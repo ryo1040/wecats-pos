@@ -1,0 +1,9 @@
+Vender
+vendor/
+App/Pods/*
+App/Mizukaze.xcworkspace
+.DS_Store 
+App/MapFan/
+
+## User settings
+xcuserdata/
