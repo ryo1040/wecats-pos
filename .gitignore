@@ -1,9 +1,3 @@
-Vender
-vendor/
-App/Pods/*
-App/Mizukaze.xcworkspace
+Pods/*
+wecatspos.xcworkspace
 .DS_Store 
-App/MapFan/
-
-## User settings
-xcuserdata/
