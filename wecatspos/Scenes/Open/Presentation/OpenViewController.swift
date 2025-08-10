@@ -288,6 +288,11 @@ extension OpenViewController: StayingDelegate {
     func tapDeleteTableVieRow(selectGuestInfo: GuestInfoModel) {
         presenter.didTapDeleteButton(id: selectGuestInfo.id, date: selectGuestInfo.date)
     }
+
+    func tapEditTableViewRow(selectGuestInfo: GuestInfoModel) {
+        enterView.editEnterInfo(selectGuestInfo: selectGuestInfo)
+        enterView.isHidden = false
+    }
 }
 
 extension OpenViewController: TitleDelegate {
@@ -322,6 +327,11 @@ extension OpenViewController: EnterDelegate {
     func tapEnterSubmitButton(id: Int, repeatFlag: Bool, patternId: Int, name: String, date: String, holidayFlag: Bool, kidsdayFlag: Bool, enterTime: String, countAdult: Int, countChild: Int, memo: String) {
         startLoading()
         presenter.didTapEnterSubmitButton(id: id, repeatFlag: repeatFlag, patternId: patternId, name: name, date: date, holidayFlag: holidayFlag, kidsdayFlag: kidsdayFlag, enterTime: enterTime, countAdult: countAdult, countChild: countChild, memo: memo)
+    }
+    
+    func tapUpdateSubmitButton(id: Int, repeatFlag: Bool, patternId: Int, name: String, date: String, holidayFlag: Bool, kidsdayFlag: Bool, enterTime: String, countAdult: Int, countChild: Int, memo: String) {
+        startLoading()
+        presenter.didTapUpdateSubmitButton(id: id, repeatFlag: repeatFlag, patternId: patternId, name: name, date: date, holidayFlag: holidayFlag, kidsdayFlag: kidsdayFlag, enterTime: enterTime, countAdult: countAdult, countChild: countChild, memo: memo)
     }
 }
 

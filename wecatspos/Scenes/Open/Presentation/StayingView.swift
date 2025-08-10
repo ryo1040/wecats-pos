@@ -12,6 +12,7 @@ protocol StayingDelegate: AnyObject  {
     func tapEnterStoreButton()
     func tapTableViewRow(selectGuestInfo: GuestInfoModel)
     func tapDeleteTableVieRow(selectGuestInfo: GuestInfoModel)
+    func tapEditTableViewRow(selectGuestInfo: GuestInfoModel)
 }
 
 public class StayingView: UIView, UITableViewDelegate, UITableViewDataSource {
@@ -21,13 +22,6 @@ public class StayingView: UIView, UITableViewDelegate, UITableViewDataSource {
     
     var screenWidth: CGFloat = -1
     var selectRow = -1
-//    var selectDate: String = ""
-//    var selectRepeatFlag: Bool = false
-//    var selectPatternId: Int = 0
-//    var selectName: String = ""
-//    var selectEnterTime: String = ""
-//    var selectAdultCount: Int = 0
-//    var selectChildCount: Int = 0
     
     weak var delegate: StayingDelegate?
     
@@ -230,13 +224,6 @@ public class StayingView: UIView, UITableViewDelegate, UITableViewDataSource {
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         selectRow = indexPath.row
         selectedStaying = stayingList[indexPath.row]
-//        self.selectDate = selectedStaying.date
-//        self.selectRepeatFlag = selectedStaying.repeatFlag
-//        self.selectPatternId = selectedStaying.patternId
-//        self.selectName = selectedStaying.name
-//        self.selectEnterTime = selectedStaying.enterTime
-//        self.selectAdultCount = selectedStaying.adultCount
-//        self.selectChildCount = selectedStaying.childCount
         
         delegate?.tapTableViewRow(selectGuestInfo: selectedStaying)
     }
@@ -246,26 +233,53 @@ public class StayingView: UIView, UITableViewDelegate, UITableViewDataSource {
         return true
     }
 
-    // スワイプ削除の実装
-    public func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
+    // スワイプアクションの設定
+    public func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        
+        // 削除アクション
+        let deleteAction = UIContextualAction(style: .destructive, title: "削除") { [weak self] (action, view, completionHandler) in
+            guard let self = self else { 
+                completionHandler(false)
+                return 
+            }
+            
             // 削除データ退避
-            var deleteGuestInfo = stayingList[indexPath.row]
+            let deleteGuestInfo = self.stayingList[indexPath.row]
             
             // データソースから該当のアイテムを削除
-            stayingList.remove(at: indexPath.row)
+            self.stayingList.remove(at: indexPath.row)
             
             // テーブルビューから行を削除（アニメーション付き）
             tableView.deleteRows(at: [indexPath], with: .fade)
             
-            // 必要に応じてデリゲートに削除を通知
-             delegate?.tapDeleteTableVieRow(selectGuestInfo: deleteGuestInfo)
+            // デリゲートに削除を通知
+            self.delegate?.tapDeleteTableVieRow(selectGuestInfo: deleteGuestInfo)
+            
+            completionHandler(true)
         }
-    }
-
-    // カスタムの削除ボタンテキスト（オプション）
-    public func tableView(_ tableView: UITableView, titleForDeleteConfirmationButtonForRowAt indexPath: IndexPath) -> String? {
-        return "削除"
+        deleteAction.backgroundColor = .systemRed
+        
+        // 編集アクション
+        let editAction = UIContextualAction(style: .normal, title: "編集") { [weak self] (action, view, completionHandler) in
+            guard let self = self else { 
+                completionHandler(false)
+                return 
+            }
+            
+            let editGuestInfo = self.stayingList[indexPath.row]
+            
+            // デリゲートに編集を通知
+            self.delegate?.tapEditTableViewRow(selectGuestInfo: editGuestInfo)
+            
+            completionHandler(true)
+        }
+        editAction.backgroundColor = .systemBlue
+        
+        // スワイプアクション設定を作成（右から左にスワイプ時）
+        let configuration = UISwipeActionsConfiguration(actions: [deleteAction, editAction])
+        configuration.performsFirstActionWithFullSwipe = false // フルスワイプで自動実行を無効化
+        
+        return configuration
     }
 }
 

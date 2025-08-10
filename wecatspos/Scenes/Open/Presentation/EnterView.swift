@@ -11,6 +11,7 @@ import UIKit
 protocol EnterDelegate: AnyObject  {
     func checkDayInfo(date: Date)
     func tapEnterSubmitButton(id: Int, repeatFlag: Bool, patternId: Int, name: String, date: String, holidayFlag: Bool, kidsdayFlag: Bool, enterTime: String, countAdult: Int, countChild: Int, memo: String)
+    func tapUpdateSubmitButton(id: Int, repeatFlag: Bool, patternId: Int, name: String, date: String, holidayFlag: Bool, kidsdayFlag: Bool, enterTime: String, countAdult: Int, countChild: Int, memo: String)
     func tapEnterCancelButton()
 }
 
@@ -41,6 +42,7 @@ public class EnterView: UIView {
     let memoTitleLabel = UILabel()
     let memoTextField = UITextField()
     let submitButton = UIButton()
+    let updateButton = UIButton()
     let cancelButton = UIButton()
     
     // ドラムロールの選択肢
@@ -54,6 +56,8 @@ public class EnterView: UIView {
     var selectedCountChildPickerId = 0
     var holidayFlag = false
     var kidsdayFlag = false
+    
+    var editId = -1
     
     weak var delegate: EnterDelegate?
     
@@ -85,6 +89,43 @@ public class EnterView: UIView {
         enterTimePicker.date = Date()
         setupEnterTimeTextField()
         delegate?.checkDayInfo(date: Date())
+        submitButton.isHidden = false
+        updateButton.isHidden = true
+    }
+    
+    func editEnterInfo(selectGuestInfo: GuestInfoModel) {
+        if selectGuestInfo.repeatFlag {
+            repeatTextField.text = "リピーター"
+            selectedRepeatPickerId = 2
+        } else {
+            repeatTextField.text = "新規"
+            selectedRepeatPickerId = 1
+        }
+        if selectGuestInfo.patternId == 1 {
+            patternTextField.text = "家族"
+            selectedPatternPickerId = 1
+        } else if selectGuestInfo.patternId == 2 {
+            patternTextField.text = "友人"
+            selectedPatternPickerId = 2
+        } else if selectGuestInfo.patternId == 3 {
+            patternTextField.text = "おひとり"
+            selectedPatternPickerId = 3
+        } else {
+            patternTextField.text = "その他"
+            selectedPatternPickerId = 4
+        }
+        nameTextField.text = selectGuestInfo.name ?? ""
+        countAdultTextField.text = String(selectGuestInfo.adultCount)
+        countChildTextField.text = String(selectGuestInfo.childCount)
+        enterTimeTextField.text = selectGuestInfo.enterTime
+        memoTextField.text = selectGuestInfo.memo ?? ""
+        enterTimePicker.date = Date()
+        delegate?.checkDayInfo(date: Date())
+        
+        self.editId = selectGuestInfo.id
+        
+        submitButton.isHidden = true
+        updateButton.isHidden = false
     }
 }
 
@@ -244,6 +285,15 @@ private extension EnterView {
         submitButton.addTarget(self, action: #selector(self.tapSubmitButton), for: .touchUpInside)
         self.addSubview(submitButton)
         
+        updateButton.setTitle("更新", for: .normal)
+        updateButton.setTitleColor(UIColor.black, for: .normal)
+        updateButton.backgroundColor = UIColor.white
+        updateButton.layer.borderColor = UIColor.black.cgColor
+        updateButton.layer.borderWidth = 1.0
+        updateButton.layer.cornerRadius = 10
+        updateButton.addTarget(self, action: #selector(self.tapUpdateButton), for: .touchUpInside)
+        self.addSubview(updateButton)
+        
         cancelButton.setTitle("キャンセル", for: .normal)
         cancelButton.setTitleColor(UIColor.black, for: .normal)
         cancelButton.backgroundColor = UIColor.white
@@ -272,6 +322,7 @@ private extension EnterView {
         memoTitleLabel.translatesAutoresizingMaskIntoConstraints = false
         memoTextField.translatesAutoresizingMaskIntoConstraints = false
         submitButton.translatesAutoresizingMaskIntoConstraints = false
+        updateButton.translatesAutoresizingMaskIntoConstraints = false
         cancelButton.translatesAutoresizingMaskIntoConstraints = false
         
         // レスポンシブルデザイン対応
@@ -355,6 +406,10 @@ private extension EnterView {
                 submitButton.rightAnchor.constraint(equalTo: scrollView.rightAnchor, constant: -16),
                 submitButton.heightAnchor.constraint(equalToConstant: 24),
                 submitButton.widthAnchor.constraint(equalToConstant: 120),
+                updateButton.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: -8),
+                updateButton.rightAnchor.constraint(equalTo: scrollView.rightAnchor, constant: -16),
+                updateButton.heightAnchor.constraint(equalToConstant: 24),
+                updateButton.widthAnchor.constraint(equalToConstant: 120),
                 cancelButton.bottomAnchor.constraint(equalTo: submitButton.bottomAnchor),
                 cancelButton.rightAnchor.constraint(equalTo: submitButton.leftAnchor, constant: -16),
                 cancelButton.heightAnchor.constraint(equalToConstant: 24),
@@ -439,6 +494,10 @@ private extension EnterView {
                 submitButton.rightAnchor.constraint(equalTo: scrollView.rightAnchor, constant: -32),
                 submitButton.heightAnchor.constraint(equalToConstant: 48),
                 submitButton.widthAnchor.constraint(equalToConstant: 160),
+                updateButton.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: -32),
+                updateButton.rightAnchor.constraint(equalTo: scrollView.rightAnchor, constant: -32),
+                updateButton.heightAnchor.constraint(equalToConstant: 48),
+                updateButton.widthAnchor.constraint(equalToConstant: 160),
                 cancelButton.bottomAnchor.constraint(equalTo: submitButton.bottomAnchor),
                 cancelButton.rightAnchor.constraint(equalTo: submitButton.leftAnchor, constant: -32),
                 cancelButton.heightAnchor.constraint(equalToConstant: 48),
@@ -660,7 +719,41 @@ private extension EnterView {
         
         delegate?.tapEnterSubmitButton(id: -1, repeatFlag: repeatFlag, patternId: selectedPatternPickerId, name: nameTextField.text!, date: formatter.string(from: Date()), holidayFlag: holidayFlag, kidsdayFlag: kidsdayFlag, enterTime: enterTimeTextField.text!, countAdult: Int(countAdultTextField.text!)!, countChild: Int(countChildTextField.text!)!, memo: memoTextField.text!)
     }
-    
+ 
+    @objc func tapUpdateButton() {
+        // 入力チェック
+        if repeatTextField.text == "" {
+            errorMessageLabel.text = "新規/リピーターを選択してください"
+            return
+        }
+        if patternTextField.text == "" {
+            errorMessageLabel.text = "パターンを選択してください"
+            return
+        }
+        if countAdultTextField.text == "" {
+            errorMessageLabel.text = "大人の人数を選択してください"
+            return
+        }
+        if countChildTextField.text == "" {
+            errorMessageLabel.text = "子供の人数を選択してください"
+            return
+        }
+        if countAdultTextField.text == "0" && countChildTextField.text == "0" {
+            errorMessageLabel.text = "人数を選択してください"
+            return
+        }
+        
+        var repeatFlag = false
+        if selectedRepeatPickerId != 1 {
+            repeatFlag = true
+        }
+        
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        
+        delegate?.tapUpdateSubmitButton(id: self.editId, repeatFlag: repeatFlag, patternId: selectedPatternPickerId, name: nameTextField.text!, date: formatter.string(from: Date()), holidayFlag: holidayFlag, kidsdayFlag: kidsdayFlag, enterTime: enterTimeTextField.text!, countAdult: Int(countAdultTextField.text!)!, countChild: Int(countChildTextField.text!)!, memo: memoTextField.text!)
+    }
+
     // キャンセルボタンタップ時のイベント
     @objc func tapCancelButton() {
         repeatTextField.text = ""
