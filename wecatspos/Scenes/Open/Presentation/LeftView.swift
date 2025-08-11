@@ -8,6 +8,12 @@
 import Foundation
 import UIKit
 
+protocol LeftDelegate: AnyObject  {
+    func tapLeftTableViewRow(selectGuestInfo: GuestInfoModel)
+//    func tapDeleteTableVieRow(selectGuestInfo: GuestInfoModel)
+//    func tapEditTableViewRow(selectGuestInfo: GuestInfoModel)
+}
+
 public class LeftView: UIView, UITableViewDelegate, UITableViewDataSource {
     
     let tableView = UITableView()
@@ -16,7 +22,8 @@ public class LeftView: UIView, UITableViewDelegate, UITableViewDataSource {
     
     var screenWidth: CGFloat = -1
     
-//    var leftList = [(name: "ご新規様", count: "大人1名、子供1名", date: "2025/05/02", enterTime: "15:00", leftTime: "16:00", price: 2700),(name: "リピータ様", count: "大人2名", date: "2025/05/02", enterTime: "16:00", leftTime: "17:00", price: 3600)]
+    weak var delegate: LeftDelegate?
+
     var leftList: [GuestInfoModel] = []
     
     public init() {
@@ -235,6 +242,7 @@ public class LeftView: UIView, UITableViewDelegate, UITableViewDataSource {
     }
     
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        delegate?.tapLeftTableViewRow(selectGuestInfo: leftList[indexPath.row])
     }
 }
 

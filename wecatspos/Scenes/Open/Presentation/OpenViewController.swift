@@ -31,6 +31,7 @@ final class OpenViewController: UIViewController, OpenViewControllerProtocol {
     let leftView = LeftView()
     let enterView = EnterView()
     let leaveView = LeaveView()
+    let visitorInfoView = VisitorInfoView()
     
     var activityIndicator: UIActivityIndicatorView!
     var overlayView: UIView!
@@ -92,6 +93,7 @@ private extension OpenViewController {
         mainLabel.addSubview(stayingView)
         
         leftView.isHidden = true
+        leftView.delegate = self
         mainLabel.addSubview(leftView)
         
         enterView.isHidden = true
@@ -102,6 +104,10 @@ private extension OpenViewController {
         leaveView.delegate = self
         mainLabel.addSubview(leaveView)
         
+        visitorInfoView.isHidden = true
+        visitorInfoView.delegate = self
+        mainLabel.addSubview(visitorInfoView)
+        
         titleView.translatesAutoresizingMaskIntoConstraints = false
         mainLabel.translatesAutoresizingMaskIntoConstraints = false
         stayingButton.translatesAutoresizingMaskIntoConstraints = false
@@ -111,6 +117,7 @@ private extension OpenViewController {
         leftView.translatesAutoresizingMaskIntoConstraints = false
         enterView.translatesAutoresizingMaskIntoConstraints = false
         leaveView.translatesAutoresizingMaskIntoConstraints = false
+        visitorInfoView.translatesAutoresizingMaskIntoConstraints = false
         
         // レスポンシブルデザイン対応
         let screenWidth = UIScreen.main.bounds.width
@@ -146,7 +153,11 @@ private extension OpenViewController {
                 leaveView.topAnchor.constraint(equalTo: mainLabel.topAnchor),
                 leaveView.bottomAnchor.constraint(equalTo: mainLabel.bottomAnchor),
                 leaveView.leftAnchor.constraint(equalTo: mainLabel.leftAnchor),
-                leaveView.rightAnchor.constraint(equalTo: mainLabel.rightAnchor)
+                leaveView.rightAnchor.constraint(equalTo: mainLabel.rightAnchor),
+                visitorInfoView.topAnchor.constraint(equalTo: mainLabel.topAnchor),
+                visitorInfoView.bottomAnchor.constraint(equalTo: mainLabel.bottomAnchor),
+                visitorInfoView.leftAnchor.constraint(equalTo: mainLabel.leftAnchor),
+                visitorInfoView.rightAnchor.constraint(equalTo: mainLabel.rightAnchor)
             ])
         } else { // 通常の画面の場合
             stayingButton.titleLabel?.font = UIFont.systemFont(ofSize: 32)
@@ -180,7 +191,11 @@ private extension OpenViewController {
                 leaveView.topAnchor.constraint(equalTo: mainLabel.topAnchor),
                 leaveView.bottomAnchor.constraint(equalTo: mainLabel.bottomAnchor),
                 leaveView.leftAnchor.constraint(equalTo: mainLabel.leftAnchor),
-                leaveView.rightAnchor.constraint(equalTo: mainLabel.rightAnchor)
+                leaveView.rightAnchor.constraint(equalTo: mainLabel.rightAnchor),
+                visitorInfoView.topAnchor.constraint(equalTo: mainLabel.topAnchor),
+                visitorInfoView.bottomAnchor.constraint(equalTo: mainLabel.bottomAnchor),
+                visitorInfoView.leftAnchor.constraint(equalTo: mainLabel.leftAnchor),
+                visitorInfoView.rightAnchor.constraint(equalTo: mainLabel.rightAnchor)
             ])
         }
     }
@@ -197,6 +212,7 @@ private extension OpenViewController {
                 leftView.tableView.reloadData()
                 enterView.isHidden = true
                 leaveView.isHidden = true
+                visitorInfoView.isHidden = true
                 stopLoading()
             }).disposed(by: disposeBag)
         
@@ -210,6 +226,7 @@ private extension OpenViewController {
                 leftView.tableView.reloadData()
                 enterView.isHidden = true
                 leaveView.isHidden = true
+                visitorInfoView.isHidden = true
                 stopLoading()
             }).disposed(by: disposeBag)
         
@@ -223,6 +240,7 @@ private extension OpenViewController {
                 leftView.tableView.reloadData()
                 enterView.isHidden = true
                 leaveView.isHidden = true
+                visitorInfoView.isHidden = true
                 stopLoading()
             }).disposed(by: disposeBag)
     }
@@ -295,6 +313,22 @@ extension OpenViewController: StayingDelegate {
     }
 }
 
+extension OpenViewController: LeftDelegate {
+    func tapLeftTableViewRow(selectGuestInfo: GuestInfoModel) {
+        visitorInfoView.setVisitorInfo(selectGuestInfo: selectGuestInfo)
+        visitorInfoView.isHidden = false
+    }
+//    
+//    func tapDeleteTableVieRow(selectGuestInfo: GuestInfoModel) {
+//        presenter.didTapDeleteButton(id: selectGuestInfo.id, date: selectGuestInfo.date)
+//    }
+//
+//    func tapEditTableViewRow(selectGuestInfo: GuestInfoModel) {
+//        enterView.editEnterInfo(selectGuestInfo: selectGuestInfo)
+//        enterView.isHidden = false
+//    }
+}
+
 extension OpenViewController: TitleDelegate {
     func tapMenuButton() {
         presenter.didTapMenuButton()
@@ -344,5 +378,11 @@ extension OpenViewController: LeaveDelegate {
     func tapLeaveSubmitButton(id: Int, repeatFlag: Bool, patternId: Int, name: String?, date: String, holidayFlag: Bool, kidsDayFlag: Bool, adultCount: Int, childCount: Int, enterTime: String, leftTime: String, stayTime: Int, calcAmount: Int, discountAmount: Int, salesAmount: Int, gachaAmount: Int, totalAmount: Int, memo: String) {
         startLoading()
         presenter.didTapLeaveSubmitButton(id: id, repeatFlag: repeatFlag, patternId: patternId, name: name, date: date, holidayFlag: holidayFlag, kidsDayFlag: kidsDayFlag, adultCount: adultCount, childCount: childCount, enterTime: enterTime, leftTime: leftTime, stayTime: stayTime, calcAmount: calcAmount, discountAmount: discountAmount, salesAmount: salesAmount, gachaAmount: gachaAmount, totalAmount: totalAmount, memo: memo)
+    }
+}
+
+extension OpenViewController: VisitorInfoDelegate {
+    func tapBackButton() {
+        visitorInfoView.isHidden = true
     }
 }
