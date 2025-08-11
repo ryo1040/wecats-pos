@@ -10,6 +10,7 @@ import UIKit
 
 protocol DayTotalDelegate: AnyObject  {
     func changeDay(day: String)
+    func tapDayTotalTableViewRow(selectGuestInfo: GuestInfoModel)
 }
 
 public class DayTotalView: UIView, UITableViewDelegate, UITableViewDataSource {
@@ -246,6 +247,7 @@ public class DayTotalView: UIView, UITableViewDelegate, UITableViewDataSource {
     }
     
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        delegate?.tapDayTotalTableViewRow(selectGuestInfo: guestList[indexPath.row])
     }
 }
 

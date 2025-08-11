@@ -29,6 +29,7 @@ final class TotalViewController: UIViewController, TotalViewControllerProtocol {
     // Views
     let dayTotalView = DayTotalView()
     let monthTotalView = MonthTotalView()
+    let visitorInfoView = VisitorInfoView()
     
     var activityIndicator: UIActivityIndicatorView!
     var overlayView: UIView!
@@ -95,6 +96,10 @@ private extension TotalViewController {
         monthTotalView.delegate = self
         mainLabel.addSubview(monthTotalView)
         
+        visitorInfoView.isHidden = true
+        visitorInfoView.delegate = self
+        mainLabel.addSubview(visitorInfoView)
+        
         titleView.translatesAutoresizingMaskIntoConstraints = false
         mainLabel.translatesAutoresizingMaskIntoConstraints = false
         dayTotalButton.translatesAutoresizingMaskIntoConstraints = false
@@ -102,6 +107,7 @@ private extension TotalViewController {
         stackView.translatesAutoresizingMaskIntoConstraints = false
         dayTotalView.translatesAutoresizingMaskIntoConstraints = false
         monthTotalView.translatesAutoresizingMaskIntoConstraints = false
+        visitorInfoView.translatesAutoresizingMaskIntoConstraints = false
         
         // レスポンシブルデザイン対応
         let screenWidth = UIScreen.main.bounds.width
@@ -129,7 +135,11 @@ private extension TotalViewController {
                 monthTotalView.topAnchor.constraint(equalTo: stackView.bottomAnchor),
                 monthTotalView.bottomAnchor.constraint(equalTo: mainLabel.bottomAnchor),
                 monthTotalView.leftAnchor.constraint(equalTo: mainLabel.leftAnchor),
-                monthTotalView.rightAnchor.constraint(equalTo: mainLabel.rightAnchor)
+                monthTotalView.rightAnchor.constraint(equalTo: mainLabel.rightAnchor),
+                visitorInfoView.topAnchor.constraint(equalTo: mainLabel.topAnchor),
+                visitorInfoView.bottomAnchor.constraint(equalTo: mainLabel.bottomAnchor),
+                visitorInfoView.leftAnchor.constraint(equalTo: mainLabel.leftAnchor),
+                visitorInfoView.rightAnchor.constraint(equalTo: mainLabel.rightAnchor)
             ])
         } else { // 通常の画面の場合
             dayTotalButton.titleLabel?.font = UIFont.systemFont(ofSize: 32)
@@ -155,7 +165,11 @@ private extension TotalViewController {
                 monthTotalView.topAnchor.constraint(equalTo: stackView.bottomAnchor),
                 monthTotalView.bottomAnchor.constraint(equalTo: mainLabel.bottomAnchor),
                 monthTotalView.leftAnchor.constraint(equalTo: mainLabel.leftAnchor),
-                monthTotalView.rightAnchor.constraint(equalTo: mainLabel.rightAnchor)
+                monthTotalView.rightAnchor.constraint(equalTo: mainLabel.rightAnchor),
+                visitorInfoView.topAnchor.constraint(equalTo: mainLabel.topAnchor),
+                visitorInfoView.bottomAnchor.constraint(equalTo: mainLabel.bottomAnchor),
+                visitorInfoView.leftAnchor.constraint(equalTo: mainLabel.leftAnchor),
+                visitorInfoView.rightAnchor.constraint(equalTo: mainLabel.rightAnchor)
             ])
         }
     }
@@ -167,6 +181,7 @@ private extension TotalViewController {
                 dayTotalView.guestList = model.filter { !$0.stayingFlag }.sorted(by: { $0.leftTime < $1.leftTime })
                 dayTotalView.calcDayTotalFee()
                 dayTotalView.tableView.reloadData()
+                visitorInfoView.isHidden = true
                 stopLoading()
             }).disposed(by: disposeBag)
         
@@ -176,6 +191,7 @@ private extension TotalViewController {
                 monthTotalView.totalAmountList = model.sorted(by: { $0.date < $1.date })
                 monthTotalView.calcMonthTotalFee()
                 monthTotalView.tableView.reloadData()
+                visitorInfoView.isHidden = true
                 stopLoading()
             }).disposed(by: disposeBag)
     }
@@ -240,11 +256,22 @@ extension TotalViewController: DayTotalDelegate {
         startLoading()
         presenter.load(date: day)
     }
+    
+    func tapDayTotalTableViewRow(selectGuestInfo: GuestInfoModel) {
+        visitorInfoView.setVisitorInfo(selectGuestInfo: selectGuestInfo)
+        visitorInfoView.isHidden = false
+    }
 }
 
 extension TotalViewController: MonthTotalDelegate {
     func changeMonth(month: String) {
         startLoading()
         presenter.getTotalAmountList(month: month)
+    }
+}
+
+extension TotalViewController: VisitorInfoDelegate {
+    func tapBackButton() {
+        visitorInfoView.isHidden = true
     }
 }
