@@ -11,6 +11,8 @@ import RxSwift
 protocol TotalDataStoreProtocol {
     func getGuestInfo(param: GetGuestInfoRequestParam) -> Single<GetGuestInfoEntity>
     func getTotalAmountList(param: GetTotalAmountListRequestParam) -> Single<GetTotalAmountListEntity>
+    func updateGuestInfo(param: PostGuestInfoRequestParam) -> Single<GetGuestInfoEntity>
+    func deleteGuestInfo(param: PostDeleteGuestInfoRequestParam) -> Single<GetGuestInfoEntity>
 }
 
 final class TotalDataStore: TotalDataStoreProtocol {
@@ -21,6 +23,14 @@ final class TotalDataStore: TotalDataStoreProtocol {
     
     func getTotalAmountList(param: GetTotalAmountListRequestParam) -> Single<GetTotalAmountListEntity> {
         return APIClient.shared.request(GetTotalAmountListTargetType(param))
+    }
+    
+    func updateGuestInfo(param: PostGuestInfoRequestParam) -> Single<GetGuestInfoEntity> {
+        return APIClient.shared.request(SetGuestInfoTargetType(param))
+    }
+    
+    func deleteGuestInfo(param: PostDeleteGuestInfoRequestParam) -> Single<GetGuestInfoEntity> {
+        return APIClient.shared.request(DeleteGuestInfoTargetType(param))
     }
 }
 
