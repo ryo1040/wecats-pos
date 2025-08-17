@@ -10,8 +10,8 @@ import UIKit
 
 protocol LeftDelegate: AnyObject  {
     func tapLeftTableViewRow(selectGuestInfo: GuestInfoModel)
-//    func tapDeleteTableVieRow(selectGuestInfo: GuestInfoModel)
-//    func tapEditTableViewRow(selectGuestInfo: GuestInfoModel)
+    func tapDeleteLeftTableVieRow(selectGuestInfo: GuestInfoModel)
+    func tapEditLeftTableViewRow(selectGuestInfo: GuestInfoModel)
 }
 
 public class LeftView: UIView, UITableViewDelegate, UITableViewDataSource {
@@ -243,6 +243,60 @@ public class LeftView: UIView, UITableViewDelegate, UITableViewDataSource {
     
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         delegate?.tapLeftTableViewRow(selectGuestInfo: leftList[indexPath.row])
+    }
+    
+    // UITableViewの削除機能を有効にする
+    public func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+
+    // スワイプアクションの設定
+    public func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        
+        // 削除アクション
+        let deleteAction = UIContextualAction(style: .destructive, title: "削除") { [weak self] (action, view, completionHandler) in
+            guard let self = self else {
+                completionHandler(false)
+                return
+            }
+            
+            // 削除データ退避
+            let deleteGuestInfo = self.leftList[indexPath.row]
+            
+            // データソースから該当のアイテムを削除
+            self.leftList.remove(at: indexPath.row)
+            
+            // テーブルビューから行を削除（アニメーション付き）
+            tableView.deleteRows(at: [indexPath], with: .fade)
+            
+            // デリゲートに削除を通知
+            self.delegate?.tapDeleteLeftTableVieRow(selectGuestInfo: deleteGuestInfo)
+            
+            completionHandler(true)
+        }
+        deleteAction.backgroundColor = .systemRed
+        
+        // 編集アクション
+        let editAction = UIContextualAction(style: .normal, title: "編集") { [weak self] (action, view, completionHandler) in
+            guard let self = self else {
+                completionHandler(false)
+                return
+            }
+            
+            let editGuestInfo = self.leftList[indexPath.row]
+            
+            // デリゲートに編集を通知
+            self.delegate?.tapEditLeftTableViewRow(selectGuestInfo: editGuestInfo)
+            
+            completionHandler(true)
+        }
+        editAction.backgroundColor = .systemBlue
+        
+        // スワイプアクション設定を作成（右から左にスワイプ時）
+        let configuration = UISwipeActionsConfiguration(actions: [deleteAction, editAction])
+        configuration.performsFirstActionWithFullSwipe = false // フルスワイプで自動実行を無効化
+        
+        return configuration
     }
 }
 

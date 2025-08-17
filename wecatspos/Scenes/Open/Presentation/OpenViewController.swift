@@ -32,6 +32,7 @@ final class OpenViewController: UIViewController, OpenViewControllerProtocol {
     let enterView = EnterView()
     let leaveView = LeaveView()
     let visitorInfoView = VisitorInfoView()
+    let editVisitorInfoView = EditVisitorInfoView()
     
     var activityIndicator: UIActivityIndicatorView!
     var overlayView: UIView!
@@ -108,6 +109,10 @@ private extension OpenViewController {
         visitorInfoView.delegate = self
         mainLabel.addSubview(visitorInfoView)
         
+        editVisitorInfoView.isHidden = true
+        editVisitorInfoView.delegate = self
+        mainLabel.addSubview(editVisitorInfoView)
+        
         titleView.translatesAutoresizingMaskIntoConstraints = false
         mainLabel.translatesAutoresizingMaskIntoConstraints = false
         stayingButton.translatesAutoresizingMaskIntoConstraints = false
@@ -118,6 +123,7 @@ private extension OpenViewController {
         enterView.translatesAutoresizingMaskIntoConstraints = false
         leaveView.translatesAutoresizingMaskIntoConstraints = false
         visitorInfoView.translatesAutoresizingMaskIntoConstraints = false
+        editVisitorInfoView.translatesAutoresizingMaskIntoConstraints = false
         
         // レスポンシブルデザイン対応
         let screenWidth = UIScreen.main.bounds.width
@@ -157,7 +163,12 @@ private extension OpenViewController {
                 visitorInfoView.topAnchor.constraint(equalTo: mainLabel.topAnchor),
                 visitorInfoView.bottomAnchor.constraint(equalTo: mainLabel.bottomAnchor),
                 visitorInfoView.leftAnchor.constraint(equalTo: mainLabel.leftAnchor),
-                visitorInfoView.rightAnchor.constraint(equalTo: mainLabel.rightAnchor)
+                visitorInfoView.rightAnchor.constraint(equalTo: mainLabel.rightAnchor),
+                editVisitorInfoView.topAnchor.constraint(equalTo: mainLabel.topAnchor),
+                editVisitorInfoView.bottomAnchor.constraint(equalTo: mainLabel.bottomAnchor),
+                editVisitorInfoView.leftAnchor.constraint(equalTo: mainLabel.leftAnchor),
+                editVisitorInfoView.rightAnchor.constraint(equalTo: mainLabel.rightAnchor)
+                
             ])
         } else { // 通常の画面の場合
             stayingButton.titleLabel?.font = UIFont.systemFont(ofSize: 32)
@@ -195,7 +206,11 @@ private extension OpenViewController {
                 visitorInfoView.topAnchor.constraint(equalTo: mainLabel.topAnchor),
                 visitorInfoView.bottomAnchor.constraint(equalTo: mainLabel.bottomAnchor),
                 visitorInfoView.leftAnchor.constraint(equalTo: mainLabel.leftAnchor),
-                visitorInfoView.rightAnchor.constraint(equalTo: mainLabel.rightAnchor)
+                visitorInfoView.rightAnchor.constraint(equalTo: mainLabel.rightAnchor),
+                editVisitorInfoView.topAnchor.constraint(equalTo: mainLabel.topAnchor),
+                editVisitorInfoView.bottomAnchor.constraint(equalTo: mainLabel.bottomAnchor),
+                editVisitorInfoView.leftAnchor.constraint(equalTo: mainLabel.leftAnchor),
+                editVisitorInfoView.rightAnchor.constraint(equalTo: mainLabel.rightAnchor)
             ])
         }
     }
@@ -213,6 +228,7 @@ private extension OpenViewController {
                 enterView.isHidden = true
                 leaveView.isHidden = true
                 visitorInfoView.isHidden = true
+                editVisitorInfoView.isHidden = true
                 stopLoading()
             }).disposed(by: disposeBag)
         
@@ -227,6 +243,7 @@ private extension OpenViewController {
                 enterView.isHidden = true
                 leaveView.isHidden = true
                 visitorInfoView.isHidden = true
+                editVisitorInfoView.isHidden = true
                 stopLoading()
             }).disposed(by: disposeBag)
         
@@ -241,6 +258,7 @@ private extension OpenViewController {
                 enterView.isHidden = true
                 leaveView.isHidden = true
                 visitorInfoView.isHidden = true
+                editVisitorInfoView.isHidden = true
                 stopLoading()
             }).disposed(by: disposeBag)
     }
@@ -318,15 +336,15 @@ extension OpenViewController: LeftDelegate {
         visitorInfoView.setVisitorInfo(selectGuestInfo: selectGuestInfo)
         visitorInfoView.isHidden = false
     }
-//    
-//    func tapDeleteTableVieRow(selectGuestInfo: GuestInfoModel) {
-//        presenter.didTapDeleteButton(id: selectGuestInfo.id, date: selectGuestInfo.date)
-//    }
-//
-//    func tapEditTableViewRow(selectGuestInfo: GuestInfoModel) {
-//        enterView.editEnterInfo(selectGuestInfo: selectGuestInfo)
-//        enterView.isHidden = false
-//    }
+    
+    func tapDeleteLeftTableVieRow(selectGuestInfo: GuestInfoModel) {
+        presenter.didTapDeleteButton(id: selectGuestInfo.id, date: selectGuestInfo.date)
+    }
+
+    func tapEditLeftTableViewRow(selectGuestInfo: GuestInfoModel) {
+        editVisitorInfoView.setVisitorInfo(selectGuestInfo: selectGuestInfo)
+        editVisitorInfoView.isHidden = false
+    }
 }
 
 extension OpenViewController: TitleDelegate {
@@ -384,5 +402,15 @@ extension OpenViewController: LeaveDelegate {
 extension OpenViewController: VisitorInfoDelegate {
     func tapBackButton() {
         visitorInfoView.isHidden = true
+    }
+}
+
+extension OpenViewController: EditVisitorInfoDelegate {
+    func tapEditVisitorInfoUpdateButton(id: Int, repeatFlag: Bool, patternId: Int, name: String?, date: String, holidayFlag: Bool, kidsDayFlag: Bool, adultCount: Int, childCount: Int, enterTime: String, leftTime: String, stayTime: Int, calcAmount: Int, discountAmount: Int, salesAmount: Int, gachaAmount: Int, totalAmount: Int, memo: String){
+        presenter.didTapEditVisitorInfoUpdateButton(id: id, repeatFlag: repeatFlag, patternId: patternId, name: name, date: date, holidayFlag: holidayFlag, kidsDayFlag: kidsDayFlag, adultCount: adultCount, childCount: childCount, enterTime: enterTime, leftTime: leftTime, stayTime: stayTime, calcAmount: calcAmount, discountAmount: discountAmount, salesAmount: salesAmount, gachaAmount: gachaAmount, totalAmount: totalAmount, memo: memo)
+    }
+    
+    func tapEditVisitorInfoBackButton() {
+        editVisitorInfoView.isHidden = true
     }
 }

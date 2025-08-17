@@ -83,120 +83,88 @@ private extension VisitorInfoView {
     func setupViews() {
         self.backgroundColor = UIColor(red: 239/255, green: 236/255, blue: 231/255, alpha: 1.0)
         
-        repeatTitleLabel.text = "新規/リピーター："
-        repeatTitleLabel.font = UIFont.systemFont(ofSize: 32)
-        repeatTitleLabel.textColor = UIColor.black
+        func setupLabel(_ label: UILabel, text: String = "") {
+            label.text = text
+            label.font = UIFont.systemFont(ofSize: 32)
+            label.textColor = UIColor.black
+        }
+        
+        setupLabel(repeatTitleLabel, text: "新規/リピーター：")
         self.addSubview(repeatTitleLabel)
         
-        repeatLabel.text = "リピーター"
-        repeatLabel.font = UIFont.systemFont(ofSize: 32)
-        repeatLabel.textColor = UIColor.black
+        setupLabel(repeatLabel)
+        repeatLabel.textAlignment = .center
         self.addSubview(repeatLabel)
         
-        patternTitleLabel.text = "パターン："
-        patternTitleLabel.font = UIFont.systemFont(ofSize: 32)
-        patternTitleLabel.textColor = UIColor.black
+        setupLabel(patternTitleLabel, text: "パターン：")
         self.addSubview(patternTitleLabel)
         
-        patternLabel.text = "家族"
-        patternLabel.font = UIFont.systemFont(ofSize: 32)
-        patternLabel.textColor = UIColor.black
+        setupLabel(patternLabel)
+        patternLabel.textAlignment = .center
         self.addSubview(patternLabel)
         
-        nameTitleLabel.text = "氏名："
-        nameTitleLabel.font = UIFont.systemFont(ofSize: 32)
-        nameTitleLabel.textColor = UIColor.black
+        setupLabel(nameTitleLabel, text: "氏名：")
         self.addSubview(nameTitleLabel)
         
-        nameLabel.text = ""
-        nameLabel.font = UIFont.systemFont(ofSize: 32)
-        nameLabel.textColor = UIColor.black
+        setupLabel(nameLabel)
+        nameLabel.textAlignment = .center
         self.addSubview(nameLabel)
         
-        countTitleLabel.text = "人数："
-        countTitleLabel.font = UIFont.systemFont(ofSize: 32)
-        countTitleLabel.textColor = UIColor.black
+        setupLabel(countTitleLabel, text: "人数：")
         self.addSubview(countTitleLabel)
         
-        countLabel.text = "大人：1人、子ども：1人"
-        countLabel.font = UIFont.systemFont(ofSize: 32)
-        countLabel.textColor = UIColor.black
+        setupLabel(countLabel)
+        countLabel.textAlignment = .center
         self.addSubview(countLabel)
 
-        stayTimeTitleLabel.text = "滞在時間："
-        stayTimeTitleLabel.font = UIFont.systemFont(ofSize: 32)
-        stayTimeTitleLabel.textColor = UIColor.black
+        setupLabel(stayTimeTitleLabel, text: "滞在時間：")
         self.addSubview(stayTimeTitleLabel)
 
-        stayTimeLabel.text = "13:00〜15:00 120分"
-        stayTimeLabel.font = UIFont.systemFont(ofSize: 32)
-        stayTimeLabel.textColor = UIColor.black
+        setupLabel(stayTimeLabel)
         stayTimeLabel.textAlignment = .center
         self.addSubview(stayTimeLabel)
         
-        basicPriceTitleLabel.text = "基本料金："
-        basicPriceTitleLabel.font = UIFont.systemFont(ofSize: 32)
-        basicPriceTitleLabel.textColor = UIColor.black
+        setupLabel(basicPriceTitleLabel, text: "基本料金：")
         self.addSubview(basicPriceTitleLabel)
         
-        basicPriceLabel.text = "1,800円"
-        basicPriceLabel.font = UIFont.systemFont(ofSize: 32)
-        basicPriceLabel.textColor = UIColor.black
+        setupLabel(basicPriceLabel)
+        basicPriceLabel.textAlignment = .center
         self.addSubview(basicPriceLabel)
         
-        discountAmountTitleLabel.text = "割引額："
-        discountAmountTitleLabel.font = UIFont.systemFont(ofSize: 32)
-        discountAmountTitleLabel.textColor = UIColor.black
+        setupLabel(discountAmountTitleLabel, text: "割引額：")
         self.addSubview(discountAmountTitleLabel)
         
-        discountAmountLabel.text = "300円"
-        discountAmountLabel.font = discountAmountLabel.font?.withSize(32)
+        setupLabel(discountAmountLabel)
         discountAmountLabel.textColor = UIColor.red
         discountAmountLabel.textAlignment = .center
         self.addSubview(discountAmountLabel)
         
-        gachaAmountTitleLabel.text = "ガチャ額："
-        gachaAmountTitleLabel.font = UIFont.systemFont(ofSize: 32)
-        gachaAmountTitleLabel.textColor = UIColor.black
+        setupLabel(gachaAmountTitleLabel, text: "ガチャ額：")
         self.addSubview(gachaAmountTitleLabel)
         
-        gachaAmountLabel.text = "400円"
-        gachaAmountLabel.font = gachaAmountLabel.font?.withSize(32)
-        gachaAmountLabel.textColor = UIColor.black
+        setupLabel(gachaAmountLabel)
         gachaAmountLabel.textAlignment = .center
         self.addSubview(gachaAmountLabel)
 
-        salesAmountTitleLabel.text = "販売額："
-        salesAmountTitleLabel.font = UIFont.systemFont(ofSize: 32)
-        salesAmountTitleLabel.textColor = UIColor.black
+        setupLabel(salesAmountTitleLabel, text: "販売額：")
         self.addSubview(salesAmountTitleLabel)
         
-        salesAmountLabel.text = "100円"
-        salesAmountLabel.font = salesAmountLabel.font?.withSize(32)
-        salesAmountLabel.textColor = UIColor.black
+        setupLabel(salesAmountLabel)
         salesAmountLabel.textAlignment = .center
         self.addSubview(salesAmountLabel)
         
-        feeTitleLabel.text = "料金："
-        feeTitleLabel.font = UIFont.systemFont(ofSize: 32)
-        feeTitleLabel.textColor = UIColor.black
+        setupLabel(feeTitleLabel, text: "料金：")
         self.addSubview(feeTitleLabel)
         
-        feeLabel.text = "2,000円"
-        feeLabel.font = UIFont.systemFont(ofSize: 32)
-        feeLabel.textColor = UIColor.black
+        setupLabel(feeLabel)
         feeLabel.textAlignment = .center
         self.addSubview(feeLabel)
         
-        memoTitleLabel.text = "メモ："
-        memoTitleLabel.font = UIFont.systemFont(ofSize: 32)
-        memoTitleLabel.textColor = UIColor.black
+        setupLabel(memoTitleLabel, text: "メモ：")
         memoTitleLabel.textAlignment = .center
         self.addSubview(memoTitleLabel)
         
-        memoLabel.text = "メモ"
-        memoLabel.textColor = UIColor.black
-        memoLabel.font = UIFont.systemFont(ofSize: 32)
+        setupLabel(memoLabel)
         self.addSubview(memoLabel)
         
         backButton.setTitle("戻る", for: .normal)

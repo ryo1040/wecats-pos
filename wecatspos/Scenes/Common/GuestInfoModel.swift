@@ -47,4 +47,26 @@ public struct GuestInfoModel {
         self.stayingFlag = stayingFlag
         self.memo = memo
     }
+    
+    public init () {
+        self.id = -1
+        self.repeatFlag = false
+        self.patternId = 0
+        self.name = ""
+        self.adultCount = 0
+        self.childCount = 0
+        self.date = ""
+        self.holidayFlag = false
+        self.kidsdayFlag = false
+        self.enterTime = ""
+        self.leftTime = ""
+        self.stayTime = 0
+        self.calcAmount = 0
+        self.discountAmount = 0
+        self.salesAmount = 0
+        self.gachaAmount = 0
+        self.totalAmount = 0
+        self.stayingFlag = false
+        self.memo = ""
+    }
 }

@@ -20,6 +20,7 @@ protocol OpenPresenterProtocol: AnyObject {
     func didTapUpdateSubmitButton(id: Int, repeatFlag: Bool, patternId: Int, name: String, date: String, holidayFlag: Bool, kidsdayFlag: Bool, enterTime: String, countAdult: Int, countChild: Int, memo: String)
     func didTapLeaveSubmitButton(id: Int, repeatFlag: Bool, patternId: Int, name: String?, date: String, holidayFlag: Bool, kidsDayFlag: Bool, adultCount: Int, childCount: Int, enterTime: String, leftTime: String, stayTime: Int, calcAmount: Int, discountAmount: Int, salesAmount: Int, gachaAmount: Int, totalAmount: Int, memo: String)
     func didTapDeleteButton(id: Int, date: String)
+    func didTapEditVisitorInfoUpdateButton(id: Int, repeatFlag: Bool, patternId: Int, name: String?, date: String, holidayFlag: Bool, kidsDayFlag: Bool, adultCount: Int, childCount: Int, enterTime: String, leftTime: String, stayTime: Int, calcAmount: Int, discountAmount: Int, salesAmount: Int, gachaAmount: Int, totalAmount: Int, memo: String)
 }
 
 final class OpenPresenter: OpenPresenterProtocol {
@@ -181,6 +182,33 @@ final class OpenPresenter: OpenPresenterProtocol {
                 if option == Sentence.DIALOG_BTN_RETRY {
                     // ボタンタップ時に再試行
                     self.didTapDeleteButton(id: id, date: date)
+                }
+            })
+            .disposed(by: self.disposeBag)
+    }
+    
+    func didTapEditVisitorInfoUpdateButton(id: Int, repeatFlag: Bool, patternId: Int, name: String?, date: String, holidayFlag: Bool, kidsDayFlag: Bool, adultCount: Int, childCount: Int, enterTime: String, leftTime: String, stayTime: Int, calcAmount: Int, discountAmount: Int, salesAmount: Int, gachaAmount: Int, totalAmount: Int, memo: String){
+        let param = PostGuestInfoRequestParam(id: id, repeatFlag: repeatFlag, patternId: patternId, name: name!, date: date, holidayFlag: holidayFlag, kidsDayFlag: kidsDayFlag, enterTime: enterTime, leftTime: leftTime, stayTime: stayTime, adultCount: adultCount, childCount: childCount, calcAmount: calcAmount, discountAmount: discountAmount, salesAmount: salesAmount, gachaAmount: gachaAmount, totalAmount: totalAmount, stayingFlag: false, memo: memo)
+        
+        Observable.just(Void())
+            .flatMap { [unowned self] in
+                self.useCase.updateGuestInfo(param: param)
+            }
+            .subscribe(onNext: {
+                [unowned self] model in
+                self.viewEntry.onNext(model)
+            }, onError: { error in
+                self.handleDidTapEditVisitorInfoUpdateButtonError(error, id: id, repeatFlag: repeatFlag, patternId: patternId, name: name, date: date, holidayFlag: holidayFlag, kidsDayFlag: kidsDayFlag, adultCount: adultCount, childCount: childCount, enterTime: enterTime, leftTime: leftTime, stayTime: stayTime, calcAmount: calcAmount, discountAmount: discountAmount, salesAmount: salesAmount, gachaAmount: gachaAmount, totalAmount: totalAmount, memo: memo)
+            })
+            .disposed(by: self.disposeBag)
+    }
+    
+    func handleDidTapEditVisitorInfoUpdateButtonError(_ error: Error, id: Int, repeatFlag: Bool, patternId: Int, name: String?, date: String, holidayFlag: Bool, kidsDayFlag: Bool, adultCount: Int, childCount: Int, enterTime: String, leftTime: String, stayTime: Int, calcAmount: Int, discountAmount: Int, salesAmount: Int, gachaAmount: Int, totalAmount: Int, memo: String) {
+        self.wireframe.presentAlert(Sentence.MSG_NETWORK_ERROR, buttonTitle: Sentence.DIALOG_BTN_RETRY)
+            .subscribe(onNext: { option in
+                if option == Sentence.DIALOG_BTN_RETRY {
+                    // ボタンタップ時に再試行
+                    self.didTapEditVisitorInfoUpdateButton(id: id, repeatFlag: repeatFlag, patternId: patternId, name: name, date: date, holidayFlag: holidayFlag, kidsDayFlag: kidsDayFlag, adultCount: adultCount, childCount: childCount, enterTime: enterTime, leftTime: leftTime, stayTime: stayTime, calcAmount: calcAmount, discountAmount: discountAmount, salesAmount: salesAmount, gachaAmount: gachaAmount, totalAmount: totalAmount, memo: memo)
                 }
             })
             .disposed(by: self.disposeBag)

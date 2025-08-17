@@ -671,11 +671,11 @@ private extension LeaveView {
         if leftTimeTextField.text == "" {
             return "退店時間を選択してください"
         }
-        if discountAmountTitleLabel.text == "" {
-            return "大人の人数を選択してください"
+        if discountAmountTextField.text == "" {
+            return "割引額を入力してください"
         }
         if salesAmountTextField.text == "" {
-            return "子供の人数を選択してください"
+            return "販売額を入力してください"
         }
         return ""
     }
