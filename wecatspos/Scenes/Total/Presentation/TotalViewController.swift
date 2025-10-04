@@ -252,6 +252,8 @@ private extension TotalViewController {
         let formatter_data = DateFormatter()
         formatter_data.dateFormat = "yyyy-MM"
         presenter.getTotalAmountList(month: formatter_data.string(from: Date()))
+        formatter_data.dateFormat = "yyyy/MM"
+        monthTotalView.monthLabel.text = formatter_data.string(from: Date())
         dayTotalView.isHidden = true
         monthTotalView.isHidden = false
         dayTotalButton.backgroundColor = UIColor(red: 239/255, green: 236/255, blue: 231/255, alpha: 1.0)

@@ -25,7 +25,7 @@ public class StayingView: UIView, UITableViewDelegate, UITableViewDataSource {
     
     weak var delegate: StayingDelegate?
     
-    var selectedStaying: GuestInfoModel = GuestInfoModel(id: -1, repeatFlag: false, patternId: -1, name: "", adultCount: 0, childCount: 0, date: "", holidayFlag: false, kidsdayFlag: false, enterTime: "", leftTime: "", stayTime: 0, calcAmount: 0, discountAmount: 0, salesAmount: 0, gachaAmount: 0, totalAmount: 0, stayingFlag: false, memo: "")
+    var selectedStaying: GuestInfoModel = GuestInfoModel()
     
     var stayingList: [GuestInfoModel] = []
     
