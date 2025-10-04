@@ -22,6 +22,7 @@ final class MenuViewController: UIViewController, MenuViewControllerProtocol {
     let catInfoButton = UIButton()
     let openButton = UIButton()
     let totalButton = UIButton()
+    let closeButton = UIButton()
     
     public func inject(presenter: MenuPresenterProtocol) {
         self.presenter = presenter
@@ -47,44 +48,58 @@ private extension MenuViewController {
         
         mainLabel.backgroundColor = UIColor(red: 239/255, green: 236/255, blue: 231/255, alpha: 1.0)
         mainLabel.isUserInteractionEnabled = true
-
-        catInfoButton.backgroundColor = UIColor.white
-        catInfoButton.layer.borderColor = UIColor.black.cgColor
-        catInfoButton.layer.borderWidth = 2.0
-        catInfoButton.layer.cornerRadius = 25
-        catInfoButton.setTitle("猫情報", for: .normal)
-        catInfoButton.titleLabel?.font = UIFont.systemFont(ofSize: 48)
-        catInfoButton.setTitleColor(UIColor.black, for: .normal)
-        catInfoButton.addTarget(self, action: #selector(self.tapCatInfoButton(_:)), for: UIControl.Event.touchUpInside)
-
-        openButton.backgroundColor = UIColor.white
-        openButton.layer.borderColor = UIColor.black.cgColor
-        openButton.layer.borderWidth = 2.0
-        openButton.layer.cornerRadius = 25
-        openButton.setTitle("営業中", for: .normal)
-        openButton.titleLabel?.font = UIFont.systemFont(ofSize: 48)
-        openButton.setTitleColor(UIColor.black, for: .normal)
-        openButton.addTarget(self, action: #selector(self.tapOpenButton(_:)), for: UIControl.Event.touchUpInside)
-        
-        totalButton.backgroundColor = UIColor.white
-        totalButton.layer.borderColor = UIColor.black.cgColor
-        totalButton.layer.borderWidth = 2.0
-        totalButton.layer.cornerRadius = 25
-        totalButton.setTitle("集計", for: .normal)
-        totalButton.titleLabel?.font = UIFont.systemFont(ofSize: 48)
-        totalButton.setTitleColor(UIColor.black, for: .normal)
-        totalButton.addTarget(self, action: #selector(self.tapTotalButton(_:)), for: UIControl.Event.touchUpInside)
-        
         self.view.addSubview(mainLabel)
+        
+        func setupButton(_ button: UIButton, text: String = "") {
+            button.backgroundColor = UIColor.white
+            button.layer.borderColor = UIColor.black.cgColor
+            button.layer.borderWidth = 2.0
+            button.layer.cornerRadius = 25
+            button.setTitle(text, for: .normal)
+            button.titleLabel?.font = UIFont.systemFont(ofSize: 48)
+            button.setTitleColor(UIColor.black, for: .normal)
+        }
+
+        setupButton(catInfoButton, text: "猫情報")
+        catInfoButton.addTarget(self, action: #selector(self.tapCatInfoButton(_:)), for: UIControl.Event.touchUpInside)
         mainLabel.addSubview(catInfoButton)
+        
+        setupButton(openButton, text: "営業中")
+        openButton.addTarget(self, action: #selector(self.tapOpenButton(_:)), for: UIControl.Event.touchUpInside)
         mainLabel.addSubview(openButton)
+
+        setupButton(closeButton, text: "締め")
+        closeButton.addTarget(self, action: #selector(self.tapCloseButton(_:)), for: UIControl.Event.touchUpInside)
+        mainLabel.addSubview(closeButton)
+
+        setupButton(totalButton, text: "統計")
+        totalButton.addTarget(self, action: #selector(self.tapTotalButton(_:)), for: UIControl.Event.touchUpInside)
         mainLabel.addSubview(totalButton)
 
+        // 2行×3列（空のUIViewで隙間を埋める）
+        let dummy1 = UIView()
+        let dummy2 = UIView()
+
+        let row1Stack = UIStackView(arrangedSubviews: [catInfoButton, openButton, closeButton])
+        row1Stack.axis = .horizontal
+        row1Stack.distribution = .fillEqually
+        row1Stack.spacing = 96
+
+        let row2Stack = UIStackView(arrangedSubviews: [totalButton, dummy1, dummy2])
+        row2Stack.axis = .horizontal
+        row2Stack.distribution = .fillEqually
+        row2Stack.spacing = 96
+
+        let mainStack = UIStackView(arrangedSubviews: [row1Stack, row2Stack])
+        mainStack.axis = .vertical
+        mainStack.distribution = .fillEqually
+        mainStack.spacing = 96
+
+        mainLabel.addSubview(mainStack)
+        
         titleView.translatesAutoresizingMaskIntoConstraints = false
         mainLabel.translatesAutoresizingMaskIntoConstraints = false
-        catInfoButton.translatesAutoresizingMaskIntoConstraints = false
-        openButton.translatesAutoresizingMaskIntoConstraints = false
-        totalButton.translatesAutoresizingMaskIntoConstraints = false
+        mainStack.translatesAutoresizingMaskIntoConstraints = false
         
         // レスポンシブルデザイン対応
         let screenWidth = UIScreen.main.bounds.width
@@ -92,10 +107,16 @@ private extension MenuViewController {
             catInfoButton.titleLabel?.font = UIFont.systemFont(ofSize: 24)
             openButton.titleLabel?.font = UIFont.systemFont(ofSize: 24)
             totalButton.titleLabel?.font = UIFont.systemFont(ofSize: 24)
+            closeButton.titleLabel?.font = UIFont.systemFont(ofSize: 24)
             
             catInfoButton.layer.cornerRadius = 15
             openButton.layer.cornerRadius = 15
             totalButton.layer.cornerRadius = 15
+            closeButton.layer.cornerRadius = 15
+            
+            row1Stack.spacing = 48
+            row2Stack.spacing = 48
+            mainStack.spacing = 48
             
             NSLayoutConstraint.activate([
                 titleView.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor),
@@ -106,23 +127,16 @@ private extension MenuViewController {
                 mainLabel.bottomAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.bottomAnchor),
                 mainLabel.leftAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.leftAnchor),
                 mainLabel.rightAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.rightAnchor),
-                catInfoButton.centerYAnchor.constraint(equalTo: mainLabel.centerYAnchor),
-                catInfoButton.leftAnchor.constraint(equalTo: mainLabel.leftAnchor, constant: 64),
-                catInfoButton.heightAnchor.constraint(equalToConstant: 90),
-                catInfoButton.widthAnchor.constraint(equalToConstant: 120),
-                openButton.centerYAnchor.constraint(equalTo: catInfoButton.centerYAnchor),
-                openButton.centerXAnchor.constraint(equalTo: mainLabel.centerXAnchor),
-                openButton.heightAnchor.constraint(equalToConstant: 90),
-                openButton.widthAnchor.constraint(equalToConstant: 120),
-                totalButton.centerYAnchor.constraint(equalTo: catInfoButton.centerYAnchor),
-                totalButton.rightAnchor.constraint(equalTo: mainLabel.rightAnchor, constant: -64),
-                totalButton.heightAnchor.constraint(equalToConstant: 90),
-                totalButton.widthAnchor.constraint(equalToConstant: 120),
+                mainStack.centerYAnchor.constraint(equalTo: mainLabel.centerYAnchor),
+                mainStack.centerXAnchor.constraint(equalTo: mainLabel.centerXAnchor),
+                mainStack.widthAnchor.constraint(equalTo: mainLabel.widthAnchor, multiplier: 0.9),
+                mainStack.heightAnchor.constraint(equalTo: mainLabel.heightAnchor, multiplier: 0.7),
             ])
         } else { // 通常の画面の場合
             catInfoButton.titleLabel?.font = UIFont.systemFont(ofSize: 48)
             openButton.titleLabel?.font = UIFont.systemFont(ofSize: 48)
             totalButton.titleLabel?.font = UIFont.systemFont(ofSize: 48)
+            closeButton.titleLabel?.font = UIFont.systemFont(ofSize: 48)
             
             NSLayoutConstraint.activate([
                 titleView.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor),
@@ -133,18 +147,10 @@ private extension MenuViewController {
                 mainLabel.bottomAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.bottomAnchor),
                 mainLabel.leftAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.leftAnchor),
                 mainLabel.rightAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.rightAnchor),
-                catInfoButton.centerYAnchor.constraint(equalTo: mainLabel.centerYAnchor),
-                catInfoButton.leftAnchor.constraint(equalTo: mainLabel.leftAnchor, constant: 96),
-                catInfoButton.heightAnchor.constraint(equalToConstant: 180),
-                catInfoButton.widthAnchor.constraint(equalToConstant: 240),
-                openButton.centerYAnchor.constraint(equalTo: catInfoButton.centerYAnchor),
-                openButton.centerXAnchor.constraint(equalTo: mainLabel.centerXAnchor),
-                openButton.heightAnchor.constraint(equalToConstant: 180),
-                openButton.widthAnchor.constraint(equalToConstant: 240),
-                totalButton.centerYAnchor.constraint(equalTo: catInfoButton.centerYAnchor),
-                totalButton.rightAnchor.constraint(equalTo: mainLabel.rightAnchor, constant: -96),
-                totalButton.heightAnchor.constraint(equalToConstant: 180),
-                totalButton.widthAnchor.constraint(equalToConstant: 240),
+                mainStack.centerYAnchor.constraint(equalTo: mainLabel.centerYAnchor),
+                mainStack.centerXAnchor.constraint(equalTo: mainLabel.centerXAnchor),
+                mainStack.widthAnchor.constraint(equalTo: mainLabel.widthAnchor, multiplier: 0.9),
+                mainStack.heightAnchor.constraint(equalTo: mainLabel.heightAnchor, multiplier: 0.7),
             ])
         }
     }
@@ -159,6 +165,10 @@ private extension MenuViewController {
     
     @objc func tapTotalButton(_ sender: UIButton){
         presenter.didTapTotalButton()
+    }
+    
+    @objc func tapCloseButton(_ sender: UIButton){
+        presenter.didTapCloseButton()
     }
 }
 

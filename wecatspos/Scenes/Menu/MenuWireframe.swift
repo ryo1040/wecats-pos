@@ -12,6 +12,7 @@ protocol MenuWireframeProtocol: BaseWireframeProtocol {
     func presentCatInfo()
     func presentOpen()
     func presentTotal()
+    func presentClose()
     func presentViewController(viewController: UIViewController)
 }
 
@@ -38,6 +39,11 @@ class MenuWireframe: BaseWireframe, MenuWireframeProtocol {
     func presentTotal() {
         let vc = TotalBuilder().build()
 //        self.viewController.navigationController?.pushViewController(vc, animated: true)
+        presentViewController(viewController: vc)
+    }
+    
+    func presentClose() {
+        let vc = CloseBuilder().build()
         presentViewController(viewController: vc)
     }
     

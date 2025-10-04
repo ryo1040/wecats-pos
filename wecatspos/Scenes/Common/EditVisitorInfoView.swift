@@ -66,6 +66,8 @@ public class EditVisitorInfoView: UIView {
     let updateButton = UIButton()
     let backButton = UIButton()
     
+    let screenWidth = UIScreen.main.bounds.width
+    
     weak var delegate: EditVisitorInfoDelegate?
     
     let repeatPickerData = [(id: 1, name: "新規"), (id: 2, name: "リピーター")]
@@ -123,8 +125,8 @@ public class EditVisitorInfoView: UIView {
     }
     
     private func setupKeyboardObservers() {
-            NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
-            NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
 
     @objc private func keyboardWillShow(_ notification: Notification) {
@@ -186,7 +188,11 @@ private extension EditVisitorInfoView {
         func setupTextField(_ textField: UITextField, text: String = "") {
             textField.backgroundColor = UIColor.white
             textField.text = text
-            textField.font = UIFont.systemFont(ofSize: 32)
+            if screenWidth < 668 {
+                textField.font = UIFont.systemFont(ofSize: 16)
+            } else {
+                textField.font = UIFont.systemFont(ofSize: 32)
+            }
             textField.textColor = UIColor.black
             textField.keyboardType = .default
             textField.returnKeyType = .next
@@ -198,7 +204,11 @@ private extension EditVisitorInfoView {
         
         func setupLabel(_ label: UILabel, text: String = "") {
             label.text = text
-            label.font = UIFont.systemFont(ofSize: 32)
+            if screenWidth < 668 {
+                label.font = UIFont.systemFont(ofSize: 16)
+            } else {
+                label.font = UIFont.systemFont(ofSize: 32)
+            }
             label.textColor = UIColor.black
         }
 
@@ -388,130 +398,270 @@ private extension EditVisitorInfoView {
         updateButton.translatesAutoresizingMaskIntoConstraints = false
         backButton.translatesAutoresizingMaskIntoConstraints = false
         
-        NSLayoutConstraint.activate([
-            scrollView.topAnchor.constraint(equalTo: self.safeAreaLayoutGuide.topAnchor),
-            scrollView.bottomAnchor.constraint(equalTo: self.safeAreaLayoutGuide.bottomAnchor),
-            scrollView.leftAnchor.constraint(equalTo: self.safeAreaLayoutGuide.leftAnchor),
-            scrollView.rightAnchor.constraint(equalTo: self.safeAreaLayoutGuide.rightAnchor),
-            
-            contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
-            contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
-            contentView.leftAnchor.constraint(equalTo: scrollView.leftAnchor),
-            contentView.rightAnchor.constraint(equalTo: scrollView.rightAnchor),
-            contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
-
-            pickerBackgroundView.topAnchor.constraint(equalTo: self.safeAreaLayoutGuide.topAnchor),
-            pickerBackgroundView.bottomAnchor.constraint(equalTo: self.safeAreaLayoutGuide.bottomAnchor),
-            pickerBackgroundView.leftAnchor.constraint(equalTo: self.safeAreaLayoutGuide.leftAnchor),
-            pickerBackgroundView.rightAnchor.constraint(equalTo: self.safeAreaLayoutGuide.rightAnchor),
-            
-            errorMessageLabel.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 8),
-            errorMessageLabel.leftAnchor.constraint(equalTo: scrollView.leftAnchor, constant: 32),
-            
-            repeatTitleLabel.topAnchor.constraint(equalTo: errorMessageLabel.bottomAnchor, constant: 8),
-            repeatTitleLabel.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 64),
-            repeatTextField.centerYAnchor.constraint(equalTo: repeatTitleLabel.centerYAnchor),
-            repeatTextField.leftAnchor.constraint(equalTo: repeatTitleLabel.rightAnchor, constant: 24),
-            repeatTextField.widthAnchor.constraint(equalToConstant: 200),
-            
-            patternTitleLabel.centerYAnchor.constraint(equalTo: repeatTitleLabel.centerYAnchor),
-            patternTitleLabel.leftAnchor.constraint(equalTo: contentView.centerXAnchor),
-            patternTextField.centerYAnchor.constraint(equalTo: patternTitleLabel.centerYAnchor),
-            patternTextField.leftAnchor.constraint(equalTo: patternTitleLabel.rightAnchor, constant: 24),
-            patternTextField.widthAnchor.constraint(equalToConstant: 200),
-            
-            nameTitleLabel.topAnchor.constraint(equalTo: repeatTitleLabel.bottomAnchor, constant: 24),
-            nameTitleLabel.rightAnchor.constraint(equalTo: repeatTitleLabel.rightAnchor),
-            nameTextField.centerYAnchor.constraint(equalTo: nameTitleLabel.centerYAnchor),
-            nameTextField.leftAnchor.constraint(equalTo: nameTitleLabel.rightAnchor, constant: 24),
-            nameTextField.widthAnchor.constraint(equalToConstant: 400),
-            
-            countTitleLabel.topAnchor.constraint(equalTo: nameTitleLabel.bottomAnchor, constant: 24),
-            countTitleLabel.rightAnchor.constraint(equalTo: nameTitleLabel.rightAnchor),
-            countAdultLabel.centerYAnchor.constraint(equalTo: countTitleLabel.centerYAnchor),
-            countAdultLabel.leftAnchor.constraint(equalTo: countTitleLabel.rightAnchor, constant: 24),
-            countAdultTextField.centerYAnchor.constraint(equalTo: countTitleLabel.centerYAnchor),
-            countAdultTextField.leftAnchor.constraint(equalTo: countAdultLabel.rightAnchor),
-            countAdultTextField.widthAnchor.constraint(equalToConstant: 80),
-            countChildLabel.centerYAnchor.constraint(equalTo: countTitleLabel.centerYAnchor),
-            countChildLabel.leftAnchor.constraint(equalTo: countAdultTextField.rightAnchor, constant: 8),
-            countChildTextField.centerYAnchor.constraint(equalTo: countTitleLabel.centerYAnchor),
-            countChildTextField.leftAnchor.constraint(equalTo: countChildLabel.rightAnchor),
-            countChildTextField.widthAnchor.constraint(equalToConstant: 80),
-            countLastLabel.centerYAnchor.constraint(equalTo: countTitleLabel.centerYAnchor),
-            countLastLabel.leftAnchor.constraint(equalTo: countChildTextField.rightAnchor, constant: 8),
-            
-            stayTimeTitleLabel.topAnchor.constraint(equalTo: countTitleLabel.bottomAnchor, constant: 24),
-            stayTimeTitleLabel.rightAnchor.constraint(equalTo: countTitleLabel.rightAnchor),
-            enterTimeTextField.centerYAnchor.constraint(equalTo: stayTimeTitleLabel.centerYAnchor),
-            enterTimeTextField.leftAnchor.constraint(equalTo: stayTimeTitleLabel.rightAnchor, constant: 24),
-            enterTimeTextField.widthAnchor.constraint(equalToConstant: 150),
-            fullWidthTildeLabel.centerYAnchor.constraint(equalTo: stayTimeTitleLabel.centerYAnchor),
-            fullWidthTildeLabel.leftAnchor.constraint(equalTo: enterTimeTextField.rightAnchor, constant: 8),
-            leftTimeTextField.centerYAnchor.constraint(equalTo: stayTimeTitleLabel.centerYAnchor),
-            leftTimeTextField.leftAnchor.constraint(equalTo: fullWidthTildeLabel.rightAnchor, constant: 8),
-            leftTimeTextField.widthAnchor.constraint(equalToConstant: 150),
-            stayTimeTextField.centerYAnchor.constraint(equalTo: stayTimeTitleLabel.centerYAnchor),
-            stayTimeTextField.leftAnchor.constraint(equalTo: leftTimeTextField.rightAnchor, constant: 24),
-            stayTimeTextField.widthAnchor.constraint(equalToConstant: 120),
-            stayTimeLastLabel.centerYAnchor.constraint(equalTo: stayTimeTitleLabel.centerYAnchor),
-            stayTimeLastLabel.leftAnchor.constraint(equalTo: stayTimeTextField.rightAnchor, constant: 24),
-            
-            basicPriceTitleLabel.topAnchor.constraint(equalTo: enterTimeTextField.bottomAnchor, constant: 24),
-            basicPriceTitleLabel.rightAnchor.constraint(equalTo: stayTimeTitleLabel.rightAnchor),
-            basicPriceTextField.centerYAnchor.constraint(equalTo: basicPriceTitleLabel.centerYAnchor),
-            basicPriceTextField.leftAnchor.constraint(equalTo: basicPriceTitleLabel.rightAnchor, constant: 24),
-            basicPriceTextField.widthAnchor.constraint(equalToConstant: 150),
-            basicPriceLastLabel.centerYAnchor.constraint(equalTo: basicPriceTitleLabel.centerYAnchor),
-            basicPriceLastLabel.leftAnchor.constraint(equalTo: basicPriceTextField.rightAnchor, constant: 24),
-            discountAmountTitleLabel.centerYAnchor.constraint(equalTo: basicPriceTitleLabel.centerYAnchor),
-            discountAmountTitleLabel.leftAnchor.constraint(equalTo: contentView.centerXAnchor),
-            discountAmountTextField.centerYAnchor.constraint(equalTo: discountAmountTitleLabel.centerYAnchor),
-            discountAmountTextField.leftAnchor.constraint(equalTo: discountAmountTitleLabel.rightAnchor, constant: 24),
-            discountAmountTextField.widthAnchor.constraint(equalToConstant: 150),
-            discountAmountLastLabel.centerYAnchor.constraint(equalTo: discountAmountTitleLabel.centerYAnchor),
-            discountAmountLastLabel.leftAnchor.constraint(equalTo: discountAmountTextField.rightAnchor, constant: 24),
-            
-            gachaAmountTitleLabel.topAnchor.constraint(equalTo: basicPriceTitleLabel.bottomAnchor, constant: 24),
-            gachaAmountTitleLabel.rightAnchor.constraint(equalTo: basicPriceTitleLabel.rightAnchor),
-            gachaAmountTextField.centerYAnchor.constraint(equalTo: gachaAmountTitleLabel.centerYAnchor),
-            gachaAmountTextField.leftAnchor.constraint(equalTo: gachaAmountTitleLabel.rightAnchor, constant: 24),
-            gachaAmountTextField.widthAnchor.constraint(equalToConstant: 150),
-            gachaAmountLastLabel.centerYAnchor.constraint(equalTo: gachaAmountTitleLabel.centerYAnchor),
-            gachaAmountLastLabel.leftAnchor.constraint(equalTo: gachaAmountTextField.rightAnchor, constant: 24),
-            salesAmountTitleLabel.centerYAnchor.constraint(equalTo: gachaAmountTitleLabel.centerYAnchor),
-            salesAmountTitleLabel.leftAnchor.constraint(equalTo: contentView.centerXAnchor),
-            salesAmountTextField.centerYAnchor.constraint(equalTo: salesAmountTitleLabel.centerYAnchor),
-            salesAmountTextField.leftAnchor.constraint(equalTo: salesAmountTitleLabel.rightAnchor, constant: 24),
-            salesAmountTextField.widthAnchor.constraint(equalToConstant: 150),
-            salesAmountLastLabel.centerYAnchor.constraint(equalTo: salesAmountTitleLabel.centerYAnchor),
-            salesAmountLastLabel.leftAnchor.constraint(equalTo: salesAmountTextField.rightAnchor, constant: 24),
-            
-            feeTitleLabel.topAnchor.constraint(equalTo: gachaAmountTitleLabel.bottomAnchor, constant: 24),
-            feeTitleLabel.rightAnchor.constraint(equalTo: gachaAmountTitleLabel.rightAnchor),
-            feeTextField.centerYAnchor.constraint(equalTo: feeTitleLabel.centerYAnchor),
-            feeTextField.leftAnchor.constraint(equalTo: feeTitleLabel.rightAnchor, constant: 24),
-            feeTextField.widthAnchor.constraint(equalToConstant: 150),
-            feeLastLabel.centerYAnchor.constraint(equalTo: feeTitleLabel.centerYAnchor),
-            feeLastLabel.leftAnchor.constraint(equalTo: feeTextField.rightAnchor, constant: 24),
-            
-            memoTitleLabel.topAnchor.constraint(equalTo: feeTitleLabel.bottomAnchor, constant: 24),
-            memoTitleLabel.rightAnchor.constraint(equalTo: feeTitleLabel.rightAnchor),
-            memoTextField.centerYAnchor.constraint(equalTo: memoTitleLabel.centerYAnchor),
-            memoTextField.leftAnchor.constraint(equalTo: memoTitleLabel.rightAnchor, constant: 24),
-            memoTextField.widthAnchor.constraint(equalToConstant: 600),
-            memoTextField.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -32),
-
-            updateButton.bottomAnchor.constraint(equalTo: self.safeAreaLayoutGuide.bottomAnchor, constant: -32),
-            updateButton.rightAnchor.constraint(equalTo: self.safeAreaLayoutGuide.rightAnchor, constant: -32),
-            updateButton.heightAnchor.constraint(equalToConstant: 48),
-            updateButton.widthAnchor.constraint(equalToConstant: 160),
-            
-            backButton.bottomAnchor.constraint(equalTo: self.safeAreaLayoutGuide.bottomAnchor, constant: -32),
-            backButton.rightAnchor.constraint(equalTo: updateButton.leftAnchor, constant: -32),
-            backButton.heightAnchor.constraint(equalToConstant: 48),
-            backButton.widthAnchor.constraint(equalToConstant: 160)
-        ])
+        if screenWidth < 668 { // 小さい画面の場合
+            NSLayoutConstraint.activate([
+                scrollView.topAnchor.constraint(equalTo: self.safeAreaLayoutGuide.topAnchor),
+                scrollView.bottomAnchor.constraint(equalTo: self.safeAreaLayoutGuide.bottomAnchor),
+                scrollView.leftAnchor.constraint(equalTo: self.safeAreaLayoutGuide.leftAnchor),
+                scrollView.rightAnchor.constraint(equalTo: self.safeAreaLayoutGuide.rightAnchor),
+                
+                contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
+                contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+                contentView.leftAnchor.constraint(equalTo: scrollView.leftAnchor),
+                contentView.rightAnchor.constraint(equalTo: scrollView.rightAnchor),
+                contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
+                
+                pickerBackgroundView.topAnchor.constraint(equalTo: self.safeAreaLayoutGuide.topAnchor),
+                pickerBackgroundView.bottomAnchor.constraint(equalTo: self.safeAreaLayoutGuide.bottomAnchor),
+                pickerBackgroundView.leftAnchor.constraint(equalTo: self.safeAreaLayoutGuide.leftAnchor),
+                pickerBackgroundView.rightAnchor.constraint(equalTo: self.safeAreaLayoutGuide.rightAnchor),
+                
+                errorMessageLabel.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 4),
+                errorMessageLabel.leftAnchor.constraint(equalTo: scrollView.leftAnchor, constant: 16),
+                
+                repeatTitleLabel.topAnchor.constraint(equalTo: errorMessageLabel.bottomAnchor, constant: 4),
+                repeatTitleLabel.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 32),
+                repeatTextField.centerYAnchor.constraint(equalTo: repeatTitleLabel.centerYAnchor),
+                repeatTextField.leftAnchor.constraint(equalTo: repeatTitleLabel.rightAnchor, constant: 12),
+                repeatTextField.widthAnchor.constraint(equalToConstant: 100),
+                repeatTextField.heightAnchor.constraint(equalToConstant: 25),
+                
+                patternTitleLabel.centerYAnchor.constraint(equalTo: repeatTitleLabel.centerYAnchor),
+                patternTitleLabel.leftAnchor.constraint(equalTo: contentView.centerXAnchor),
+                patternTextField.centerYAnchor.constraint(equalTo: patternTitleLabel.centerYAnchor),
+                patternTextField.leftAnchor.constraint(equalTo: patternTitleLabel.rightAnchor, constant: 12),
+                patternTextField.widthAnchor.constraint(equalToConstant: 100),
+                patternTextField.heightAnchor.constraint(equalToConstant: 25),
+                
+                nameTitleLabel.topAnchor.constraint(equalTo: repeatTitleLabel.bottomAnchor, constant: 12),
+                nameTitleLabel.rightAnchor.constraint(equalTo: repeatTitleLabel.rightAnchor),
+                nameTextField.centerYAnchor.constraint(equalTo: nameTitleLabel.centerYAnchor),
+                nameTextField.leftAnchor.constraint(equalTo: nameTitleLabel.rightAnchor, constant: 12),
+                nameTextField.widthAnchor.constraint(equalToConstant: 200),
+                nameTextField.heightAnchor.constraint(equalToConstant: 25),
+                
+                countTitleLabel.topAnchor.constraint(equalTo: nameTitleLabel.bottomAnchor, constant: 12),
+                countTitleLabel.rightAnchor.constraint(equalTo: nameTitleLabel.rightAnchor),
+                countAdultLabel.centerYAnchor.constraint(equalTo: countTitleLabel.centerYAnchor),
+                countAdultLabel.leftAnchor.constraint(equalTo: countTitleLabel.rightAnchor, constant: 12),
+                countAdultTextField.centerYAnchor.constraint(equalTo: countTitleLabel.centerYAnchor),
+                countAdultTextField.leftAnchor.constraint(equalTo: countAdultLabel.rightAnchor),
+                countAdultTextField.widthAnchor.constraint(equalToConstant: 40),
+                countAdultTextField.heightAnchor.constraint(equalToConstant: 25),
+                countChildLabel.centerYAnchor.constraint(equalTo: countTitleLabel.centerYAnchor),
+                countChildLabel.leftAnchor.constraint(equalTo: countAdultTextField.rightAnchor, constant: 4),
+                countChildTextField.centerYAnchor.constraint(equalTo: countTitleLabel.centerYAnchor),
+                countChildTextField.leftAnchor.constraint(equalTo: countChildLabel.rightAnchor),
+                countChildTextField.widthAnchor.constraint(equalToConstant: 40),
+                countChildTextField.heightAnchor.constraint(equalToConstant: 25),
+                countLastLabel.centerYAnchor.constraint(equalTo: countTitleLabel.centerYAnchor),
+                countLastLabel.leftAnchor.constraint(equalTo: countChildTextField.rightAnchor, constant: 4),
+                
+                stayTimeTitleLabel.topAnchor.constraint(equalTo: countTitleLabel.bottomAnchor, constant: 12),
+                stayTimeTitleLabel.rightAnchor.constraint(equalTo: countTitleLabel.rightAnchor),
+                enterTimeTextField.centerYAnchor.constraint(equalTo: stayTimeTitleLabel.centerYAnchor),
+                enterTimeTextField.leftAnchor.constraint(equalTo: stayTimeTitleLabel.rightAnchor, constant: 12),
+                enterTimeTextField.widthAnchor.constraint(equalToConstant: 75),
+                enterTimeTextField.heightAnchor.constraint(equalToConstant: 25),
+                fullWidthTildeLabel.centerYAnchor.constraint(equalTo: stayTimeTitleLabel.centerYAnchor),
+                fullWidthTildeLabel.leftAnchor.constraint(equalTo: enterTimeTextField.rightAnchor, constant: 4),
+                leftTimeTextField.centerYAnchor.constraint(equalTo: stayTimeTitleLabel.centerYAnchor),
+                leftTimeTextField.leftAnchor.constraint(equalTo: fullWidthTildeLabel.rightAnchor, constant: 4),
+                leftTimeTextField.widthAnchor.constraint(equalToConstant: 75),
+                leftTimeTextField.heightAnchor.constraint(equalToConstant: 25),
+                stayTimeTextField.centerYAnchor.constraint(equalTo: stayTimeTitleLabel.centerYAnchor),
+                stayTimeTextField.leftAnchor.constraint(equalTo: leftTimeTextField.rightAnchor, constant: 12),
+                stayTimeTextField.widthAnchor.constraint(equalToConstant: 60),
+                stayTimeTextField.heightAnchor.constraint(equalToConstant: 25),
+                stayTimeLastLabel.centerYAnchor.constraint(equalTo: stayTimeTitleLabel.centerYAnchor),
+                stayTimeLastLabel.leftAnchor.constraint(equalTo: stayTimeTextField.rightAnchor, constant: 12),
+                
+                basicPriceTitleLabel.topAnchor.constraint(equalTo: enterTimeTextField.bottomAnchor, constant: 12),
+                basicPriceTitleLabel.rightAnchor.constraint(equalTo: stayTimeTitleLabel.rightAnchor),
+                basicPriceTextField.centerYAnchor.constraint(equalTo: basicPriceTitleLabel.centerYAnchor),
+                basicPriceTextField.leftAnchor.constraint(equalTo: basicPriceTitleLabel.rightAnchor, constant: 12),
+                basicPriceTextField.widthAnchor.constraint(equalToConstant: 75),
+                basicPriceTextField.heightAnchor.constraint(equalToConstant: 25),
+                basicPriceLastLabel.centerYAnchor.constraint(equalTo: basicPriceTitleLabel.centerYAnchor),
+                basicPriceLastLabel.leftAnchor.constraint(equalTo: basicPriceTextField.rightAnchor, constant: 12),
+                discountAmountTitleLabel.centerYAnchor.constraint(equalTo: basicPriceTitleLabel.centerYAnchor),
+                discountAmountTitleLabel.leftAnchor.constraint(equalTo: contentView.centerXAnchor),
+                discountAmountTextField.centerYAnchor.constraint(equalTo: discountAmountTitleLabel.centerYAnchor),
+                discountAmountTextField.leftAnchor.constraint(equalTo: discountAmountTitleLabel.rightAnchor, constant: 12),
+                discountAmountTextField.widthAnchor.constraint(equalToConstant: 75),
+                discountAmountTextField.heightAnchor.constraint(equalToConstant: 25),
+                discountAmountLastLabel.centerYAnchor.constraint(equalTo: discountAmountTitleLabel.centerYAnchor),
+                discountAmountLastLabel.leftAnchor.constraint(equalTo: discountAmountTextField.rightAnchor, constant: 12),
+                
+                gachaAmountTitleLabel.topAnchor.constraint(equalTo: basicPriceTitleLabel.bottomAnchor, constant: 12),
+                gachaAmountTitleLabel.rightAnchor.constraint(equalTo: basicPriceTitleLabel.rightAnchor),
+                gachaAmountTextField.centerYAnchor.constraint(equalTo: gachaAmountTitleLabel.centerYAnchor),
+                gachaAmountTextField.leftAnchor.constraint(equalTo: gachaAmountTitleLabel.rightAnchor, constant: 12),
+                gachaAmountTextField.widthAnchor.constraint(equalToConstant: 75),
+                gachaAmountTextField.heightAnchor.constraint(equalToConstant: 25),
+                gachaAmountLastLabel.centerYAnchor.constraint(equalTo: gachaAmountTitleLabel.centerYAnchor),
+                gachaAmountLastLabel.leftAnchor.constraint(equalTo: gachaAmountTextField.rightAnchor, constant: 12),
+                salesAmountTitleLabel.centerYAnchor.constraint(equalTo: gachaAmountTitleLabel.centerYAnchor),
+                salesAmountTitleLabel.leftAnchor.constraint(equalTo: contentView.centerXAnchor),
+                salesAmountTextField.centerYAnchor.constraint(equalTo: salesAmountTitleLabel.centerYAnchor),
+                salesAmountTextField.leftAnchor.constraint(equalTo: salesAmountTitleLabel.rightAnchor, constant: 12),
+                salesAmountTextField.widthAnchor.constraint(equalToConstant: 75),
+                salesAmountLastLabel.centerYAnchor.constraint(equalTo: salesAmountTitleLabel.centerYAnchor),
+                salesAmountLastLabel.leftAnchor.constraint(equalTo: salesAmountTextField.rightAnchor, constant: 12),
+                
+                feeTitleLabel.topAnchor.constraint(equalTo: gachaAmountTitleLabel.bottomAnchor, constant: 12),
+                feeTitleLabel.rightAnchor.constraint(equalTo: gachaAmountTitleLabel.rightAnchor),
+                feeTextField.centerYAnchor.constraint(equalTo: feeTitleLabel.centerYAnchor),
+                feeTextField.leftAnchor.constraint(equalTo: feeTitleLabel.rightAnchor, constant: 12),
+                feeTextField.widthAnchor.constraint(equalToConstant: 75),
+                feeTextField.heightAnchor.constraint(equalToConstant: 25),
+                feeLastLabel.centerYAnchor.constraint(equalTo: feeTitleLabel.centerYAnchor),
+                feeLastLabel.leftAnchor.constraint(equalTo: feeTextField.rightAnchor, constant: 12),
+                
+                memoTitleLabel.topAnchor.constraint(equalTo: feeTitleLabel.bottomAnchor, constant: 12),
+                memoTitleLabel.rightAnchor.constraint(equalTo: feeTitleLabel.rightAnchor),
+                memoTextField.centerYAnchor.constraint(equalTo: memoTitleLabel.centerYAnchor),
+                memoTextField.leftAnchor.constraint(equalTo: memoTitleLabel.rightAnchor, constant: 12),
+                memoTextField.widthAnchor.constraint(equalToConstant: 300),
+                memoTextField.heightAnchor.constraint(equalToConstant: 25),
+                memoTextField.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16),
+                
+                updateButton.bottomAnchor.constraint(equalTo: self.safeAreaLayoutGuide.bottomAnchor, constant: -16),
+                updateButton.rightAnchor.constraint(equalTo: self.safeAreaLayoutGuide.rightAnchor, constant: -16),
+                updateButton.heightAnchor.constraint(equalToConstant: 24),
+                updateButton.widthAnchor.constraint(equalToConstant: 80),
+                
+                backButton.bottomAnchor.constraint(equalTo: self.safeAreaLayoutGuide.bottomAnchor, constant: -16),
+                backButton.rightAnchor.constraint(equalTo: updateButton.leftAnchor, constant: -16),
+                backButton.heightAnchor.constraint(equalToConstant: 24),
+                backButton.widthAnchor.constraint(equalToConstant: 80)
+            ])
+        } else { // 通常の画面の場合
+            NSLayoutConstraint.activate([
+                scrollView.topAnchor.constraint(equalTo: self.safeAreaLayoutGuide.topAnchor),
+                scrollView.bottomAnchor.constraint(equalTo: self.safeAreaLayoutGuide.bottomAnchor),
+                scrollView.leftAnchor.constraint(equalTo: self.safeAreaLayoutGuide.leftAnchor),
+                scrollView.rightAnchor.constraint(equalTo: self.safeAreaLayoutGuide.rightAnchor),
+                
+                contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
+                contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+                contentView.leftAnchor.constraint(equalTo: scrollView.leftAnchor),
+                contentView.rightAnchor.constraint(equalTo: scrollView.rightAnchor),
+                contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
+                
+                pickerBackgroundView.topAnchor.constraint(equalTo: self.safeAreaLayoutGuide.topAnchor),
+                pickerBackgroundView.bottomAnchor.constraint(equalTo: self.safeAreaLayoutGuide.bottomAnchor),
+                pickerBackgroundView.leftAnchor.constraint(equalTo: self.safeAreaLayoutGuide.leftAnchor),
+                pickerBackgroundView.rightAnchor.constraint(equalTo: self.safeAreaLayoutGuide.rightAnchor),
+                
+                errorMessageLabel.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 8),
+                errorMessageLabel.leftAnchor.constraint(equalTo: scrollView.leftAnchor, constant: 32),
+                
+                repeatTitleLabel.topAnchor.constraint(equalTo: errorMessageLabel.bottomAnchor, constant: 8),
+                repeatTitleLabel.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 64),
+                repeatTextField.centerYAnchor.constraint(equalTo: repeatTitleLabel.centerYAnchor),
+                repeatTextField.leftAnchor.constraint(equalTo: repeatTitleLabel.rightAnchor, constant: 24),
+                repeatTextField.widthAnchor.constraint(equalToConstant: 200),
+                
+                patternTitleLabel.centerYAnchor.constraint(equalTo: repeatTitleLabel.centerYAnchor),
+                patternTitleLabel.leftAnchor.constraint(equalTo: contentView.centerXAnchor),
+                patternTextField.centerYAnchor.constraint(equalTo: patternTitleLabel.centerYAnchor),
+                patternTextField.leftAnchor.constraint(equalTo: patternTitleLabel.rightAnchor, constant: 24),
+                patternTextField.widthAnchor.constraint(equalToConstant: 200),
+                
+                nameTitleLabel.topAnchor.constraint(equalTo: repeatTitleLabel.bottomAnchor, constant: 24),
+                nameTitleLabel.rightAnchor.constraint(equalTo: repeatTitleLabel.rightAnchor),
+                nameTextField.centerYAnchor.constraint(equalTo: nameTitleLabel.centerYAnchor),
+                nameTextField.leftAnchor.constraint(equalTo: nameTitleLabel.rightAnchor, constant: 24),
+                nameTextField.widthAnchor.constraint(equalToConstant: 400),
+                
+                countTitleLabel.topAnchor.constraint(equalTo: nameTitleLabel.bottomAnchor, constant: 24),
+                countTitleLabel.rightAnchor.constraint(equalTo: nameTitleLabel.rightAnchor),
+                countAdultLabel.centerYAnchor.constraint(equalTo: countTitleLabel.centerYAnchor),
+                countAdultLabel.leftAnchor.constraint(equalTo: countTitleLabel.rightAnchor, constant: 24),
+                countAdultTextField.centerYAnchor.constraint(equalTo: countTitleLabel.centerYAnchor),
+                countAdultTextField.leftAnchor.constraint(equalTo: countAdultLabel.rightAnchor),
+                countAdultTextField.widthAnchor.constraint(equalToConstant: 80),
+                countChildLabel.centerYAnchor.constraint(equalTo: countTitleLabel.centerYAnchor),
+                countChildLabel.leftAnchor.constraint(equalTo: countAdultTextField.rightAnchor, constant: 8),
+                countChildTextField.centerYAnchor.constraint(equalTo: countTitleLabel.centerYAnchor),
+                countChildTextField.leftAnchor.constraint(equalTo: countChildLabel.rightAnchor),
+                countChildTextField.widthAnchor.constraint(equalToConstant: 80),
+                countLastLabel.centerYAnchor.constraint(equalTo: countTitleLabel.centerYAnchor),
+                countLastLabel.leftAnchor.constraint(equalTo: countChildTextField.rightAnchor, constant: 8),
+                
+                stayTimeTitleLabel.topAnchor.constraint(equalTo: countTitleLabel.bottomAnchor, constant: 24),
+                stayTimeTitleLabel.rightAnchor.constraint(equalTo: countTitleLabel.rightAnchor),
+                enterTimeTextField.centerYAnchor.constraint(equalTo: stayTimeTitleLabel.centerYAnchor),
+                enterTimeTextField.leftAnchor.constraint(equalTo: stayTimeTitleLabel.rightAnchor, constant: 24),
+                enterTimeTextField.widthAnchor.constraint(equalToConstant: 150),
+                fullWidthTildeLabel.centerYAnchor.constraint(equalTo: stayTimeTitleLabel.centerYAnchor),
+                fullWidthTildeLabel.leftAnchor.constraint(equalTo: enterTimeTextField.rightAnchor, constant: 8),
+                leftTimeTextField.centerYAnchor.constraint(equalTo: stayTimeTitleLabel.centerYAnchor),
+                leftTimeTextField.leftAnchor.constraint(equalTo: fullWidthTildeLabel.rightAnchor, constant: 8),
+                leftTimeTextField.widthAnchor.constraint(equalToConstant: 150),
+                stayTimeTextField.centerYAnchor.constraint(equalTo: stayTimeTitleLabel.centerYAnchor),
+                stayTimeTextField.leftAnchor.constraint(equalTo: leftTimeTextField.rightAnchor, constant: 24),
+                stayTimeTextField.widthAnchor.constraint(equalToConstant: 120),
+                stayTimeLastLabel.centerYAnchor.constraint(equalTo: stayTimeTitleLabel.centerYAnchor),
+                stayTimeLastLabel.leftAnchor.constraint(equalTo: stayTimeTextField.rightAnchor, constant: 24),
+                
+                basicPriceTitleLabel.topAnchor.constraint(equalTo: enterTimeTextField.bottomAnchor, constant: 24),
+                basicPriceTitleLabel.rightAnchor.constraint(equalTo: stayTimeTitleLabel.rightAnchor),
+                basicPriceTextField.centerYAnchor.constraint(equalTo: basicPriceTitleLabel.centerYAnchor),
+                basicPriceTextField.leftAnchor.constraint(equalTo: basicPriceTitleLabel.rightAnchor, constant: 24),
+                basicPriceTextField.widthAnchor.constraint(equalToConstant: 150),
+                basicPriceLastLabel.centerYAnchor.constraint(equalTo: basicPriceTitleLabel.centerYAnchor),
+                basicPriceLastLabel.leftAnchor.constraint(equalTo: basicPriceTextField.rightAnchor, constant: 24),
+                discountAmountTitleLabel.centerYAnchor.constraint(equalTo: basicPriceTitleLabel.centerYAnchor),
+                discountAmountTitleLabel.leftAnchor.constraint(equalTo: contentView.centerXAnchor),
+                discountAmountTextField.centerYAnchor.constraint(equalTo: discountAmountTitleLabel.centerYAnchor),
+                discountAmountTextField.leftAnchor.constraint(equalTo: discountAmountTitleLabel.rightAnchor, constant: 24),
+                discountAmountTextField.widthAnchor.constraint(equalToConstant: 150),
+                discountAmountLastLabel.centerYAnchor.constraint(equalTo: discountAmountTitleLabel.centerYAnchor),
+                discountAmountLastLabel.leftAnchor.constraint(equalTo: discountAmountTextField.rightAnchor, constant: 24),
+                
+                gachaAmountTitleLabel.topAnchor.constraint(equalTo: basicPriceTitleLabel.bottomAnchor, constant: 24),
+                gachaAmountTitleLabel.rightAnchor.constraint(equalTo: basicPriceTitleLabel.rightAnchor),
+                gachaAmountTextField.centerYAnchor.constraint(equalTo: gachaAmountTitleLabel.centerYAnchor),
+                gachaAmountTextField.leftAnchor.constraint(equalTo: gachaAmountTitleLabel.rightAnchor, constant: 24),
+                gachaAmountTextField.widthAnchor.constraint(equalToConstant: 150),
+                gachaAmountLastLabel.centerYAnchor.constraint(equalTo: gachaAmountTitleLabel.centerYAnchor),
+                gachaAmountLastLabel.leftAnchor.constraint(equalTo: gachaAmountTextField.rightAnchor, constant: 24),
+                salesAmountTitleLabel.centerYAnchor.constraint(equalTo: gachaAmountTitleLabel.centerYAnchor),
+                salesAmountTitleLabel.leftAnchor.constraint(equalTo: contentView.centerXAnchor),
+                salesAmountTextField.centerYAnchor.constraint(equalTo: salesAmountTitleLabel.centerYAnchor),
+                salesAmountTextField.leftAnchor.constraint(equalTo: salesAmountTitleLabel.rightAnchor, constant: 24),
+                salesAmountTextField.widthAnchor.constraint(equalToConstant: 150),
+                salesAmountLastLabel.centerYAnchor.constraint(equalTo: salesAmountTitleLabel.centerYAnchor),
+                salesAmountLastLabel.leftAnchor.constraint(equalTo: salesAmountTextField.rightAnchor, constant: 24),
+                
+                feeTitleLabel.topAnchor.constraint(equalTo: gachaAmountTitleLabel.bottomAnchor, constant: 24),
+                feeTitleLabel.rightAnchor.constraint(equalTo: gachaAmountTitleLabel.rightAnchor),
+                feeTextField.centerYAnchor.constraint(equalTo: feeTitleLabel.centerYAnchor),
+                feeTextField.leftAnchor.constraint(equalTo: feeTitleLabel.rightAnchor, constant: 24),
+                feeTextField.widthAnchor.constraint(equalToConstant: 150),
+                feeLastLabel.centerYAnchor.constraint(equalTo: feeTitleLabel.centerYAnchor),
+                feeLastLabel.leftAnchor.constraint(equalTo: feeTextField.rightAnchor, constant: 24),
+                
+                memoTitleLabel.topAnchor.constraint(equalTo: feeTitleLabel.bottomAnchor, constant: 24),
+                memoTitleLabel.rightAnchor.constraint(equalTo: feeTitleLabel.rightAnchor),
+                memoTextField.centerYAnchor.constraint(equalTo: memoTitleLabel.centerYAnchor),
+                memoTextField.leftAnchor.constraint(equalTo: memoTitleLabel.rightAnchor, constant: 24),
+                memoTextField.widthAnchor.constraint(equalToConstant: 600),
+                memoTextField.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -32),
+                
+                updateButton.bottomAnchor.constraint(equalTo: self.safeAreaLayoutGuide.bottomAnchor, constant: -32),
+                updateButton.rightAnchor.constraint(equalTo: self.safeAreaLayoutGuide.rightAnchor, constant: -32),
+                updateButton.heightAnchor.constraint(equalToConstant: 48),
+                updateButton.widthAnchor.constraint(equalToConstant: 160),
+                
+                backButton.bottomAnchor.constraint(equalTo: self.safeAreaLayoutGuide.bottomAnchor, constant: -32),
+                backButton.rightAnchor.constraint(equalTo: updateButton.leftAnchor, constant: -32),
+                backButton.heightAnchor.constraint(equalToConstant: 48),
+                backButton.widthAnchor.constraint(equalToConstant: 160)
+            ])
+        }
     }
     
     private func setupRepeatTextField() {

@@ -62,6 +62,8 @@ public class LeaveView: UIView {
     var childCount: Int = 0
     var memo: String = ""
     
+    let screenWidth = UIScreen.main.bounds.width
+    
     weak var delegate: LeaveDelegate?
     
     public init() {
@@ -165,6 +167,49 @@ private extension LeaveView {
     func setupViews() {
         self.backgroundColor = UIColor(red: 239/255, green: 236/255, blue: 231/255, alpha: 1.0)
         
+        // 共通設定用の関数
+        func setupTextField(_ textField: UITextField, text: String = "") {
+            textField.backgroundColor = UIColor.white
+            textField.text = text
+            if screenWidth < 668 {
+                textField.font = UIFont.systemFont(ofSize: 12)
+            } else {
+                textField.font = UIFont.systemFont(ofSize: 32)
+            }
+            textField.textColor = UIColor.black
+            textField.keyboardType = .default
+            textField.returnKeyType = .next
+            textField.textAlignment = .center
+            textField.borderStyle = .roundedRect
+            textField.layer.borderColor = UIColor.black.cgColor
+            textField.layer.borderWidth = 1.0
+        }
+        
+        func setupLabel(_ label: UILabel, text: String = "") {
+            label.text = text
+            if screenWidth < 668 {
+                label.font = UIFont.systemFont(ofSize: 12)
+            } else {
+                label.font = UIFont.systemFont(ofSize: 32)
+            }
+            label.textColor = UIColor.black
+            label.textAlignment = .right
+        }
+        
+        func setupButton(_ button: UIButton, text: String = "") {
+            button.setTitle(text, for: .normal)
+            if screenWidth < 668 {
+                button.titleLabel?.font = UIFont.systemFont(ofSize: 12)
+            } else {
+                button.titleLabel?.font = UIFont.systemFont(ofSize: 24)
+            }
+            button.setTitleColor(UIColor.black, for: .normal)
+            button.backgroundColor = UIColor.white
+            button.layer.borderColor = UIColor.black.cgColor
+            button.layer.borderWidth = 1.0
+            button.layer.cornerRadius = 10
+        }
+        
         setupTapGesture()
         
         scrollView.isScrollEnabled = true
@@ -177,192 +222,93 @@ private extension LeaveView {
         errorMessageLabel.textColor = UIColor.red
         scrollView.addSubview(errorMessageLabel)
         
-        enterTimeTitleLabel.text = "入店時間："
-        enterTimeTitleLabel.font = UIFont.systemFont(ofSize: 32)
-        enterTimeTitleLabel.textColor = UIColor.black
+        setupLabel(enterTimeTitleLabel, text: "入店時間：")
         scrollView.addSubview(enterTimeTitleLabel)
         
-        enterTimeTextField.backgroundColor = UIColor.lightGray
-        enterTimeTextField.text = " "
-        enterTimeTextField.font = UIFont.systemFont(ofSize: 32)
-        enterTimeTextField.textColor = UIColor.black
-        scrollView.addSubview(enterTimeTextField)
-        
-        enterTimeTextField.keyboardType = .default
-        enterTimeTextField.returnKeyType = .next
-        enterTimeTextField.textColor = UIColor.black
-        enterTimeTextField.backgroundColor = UIColor.white
-        enterTimeTextField.textAlignment = .center
-        enterTimeTextField.borderStyle = .roundedRect
-        enterTimeTextField.layer.borderColor = UIColor.black.cgColor
-        enterTimeTextField.layer.borderWidth = 1.0
+        setupTextField(enterTimeTextField, text: " ")
         enterTimeTextField.frame = self.frame
         enterTimeTextField.tag = 1
-//        enterTimeTextField.isEnabled = false
         scrollView.addSubview(enterTimeTextField)
-        
         setupEnterTimeTextField()
         
-        leftTimeTitleLabel.text = "退店時間："
-        leftTimeTitleLabel.font = UIFont.systemFont(ofSize: 32)
-        leftTimeTitleLabel.textColor = UIColor.black
+        setupLabel(leftTimeTitleLabel, text: "退店時間：")
         scrollView.addSubview(leftTimeTitleLabel)
         
-        leftTimeTextField.backgroundColor = UIColor.lightGray
-        leftTimeTextField.text = " "
-        leftTimeTextField.font = UIFont.systemFont(ofSize: 32)
-        leftTimeTextField.textColor = UIColor.black
-        scrollView.addSubview(leftTimeTextField)
-        
-        leftTimeTextField.keyboardType = .default
-        leftTimeTextField.returnKeyType = .next
-        leftTimeTextField.textColor = UIColor.black
-        leftTimeTextField.backgroundColor = UIColor.white
-        leftTimeTextField.textAlignment = .center
-        leftTimeTextField.borderStyle = .roundedRect
-        leftTimeTextField.layer.borderColor = UIColor.black.cgColor
-        leftTimeTextField.layer.borderWidth = 1.0
+        setupTextField(leftTimeTextField, text: " ")
         leftTimeTextField.frame = self.frame
         leftTimeTextField.tag = 1
-//        leftTimeTextField.isEnabled = false
         scrollView.addSubview(leftTimeTextField)
-        
         setupLeftTimeTextField()
         
-        stayTimeTitleLabel.text = "滞在時間："
-        stayTimeTitleLabel.font = UIFont.systemFont(ofSize: 32)
-        stayTimeTitleLabel.textColor = UIColor.black
+        setupLabel(stayTimeTitleLabel, text: "滞在時間：")
         scrollView.addSubview(stayTimeTitleLabel)
-        
+
+        setupLabel(stayTimeTitleLabel, text: " ")
         stayTimeLabel.backgroundColor = UIColor.lightGray
-        stayTimeLabel.text = " "
-        stayTimeLabel.font = UIFont.systemFont(ofSize: 32)
-        stayTimeLabel.textColor = UIColor.black
         stayTimeLabel.textAlignment = .center
         scrollView.addSubview(stayTimeLabel)
         
-        discountAmountTitleLabel.text = "割引額："
-        discountAmountTitleLabel.font = UIFont.systemFont(ofSize: 32)
-        discountAmountTitleLabel.textColor = UIColor.black
+        setupLabel(discountAmountTitleLabel, text: "割引額：")
         scrollView.addSubview(discountAmountTitleLabel)
         
-        discountAmountTextField.text = "0"
+        setupTextField(discountAmountTextField, text: "0")
         discountAmountTextField.keyboardType = .numberPad
         discountAmountTextField.returnKeyType = .done
-        discountAmountTextField.font = discountAmountTextField.font?.withSize(32)
         discountAmountTextField.textColor = UIColor.red
-        discountAmountTextField.backgroundColor = UIColor.white
-        discountAmountTextField.textAlignment = .center
-        discountAmountTextField.borderStyle = .roundedRect
-        discountAmountTextField.layer.borderColor = UIColor.black.cgColor
-        discountAmountTextField.layer.borderWidth = 1.0
         discountAmountTextField.frame = self.frame
         discountAmountTextField.tag = 1
         scrollView.addSubview(discountAmountTextField)
-        
         setupDiscountAmountTextField()
         
-        gachaAmountTitleLabel.text = "ガチャ額："
-        gachaAmountTitleLabel.font = UIFont.systemFont(ofSize: 32)
-        gachaAmountTitleLabel.textColor = UIColor.black
+        setupLabel(gachaAmountTitleLabel, text: "ガチャ額：")
         scrollView.addSubview(gachaAmountTitleLabel)
         
-        gachaAmountTextField.text = "0"
+        setupTextField(gachaAmountTextField, text: "0")
         gachaAmountTextField.keyboardType = .numberPad
         gachaAmountTextField.returnKeyType = .done
-        gachaAmountTextField.font = gachaAmountTextField.font?.withSize(32)
-        gachaAmountTextField.textColor = UIColor.black
-        gachaAmountTextField.backgroundColor = UIColor.white
-        gachaAmountTextField.textAlignment = .center
-        gachaAmountTextField.borderStyle = .roundedRect
-        gachaAmountTextField.layer.borderColor = UIColor.black.cgColor
-        gachaAmountTextField.layer.borderWidth = 1.0
         gachaAmountTextField.frame = self.frame
         gachaAmountTextField.tag = 2
         scrollView.addSubview(gachaAmountTextField)
-        
         setupGachaAmountTextField()
 
-        salesAmountTitleLabel.text = "販売額："
-        salesAmountTitleLabel.font = UIFont.systemFont(ofSize: 32)
-        salesAmountTitleLabel.textColor = UIColor.black
+        setupLabel(salesAmountTitleLabel, text: "販売額：")
         scrollView.addSubview(salesAmountTitleLabel)
         
-        salesAmountTextField.text = "0"
+        setupTextField(salesAmountTextField, text: "0")
         salesAmountTextField.keyboardType = .numberPad
-        salesAmountTextField.returnKeyType = .next
-        salesAmountTextField.font = salesAmountTextField.font?.withSize(32)
-        salesAmountTextField.textColor = UIColor.black
-        salesAmountTextField.backgroundColor = UIColor.white
-        salesAmountTextField.textAlignment = .center
-        salesAmountTextField.borderStyle = .roundedRect
-        salesAmountTextField.layer.borderColor = UIColor.black.cgColor
-        salesAmountTextField.layer.borderWidth = 1.0
         salesAmountTextField.frame = self.frame
         salesAmountTextField.tag = 3
         scrollView.addSubview(salesAmountTextField)
-        
         setupSalesAmountTextField()
         
-        feeTitleLabel.text = "レジ精算料金："
-        feeTitleLabel.font = UIFont.systemFont(ofSize: 32)
-        feeTitleLabel.textColor = UIColor.black
+        setupLabel(feeTitleLabel, text: "レジ精算料金：")
         scrollView.addSubview(feeTitleLabel)
-        
+
+        setupLabel(feeLabel, text: " ")
         feeLabel.backgroundColor = UIColor.lightGray
-        feeLabel.text = " "
-        feeLabel.font = UIFont.systemFont(ofSize: 32)
-        feeLabel.textColor = UIColor.black
-        feeLabel.textAlignment = .center
         scrollView.addSubview(feeLabel)
         
-        feeCalcButton.setTitle("料金計算", for: .normal)
-        feeCalcButton.setTitleColor(UIColor.black, for: .normal)
-        feeCalcButton.titleLabel?.font = UIFont.systemFont(ofSize: 32)
-        feeCalcButton.backgroundColor = UIColor.white
-        feeCalcButton.layer.borderColor = UIColor.black.cgColor
-        feeCalcButton.layer.borderWidth = 1.0
-        feeCalcButton.layer.cornerRadius = 10
+        setupButton(feeCalcButton, text: "料金計算")
         feeCalcButton.addTarget(self, action: #selector(self.tapFeeCalcButton), for: .touchUpInside)
         self.addSubview(feeCalcButton)
         
-        memoTitleLabel.text = "メモ："
-        memoTitleLabel.font = UIFont.systemFont(ofSize: 32)
-        memoTitleLabel.textColor = UIColor.black
-        memoTitleLabel.textAlignment = .center
+        setupLabel(memoTitleLabel, text: "メモ：")
         scrollView.addSubview(memoTitleLabel)
         
-        memoTextField.keyboardType = .default
-        memoTextField.returnKeyType = .next
-        memoTextField.textColor = UIColor.black
-        memoTextField.font = UIFont.systemFont(ofSize: 32)
-        memoTextField.backgroundColor = UIColor.white
+        setupTextField(memoTextField, text: " ")
         let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 8, height: 0))
         paddingView.backgroundColor = UIColor.clear
         memoTextField.leftView = paddingView
         memoTextField.leftViewMode = .always
-        memoTextField.borderStyle = .roundedRect
-        memoTextField.layer.borderColor = UIColor.black.cgColor
-        memoTextField.layer.borderWidth = 1.0
         memoTextField.frame = self.frame
         memoTextField.tag = 4
         scrollView.addSubview(memoTextField)
-        
-        submitButton.setTitle("退店登録", for: .normal)
-        submitButton.setTitleColor(UIColor.black, for: .normal)
-        submitButton.backgroundColor = UIColor.white
-        submitButton.layer.borderColor = UIColor.black.cgColor
-        submitButton.layer.borderWidth = 1.0
-        submitButton.layer.cornerRadius = 10
+
+        setupButton(submitButton, text: "退店登録")
         submitButton.addTarget(self, action: #selector(self.tapSubmitButton), for: .touchUpInside)
         self.addSubview(submitButton)
-        
-        cancelButton.setTitle("キャンセル", for: .normal)
-        cancelButton.setTitleColor(UIColor.black, for: .normal)
-        cancelButton.backgroundColor = UIColor.white
-        cancelButton.layer.borderColor = UIColor.black.cgColor
-        cancelButton.layer.borderWidth = 1.0
-        cancelButton.layer.cornerRadius = 10
+
+        setupButton(cancelButton, text: "キャンセル")
         cancelButton.addTarget(self, action: #selector(self.tapCancelButton), for: .touchUpInside)
         self.addSubview(cancelButton)
         
@@ -395,82 +341,147 @@ private extension LeaveView {
         cancelButton.translatesAutoresizingMaskIntoConstraints = false
         
         // レスポンシブルデザイン対応
-        let screenWidth = UIScreen.main.bounds.width
         if screenWidth < 668 { // 小さい画面の場合
-            
-        } else { // 通常の画面の場合
-            
-        }
-        
-        NSLayoutConstraint.activate([
-            scrollView.topAnchor.constraint(equalTo: self.safeAreaLayoutGuide.topAnchor),
-            scrollView.bottomAnchor.constraint(equalTo: self.safeAreaLayoutGuide.bottomAnchor),
-            scrollView.leftAnchor.constraint(equalTo: self.safeAreaLayoutGuide.leftAnchor),
-            scrollView.rightAnchor.constraint(equalTo: self.safeAreaLayoutGuide.rightAnchor),
-            errorMessageLabel.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 32),
-            errorMessageLabel.leftAnchor.constraint(equalTo: scrollView.leftAnchor, constant: 64),
-            enterTimeTitleLabel.topAnchor.constraint(equalTo: errorMessageLabel.bottomAnchor, constant: 32),
-            enterTimeTitleLabel.rightAnchor.constraint(equalTo: scrollView.leftAnchor, constant: 320),
-            enterTimeTextField.topAnchor.constraint(equalTo: enterTimeTitleLabel.topAnchor),
-            enterTimeTextField.bottomAnchor.constraint(equalTo: enterTimeTitleLabel.bottomAnchor),
-            enterTimeTextField.leftAnchor.constraint(equalTo: enterTimeTitleLabel.rightAnchor, constant: 16),
-            enterTimeTextField.widthAnchor.constraint(equalToConstant: 160),
-            leftTimeTitleLabel.topAnchor.constraint(equalTo: enterTimeTitleLabel.bottomAnchor, constant: 32),
-            leftTimeTitleLabel.rightAnchor.constraint(equalTo: enterTimeTitleLabel.rightAnchor),
-            leftTimeTextField.topAnchor.constraint(equalTo: leftTimeTitleLabel.topAnchor),
-            leftTimeTextField.bottomAnchor.constraint(equalTo: leftTimeTitleLabel.bottomAnchor),
-            leftTimeTextField.leftAnchor.constraint(equalTo: leftTimeTitleLabel.rightAnchor, constant: 16),
-            leftTimeTextField.widthAnchor.constraint(equalToConstant: 160),
-            stayTimeTitleLabel.centerYAnchor.constraint(equalTo: enterTimeTitleLabel.bottomAnchor, constant: 16),
-            stayTimeTitleLabel.leftAnchor.constraint(equalTo: enterTimeTextField.rightAnchor, constant: 64),
-            stayTimeLabel.topAnchor.constraint(equalTo: stayTimeTitleLabel.topAnchor),
-            stayTimeLabel.bottomAnchor.constraint(equalTo: stayTimeTitleLabel.bottomAnchor),
-            stayTimeLabel.leftAnchor.constraint(equalTo: stayTimeTitleLabel.rightAnchor, constant: 16),
-            stayTimeLabel.widthAnchor.constraint(equalToConstant: 160),
-            discountAmountTitleLabel.topAnchor.constraint(equalTo: leftTimeTitleLabel.bottomAnchor, constant: 32),
-            discountAmountTitleLabel.rightAnchor.constraint(equalTo: enterTimeTitleLabel.rightAnchor),
-            discountAmountTextField.topAnchor.constraint(equalTo: discountAmountTitleLabel.topAnchor),
-            discountAmountTextField.bottomAnchor.constraint(equalTo: discountAmountTitleLabel.bottomAnchor),
-            discountAmountTextField.leftAnchor.constraint(equalTo: discountAmountTitleLabel.rightAnchor, constant: 16),
-            discountAmountTextField.widthAnchor.constraint(equalToConstant: 240),
+            NSLayoutConstraint.activate([
+                scrollView.topAnchor.constraint(equalTo: self.safeAreaLayoutGuide.topAnchor),
+                scrollView.bottomAnchor.constraint(equalTo: self.safeAreaLayoutGuide.bottomAnchor),
+                scrollView.leftAnchor.constraint(equalTo: self.safeAreaLayoutGuide.leftAnchor),
+                scrollView.rightAnchor.constraint(equalTo: self.safeAreaLayoutGuide.rightAnchor),
+                errorMessageLabel.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 16),
+                errorMessageLabel.leftAnchor.constraint(equalTo: scrollView.leftAnchor, constant: 32),
+                enterTimeTitleLabel.topAnchor.constraint(equalTo: errorMessageLabel.bottomAnchor, constant: 16),
+                enterTimeTitleLabel.rightAnchor.constraint(equalTo: scrollView.leftAnchor, constant: 160),
+                enterTimeTextField.topAnchor.constraint(equalTo: enterTimeTitleLabel.topAnchor),
+                enterTimeTextField.bottomAnchor.constraint(equalTo: enterTimeTitleLabel.bottomAnchor),
+                enterTimeTextField.leftAnchor.constraint(equalTo: enterTimeTitleLabel.rightAnchor, constant: 8),
+                enterTimeTextField.widthAnchor.constraint(equalToConstant: 80),
+                leftTimeTitleLabel.topAnchor.constraint(equalTo: enterTimeTitleLabel.bottomAnchor, constant: 16),
+                leftTimeTitleLabel.rightAnchor.constraint(equalTo: enterTimeTitleLabel.rightAnchor),
+                leftTimeTextField.topAnchor.constraint(equalTo: leftTimeTitleLabel.topAnchor),
+                leftTimeTextField.bottomAnchor.constraint(equalTo: leftTimeTitleLabel.bottomAnchor),
+                leftTimeTextField.leftAnchor.constraint(equalTo: leftTimeTitleLabel.rightAnchor, constant: 16),
+                leftTimeTextField.widthAnchor.constraint(equalToConstant: 80),
+                stayTimeTitleLabel.centerYAnchor.constraint(equalTo: enterTimeTitleLabel.bottomAnchor, constant: 8),
+                stayTimeTitleLabel.leftAnchor.constraint(equalTo: enterTimeTextField.rightAnchor, constant: 32),
+                stayTimeLabel.topAnchor.constraint(equalTo: stayTimeTitleLabel.topAnchor),
+                stayTimeLabel.bottomAnchor.constraint(equalTo: stayTimeTitleLabel.bottomAnchor),
+                stayTimeLabel.leftAnchor.constraint(equalTo: stayTimeTitleLabel.rightAnchor, constant: 8),
+                stayTimeLabel.widthAnchor.constraint(equalToConstant: 80),
+                discountAmountTitleLabel.topAnchor.constraint(equalTo: leftTimeTitleLabel.bottomAnchor, constant: 16),
+                discountAmountTitleLabel.rightAnchor.constraint(equalTo: enterTimeTitleLabel.rightAnchor),
+                discountAmountTextField.topAnchor.constraint(equalTo: discountAmountTitleLabel.topAnchor),
+                discountAmountTextField.bottomAnchor.constraint(equalTo: discountAmountTitleLabel.bottomAnchor),
+                discountAmountTextField.leftAnchor.constraint(equalTo: discountAmountTitleLabel.rightAnchor, constant: 8),
+                discountAmountTextField.widthAnchor.constraint(equalToConstant: 120),
 
-            salesAmountTitleLabel.topAnchor.constraint(equalTo: discountAmountTitleLabel.bottomAnchor, constant: 32),
-            salesAmountTitleLabel.rightAnchor.constraint(equalTo: enterTimeTitleLabel.rightAnchor),
-            salesAmountTextField.topAnchor.constraint(equalTo: salesAmountTitleLabel.topAnchor),
-            salesAmountTextField.bottomAnchor.constraint(equalTo: salesAmountTitleLabel.bottomAnchor),
-            salesAmountTextField.leftAnchor.constraint(equalTo: salesAmountTitleLabel.rightAnchor, constant: 16),
-            salesAmountTextField.widthAnchor.constraint(equalToConstant: 240),
-            feeTitleLabel.topAnchor.constraint(equalTo: salesAmountTitleLabel.bottomAnchor, constant: 32),
-            feeTitleLabel.rightAnchor.constraint(equalTo: enterTimeTitleLabel.rightAnchor),
-            feeLabel.topAnchor.constraint(equalTo: feeTitleLabel.topAnchor),
-            feeLabel.bottomAnchor.constraint(equalTo: feeTitleLabel.bottomAnchor),
-            feeLabel.leftAnchor.constraint(equalTo: feeTitleLabel.rightAnchor, constant: 16),
-            feeLabel.widthAnchor.constraint(equalToConstant: 240),
-            feeCalcButton.centerYAnchor.constraint(equalTo: feeTitleLabel.centerYAnchor),
-            feeCalcButton.leftAnchor.constraint(equalTo: feeLabel.rightAnchor, constant: 50),
-            feeCalcButton.heightAnchor.constraint(equalToConstant: 80),
-            feeCalcButton.widthAnchor.constraint(equalToConstant: 160),
-            gachaAmountTitleLabel.topAnchor.constraint(equalTo: feeTitleLabel.bottomAnchor, constant: 32),
-            gachaAmountTitleLabel.rightAnchor.constraint(equalTo: enterTimeTitleLabel.rightAnchor),
-            gachaAmountTextField.topAnchor.constraint(equalTo: gachaAmountTitleLabel.topAnchor),
-            gachaAmountTextField.bottomAnchor.constraint(equalTo: gachaAmountTitleLabel.bottomAnchor),
-            gachaAmountTextField.leftAnchor.constraint(equalTo: gachaAmountTitleLabel.rightAnchor, constant: 16),
-            gachaAmountTextField.widthAnchor.constraint(equalToConstant: 240),
-            memoTitleLabel.topAnchor.constraint(equalTo: gachaAmountTitleLabel.bottomAnchor, constant: 32),
-            memoTitleLabel.rightAnchor.constraint(equalTo: enterTimeTitleLabel.rightAnchor),
-            memoTextField.topAnchor.constraint(equalTo: memoTitleLabel.topAnchor),
-            memoTextField.bottomAnchor.constraint(equalTo: memoTitleLabel.bottomAnchor),
-            memoTextField.leftAnchor.constraint(equalTo: memoTitleLabel.rightAnchor, constant: 16),
-            memoTextField.widthAnchor.constraint(equalToConstant: 400),
-            submitButton.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: -32),
-            submitButton.rightAnchor.constraint(equalTo: scrollView.rightAnchor, constant: -32),
-            submitButton.heightAnchor.constraint(equalToConstant: 48),
-            submitButton.widthAnchor.constraint(equalToConstant: 160),
-            cancelButton.bottomAnchor.constraint(equalTo: submitButton.bottomAnchor),
-            cancelButton.rightAnchor.constraint(equalTo: submitButton.leftAnchor, constant: -32),
-            cancelButton.heightAnchor.constraint(equalToConstant: 48),
-            cancelButton.widthAnchor.constraint(equalToConstant: 160)
-        ])
+                salesAmountTitleLabel.topAnchor.constraint(equalTo: discountAmountTitleLabel.bottomAnchor, constant: 16),
+                salesAmountTitleLabel.rightAnchor.constraint(equalTo: enterTimeTitleLabel.rightAnchor),
+                salesAmountTextField.topAnchor.constraint(equalTo: salesAmountTitleLabel.topAnchor),
+                salesAmountTextField.bottomAnchor.constraint(equalTo: salesAmountTitleLabel.bottomAnchor),
+                salesAmountTextField.leftAnchor.constraint(equalTo: salesAmountTitleLabel.rightAnchor, constant: 8),
+                salesAmountTextField.widthAnchor.constraint(equalToConstant: 120),
+                feeTitleLabel.topAnchor.constraint(equalTo: salesAmountTitleLabel.bottomAnchor, constant: 16),
+                feeTitleLabel.rightAnchor.constraint(equalTo: enterTimeTitleLabel.rightAnchor),
+                feeLabel.topAnchor.constraint(equalTo: feeTitleLabel.topAnchor),
+                feeLabel.bottomAnchor.constraint(equalTo: feeTitleLabel.bottomAnchor),
+                feeLabel.leftAnchor.constraint(equalTo: feeTitleLabel.rightAnchor, constant: 8),
+                feeLabel.widthAnchor.constraint(equalToConstant: 120),
+                feeCalcButton.centerYAnchor.constraint(equalTo: feeTitleLabel.centerYAnchor),
+                feeCalcButton.leftAnchor.constraint(equalTo: feeLabel.rightAnchor, constant: 25),
+                feeCalcButton.heightAnchor.constraint(equalToConstant: 40),
+                feeCalcButton.widthAnchor.constraint(equalToConstant: 80),
+                gachaAmountTitleLabel.topAnchor.constraint(equalTo: feeTitleLabel.bottomAnchor, constant: 16),
+                gachaAmountTitleLabel.rightAnchor.constraint(equalTo: enterTimeTitleLabel.rightAnchor),
+                gachaAmountTextField.topAnchor.constraint(equalTo: gachaAmountTitleLabel.topAnchor),
+                gachaAmountTextField.bottomAnchor.constraint(equalTo: gachaAmountTitleLabel.bottomAnchor),
+                gachaAmountTextField.leftAnchor.constraint(equalTo: gachaAmountTitleLabel.rightAnchor, constant: 8),
+                gachaAmountTextField.widthAnchor.constraint(equalToConstant: 120),
+                memoTitleLabel.topAnchor.constraint(equalTo: gachaAmountTitleLabel.bottomAnchor, constant: 16),
+                memoTitleLabel.rightAnchor.constraint(equalTo: enterTimeTitleLabel.rightAnchor),
+                memoTextField.topAnchor.constraint(equalTo: memoTitleLabel.topAnchor),
+                memoTextField.bottomAnchor.constraint(equalTo: memoTitleLabel.bottomAnchor),
+                memoTextField.leftAnchor.constraint(equalTo: memoTitleLabel.rightAnchor, constant: 8),
+                memoTextField.widthAnchor.constraint(equalToConstant: 200),
+                submitButton.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: -16),
+                submitButton.rightAnchor.constraint(equalTo: scrollView.rightAnchor, constant: -16),
+                submitButton.heightAnchor.constraint(equalToConstant: 24),
+                submitButton.widthAnchor.constraint(equalToConstant: 80),
+                cancelButton.bottomAnchor.constraint(equalTo: submitButton.bottomAnchor),
+                cancelButton.rightAnchor.constraint(equalTo: submitButton.leftAnchor, constant: -16),
+                cancelButton.heightAnchor.constraint(equalToConstant: 24),
+                cancelButton.widthAnchor.constraint(equalToConstant: 80)
+            ])
+        } else { // 通常の画面の場合
+            NSLayoutConstraint.activate([
+                scrollView.topAnchor.constraint(equalTo: self.safeAreaLayoutGuide.topAnchor),
+                scrollView.bottomAnchor.constraint(equalTo: self.safeAreaLayoutGuide.bottomAnchor),
+                scrollView.leftAnchor.constraint(equalTo: self.safeAreaLayoutGuide.leftAnchor),
+                scrollView.rightAnchor.constraint(equalTo: self.safeAreaLayoutGuide.rightAnchor),
+                errorMessageLabel.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 32),
+                errorMessageLabel.leftAnchor.constraint(equalTo: scrollView.leftAnchor, constant: 64),
+                enterTimeTitleLabel.topAnchor.constraint(equalTo: errorMessageLabel.bottomAnchor, constant: 32),
+                enterTimeTitleLabel.rightAnchor.constraint(equalTo: scrollView.leftAnchor, constant: 320),
+                enterTimeTextField.topAnchor.constraint(equalTo: enterTimeTitleLabel.topAnchor),
+                enterTimeTextField.bottomAnchor.constraint(equalTo: enterTimeTitleLabel.bottomAnchor),
+                enterTimeTextField.leftAnchor.constraint(equalTo: enterTimeTitleLabel.rightAnchor, constant: 16),
+                enterTimeTextField.widthAnchor.constraint(equalToConstant: 160),
+                leftTimeTitleLabel.topAnchor.constraint(equalTo: enterTimeTitleLabel.bottomAnchor, constant: 32),
+                leftTimeTitleLabel.rightAnchor.constraint(equalTo: enterTimeTitleLabel.rightAnchor),
+                leftTimeTextField.topAnchor.constraint(equalTo: leftTimeTitleLabel.topAnchor),
+                leftTimeTextField.bottomAnchor.constraint(equalTo: leftTimeTitleLabel.bottomAnchor),
+                leftTimeTextField.leftAnchor.constraint(equalTo: leftTimeTitleLabel.rightAnchor, constant: 16),
+                leftTimeTextField.widthAnchor.constraint(equalToConstant: 160),
+                stayTimeTitleLabel.centerYAnchor.constraint(equalTo: enterTimeTitleLabel.bottomAnchor, constant: 16),
+                stayTimeTitleLabel.leftAnchor.constraint(equalTo: enterTimeTextField.rightAnchor, constant: 64),
+                stayTimeLabel.topAnchor.constraint(equalTo: stayTimeTitleLabel.topAnchor),
+                stayTimeLabel.bottomAnchor.constraint(equalTo: stayTimeTitleLabel.bottomAnchor),
+                stayTimeLabel.leftAnchor.constraint(equalTo: stayTimeTitleLabel.rightAnchor, constant: 16),
+                stayTimeLabel.widthAnchor.constraint(equalToConstant: 160),
+                discountAmountTitleLabel.topAnchor.constraint(equalTo: leftTimeTitleLabel.bottomAnchor, constant: 32),
+                discountAmountTitleLabel.rightAnchor.constraint(equalTo: enterTimeTitleLabel.rightAnchor),
+                discountAmountTextField.topAnchor.constraint(equalTo: discountAmountTitleLabel.topAnchor),
+                discountAmountTextField.bottomAnchor.constraint(equalTo: discountAmountTitleLabel.bottomAnchor),
+                discountAmountTextField.leftAnchor.constraint(equalTo: discountAmountTitleLabel.rightAnchor, constant: 16),
+                discountAmountTextField.widthAnchor.constraint(equalToConstant: 240),
+
+                salesAmountTitleLabel.topAnchor.constraint(equalTo: discountAmountTitleLabel.bottomAnchor, constant: 32),
+                salesAmountTitleLabel.rightAnchor.constraint(equalTo: enterTimeTitleLabel.rightAnchor),
+                salesAmountTextField.topAnchor.constraint(equalTo: salesAmountTitleLabel.topAnchor),
+                salesAmountTextField.bottomAnchor.constraint(equalTo: salesAmountTitleLabel.bottomAnchor),
+                salesAmountTextField.leftAnchor.constraint(equalTo: salesAmountTitleLabel.rightAnchor, constant: 16),
+                salesAmountTextField.widthAnchor.constraint(equalToConstant: 240),
+                feeTitleLabel.topAnchor.constraint(equalTo: salesAmountTitleLabel.bottomAnchor, constant: 32),
+                feeTitleLabel.rightAnchor.constraint(equalTo: enterTimeTitleLabel.rightAnchor),
+                feeLabel.topAnchor.constraint(equalTo: feeTitleLabel.topAnchor),
+                feeLabel.bottomAnchor.constraint(equalTo: feeTitleLabel.bottomAnchor),
+                feeLabel.leftAnchor.constraint(equalTo: feeTitleLabel.rightAnchor, constant: 16),
+                feeLabel.widthAnchor.constraint(equalToConstant: 240),
+                feeCalcButton.centerYAnchor.constraint(equalTo: feeTitleLabel.centerYAnchor),
+                feeCalcButton.leftAnchor.constraint(equalTo: feeLabel.rightAnchor, constant: 50),
+                feeCalcButton.heightAnchor.constraint(equalToConstant: 80),
+                feeCalcButton.widthAnchor.constraint(equalToConstant: 160),
+                gachaAmountTitleLabel.topAnchor.constraint(equalTo: feeTitleLabel.bottomAnchor, constant: 32),
+                gachaAmountTitleLabel.rightAnchor.constraint(equalTo: enterTimeTitleLabel.rightAnchor),
+                gachaAmountTextField.topAnchor.constraint(equalTo: gachaAmountTitleLabel.topAnchor),
+                gachaAmountTextField.bottomAnchor.constraint(equalTo: gachaAmountTitleLabel.bottomAnchor),
+                gachaAmountTextField.leftAnchor.constraint(equalTo: gachaAmountTitleLabel.rightAnchor, constant: 16),
+                gachaAmountTextField.widthAnchor.constraint(equalToConstant: 240),
+                memoTitleLabel.topAnchor.constraint(equalTo: gachaAmountTitleLabel.bottomAnchor, constant: 32),
+                memoTitleLabel.rightAnchor.constraint(equalTo: enterTimeTitleLabel.rightAnchor),
+                memoTextField.topAnchor.constraint(equalTo: memoTitleLabel.topAnchor),
+                memoTextField.bottomAnchor.constraint(equalTo: memoTitleLabel.bottomAnchor),
+                memoTextField.leftAnchor.constraint(equalTo: memoTitleLabel.rightAnchor, constant: 16),
+                memoTextField.widthAnchor.constraint(equalToConstant: 400),
+                submitButton.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: -32),
+                submitButton.rightAnchor.constraint(equalTo: scrollView.rightAnchor, constant: -32),
+                submitButton.heightAnchor.constraint(equalToConstant: 48),
+                submitButton.widthAnchor.constraint(equalToConstant: 160),
+                cancelButton.bottomAnchor.constraint(equalTo: submitButton.bottomAnchor),
+                cancelButton.rightAnchor.constraint(equalTo: submitButton.leftAnchor, constant: -32),
+                cancelButton.heightAnchor.constraint(equalToConstant: 48),
+                cancelButton.widthAnchor.constraint(equalToConstant: 160)
+            ])
+        }
     }
     
     private func setupEnterTimeTextField() {
@@ -733,7 +744,9 @@ private extension LeaveView {
         }
         
         if self.kidsDayFlag {
-            childUnitPrice = adultUnitPrice / 2
+            if stayTime > 30 {
+                childUnitPrice = adultUnitPrice / 2
+            }
         } else {
             childUnitPrice = adultUnitPrice
         }
