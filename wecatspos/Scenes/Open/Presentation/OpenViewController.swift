@@ -261,6 +261,13 @@ private extension OpenViewController {
                 editVisitorInfoView.isHidden = true
                 stopLoading()
             }).disposed(by: disposeBag)
+        presenter.calcedTotalAmount
+            .subscribe(onNext: { [unowned self] model in
+                print("Received cat info data: \(model)")
+                leaveView.stayTimeLabel.text = "\(model.stayTime)" + "分"
+                leaveView.feeLabel.text = "¥" + formatNumber(String(model.totalAmount))
+                stopLoading()
+            }).disposed(by: disposeBag)
     }
     
     func setupActivityIndicator() {
@@ -307,6 +314,15 @@ private extension OpenViewController {
         leftBotton.backgroundColor = UIColor.lightGray
         stayingButton.setTitleColor(UIColor.black, for: .normal)
         leftBotton.setTitleColor(UIColor.white, for: .normal)
+    }
+    
+    private func formatNumber(_ number: String) -> String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        formatter.groupingSeparator = "," // 3桁区切りの区切り文字
+        formatter.maximumFractionDigits = 0 // 小数点以下を許可しない
+        let numberValue = Int(number) ?? 0
+        return formatter.string(from: NSNumber(value: numberValue)) ?? number
     }
 }
 
@@ -388,7 +404,6 @@ extension OpenViewController: EnterDelegate {
 }
 
 extension OpenViewController: LeaveDelegate {
-
     func tapLeaveCancelButton() {
         leaveView.isHidden = true
     }
@@ -396,6 +411,11 @@ extension OpenViewController: LeaveDelegate {
     func tapLeaveSubmitButton(id: Int, repeatFlag: Bool, patternId: Int, name: String?, date: String, holidayFlag: Bool, kidsDayFlag: Bool, adultCount: Int, childCount: Int, enterTime: String, leftTime: String, stayTime: Int, calcAmount: Int, discountAmount: Int, salesAmount: Int, gachaAmount: Int, totalAmount: Int, memo: String) {
         startLoading()
         presenter.didTapLeaveSubmitButton(id: id, repeatFlag: repeatFlag, patternId: patternId, name: name, date: date, holidayFlag: holidayFlag, kidsDayFlag: kidsDayFlag, adultCount: adultCount, childCount: childCount, enterTime: enterTime, leftTime: leftTime, stayTime: stayTime, calcAmount: calcAmount, discountAmount: discountAmount, salesAmount: salesAmount, gachaAmount: gachaAmount, totalAmount: totalAmount, memo: memo)
+    }
+    
+    func calcTotalAmount(enterTime: String, leftTime: String, adultCount: Int, childCount: Int, discountAmount: String, salesAmount: String) {
+        startLoading()
+        presenter.calcTotalAmount(enterTime: enterTime, leftTime: leftTime, adultCount: adultCount, childCount: childCount, discountAmount: discountAmount, salesAmount: salesAmount)
     }
 }
 

@@ -11,6 +11,7 @@ import UIKit
 protocol LeaveDelegate: AnyObject  {
     func tapLeaveSubmitButton(id: Int, repeatFlag: Bool, patternId: Int, name: String?, date: String, holidayFlag: Bool, kidsDayFlag: Bool, adultCount: Int, childCount: Int, enterTime: String, leftTime: String, stayTime: Int, calcAmount: Int, discountAmount: Int, salesAmount: Int, gachaAmount: Int, totalAmount: Int, memo: String)
     func tapLeaveCancelButton()
+    func calcTotalAmount(enterTime: String, leftTime: String, adultCount: Int, childCount: Int, discountAmount: String, salesAmount: String)
 }
 
 public class LeaveView: UIView {
@@ -193,7 +194,7 @@ private extension LeaveView {
                 label.font = UIFont.systemFont(ofSize: 32)
             }
             label.textColor = UIColor.black
-            label.textAlignment = .right
+            label.textAlignment = .center
         }
         
         func setupButton(_ button: UIButton, text: String = "") {
@@ -243,9 +244,8 @@ private extension LeaveView {
         setupLabel(stayTimeTitleLabel, text: "滞在時間：")
         scrollView.addSubview(stayTimeTitleLabel)
 
-        setupLabel(stayTimeTitleLabel, text: " ")
+        setupLabel(stayTimeLabel, text: " ")
         stayTimeLabel.backgroundColor = UIColor.lightGray
-        stayTimeLabel.textAlignment = .center
         scrollView.addSubview(stayTimeLabel)
         
         setupLabel(discountAmountTitleLabel, text: "割引額：")
@@ -634,11 +634,8 @@ private extension LeaveView {
             return
         }
         
-        let totalFee = calcTotalFee()
-        
-        if !(totalFee < 0) {
-            feeLabel.text = "¥" + formatNumber(String(totalFee))
-        }
+        // 料金計算
+        delegate?.calcTotalAmount(enterTime: enterTimeTextField.text ?? "", leftTime: leftTimeTextField.text ?? "", adultCount: self.adultCount, childCount: self.childCount, discountAmount: discountAmountTextField.text?.replacingOccurrences(of: ",", with: "") ?? "", salesAmount: salesAmountTextField.text?.replacingOccurrences(of: ",", with: "") ?? "")
     }
     
     // 退店登録ボタンタップ時のイベント
@@ -657,7 +654,8 @@ private extension LeaveView {
         // ガチャ額も含めたトータル金額を算出
         let gachaAmountText = gachaAmountTextField.text?.replacingOccurrences(of: ",", with: "") ?? "0"
         self.gachaAmount = Int(gachaAmountText) ?? 0
-        self.totalAmount = calcTotalFee() + self.gachaAmount
+        let totalAmountText = Int(feeLabel.text?.replacingOccurrences(of: ",", with: "").replacingOccurrences(of: "¥", with: "") ?? "0") ?? 0
+        self.totalAmount = totalAmountText + self.gachaAmount
         
         // 退店データをサーバに登録
         delegate?.tapLeaveSubmitButton(id: id, repeatFlag: repeatFlag, patternId: patternId, name: name, date: date, holidayFlag: holidayFlag, kidsDayFlag: kidsDayFlag, adultCount: adultCount, childCount: childCount, enterTime: enterTimeTextField.text!, leftTime: leftTimeTextField.text!, stayTime: stayTime, calcAmount: calcAmount, discountAmount: discountAmount, salesAmount: salesAmount, gachaAmount: gachaAmount, totalAmount: totalAmount, memo: memoTextField.text!)
@@ -689,77 +687,6 @@ private extension LeaveView {
             return "販売額を入力してください"
         }
         return ""
-    }
-    
-    func calcTotalFee() -> Int {
-        var totalMinutes: Int = 0
-        var adultUnitPrice: Int = 0
-        var childUnitPrice: Int = 0
-        
-        // DateFormatterを使用して時間を取得
-        let formatter = DateFormatter()
-        formatter.dateFormat = "HH:mm"
-        
-        guard let enterTime = formatter.date(from: enterTimeTextField.text ?? ""),
-              let leftTime = formatter.date(from: leftTimeTextField.text ?? "") else {
-            stayTimeLabel.text = "エラー"
-            return -1
-        }
-        
-        // 時間差を計算
-        let calendar = Calendar.current
-        let components = calendar.dateComponents([.hour, .minute], from: enterTime, to: leftTime)
-        
-        // 分単位で計算
-        if let hours = components.hour, let minutes = components.minute {
-            totalMinutes = (hours * 60) + minutes
-            self.stayTime = totalMinutes
-            stayTimeLabel.text = "\(totalMinutes)分"
-        } else {
-            stayTimeLabel.text = "エラー"
-        }
-
-        // 単価計算
-        if totalMinutes <= 30 {
-            if self.holidayFlag {
-                adultUnitPrice = 1200
-            } else {
-                adultUnitPrice = 1000
-            }
-        } else if totalMinutes <= 60 {
-            if self.holidayFlag {
-                adultUnitPrice = 1800
-            } else {
-                adultUnitPrice = 1500
-            }
-        } else {
-            if self.holidayFlag {
-                adultUnitPrice = 1800 + (totalMinutes - 60) / 30 * 500
-            } else {
-                adultUnitPrice = 1500 + (totalMinutes - 60) / 30 * 500
-            }
-            if (totalMinutes - 60) % 30 != 0 {
-                adultUnitPrice += 500
-            }
-        }
-        
-        if self.kidsDayFlag {
-            if stayTime > 30 {
-                childUnitPrice = adultUnitPrice / 2
-            } else {
-                childUnitPrice = adultUnitPrice
-            }
-        } else {
-            childUnitPrice = adultUnitPrice
-        }
-        
-        self.calcAmount = adultUnitPrice * adultCount + childUnitPrice * childCount
-        let discountAmountText = discountAmountTextField.text?.replacingOccurrences(of: ",", with: "") ?? "0"
-        self.discountAmount = Int(discountAmountText) ?? 0
-        let salesAmountText = salesAmountTextField.text?.replacingOccurrences(of: ",", with: "") ?? "0"
-        self.salesAmount = Int(salesAmountText) ?? 0
-        
-        return self.calcAmount - self.discountAmount + self.salesAmount
     }
 }
 
