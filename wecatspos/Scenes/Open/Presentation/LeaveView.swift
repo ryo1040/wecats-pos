@@ -194,7 +194,7 @@ private extension LeaveView {
                 label.font = UIFont.systemFont(ofSize: 32)
             }
             label.textColor = UIColor.black
-            label.textAlignment = .right
+            label.textAlignment = .center
         }
         
         func setupButton(_ button: UIButton, text: String = "") {
@@ -244,9 +244,8 @@ private extension LeaveView {
         setupLabel(stayTimeTitleLabel, text: "滞在時間：")
         scrollView.addSubview(stayTimeTitleLabel)
 
-        setupLabel(stayTimeTitleLabel, text: " ")
+        setupLabel(stayTimeLabel, text: " ")
         stayTimeLabel.backgroundColor = UIColor.lightGray
-        stayTimeLabel.textAlignment = .center
         scrollView.addSubview(stayTimeLabel)
         
         setupLabel(discountAmountTitleLabel, text: "割引額：")
