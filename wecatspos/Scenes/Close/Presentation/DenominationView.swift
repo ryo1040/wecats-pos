@@ -18,6 +18,13 @@ public class DenominationView: UIView {
     
     let scrollView = UIScrollView()
     
+    // キーボード対応用のプロパティ
+    var activeTextField: UITextField?
+    var originalContentInset: UIEdgeInsets = .zero
+    var originalScrollIndicatorInsets: UIEdgeInsets = .zero
+    var originalContentOffset: CGPoint = .zero
+    var keyboardIsVisible: Bool = false
+    
     let errorMessageLabel = UILabel()
     let dateTitleLabel = UILabel()
     let dateLabel = UILabel()
@@ -82,12 +89,17 @@ public class DenominationView: UIView {
     
     public init() {
         super.init(frame: .zero)
-                
+        
         setupViews()
+        setupKeyboardObservers()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    deinit {
+        removeKeyboardObservers()
     }
     
     func setInitialDenomination() {
@@ -192,6 +204,7 @@ private extension DenominationView {
             textField.borderStyle = .roundedRect
             textField.layer.borderColor = UIColor.black.cgColor
             textField.layer.borderWidth = 1.0
+            textField.delegate = self
         }
         
         func setupLabel(_ label: UILabel, text: String = "") {
@@ -981,5 +994,77 @@ private extension DenominationView {
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
         return formatter.string(from: NSNumber(value: amount)) ?? "\(amount)"
+    }
+    
+    // MARK: - Keyboard Handling
+    
+    private func setupKeyboardObservers() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardWillShow),
+            name: UIResponder.keyboardWillShowNotification,
+            object: nil
+        )
+        
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardWillHide),
+            name: UIResponder.keyboardWillHideNotification,
+            object: nil
+        )
+    }
+    
+    private func removeKeyboardObservers() {
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    
+    @objc private func keyboardWillShow(notification: NSNotification) {
+        guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue,
+              let activeTextField = activeTextField else { return }
+        
+        let keyboardHeight = keyboardFrame.cgRectValue.height
+        
+        // 初回キーボード表示時のみオリジナル設定を保存
+        if !keyboardIsVisible {
+            originalContentInset = scrollView.contentInset
+            originalScrollIndicatorInsets = scrollView.scrollIndicatorInsets
+            originalContentOffset = scrollView.contentOffset
+            keyboardIsVisible = true
+        }
+        
+        // キーボードの高さ分だけinsetを調整
+        scrollView.contentInset.bottom = keyboardHeight
+        scrollView.scrollIndicatorInsets.bottom = keyboardHeight
+        
+        // アクティブなテキストフィールドがキーボードに隠れないようにスクロール
+        let textFieldFrame = scrollView.convert(activeTextField.frame, from: activeTextField.superview)
+        let visibleHeight = scrollView.frame.height - keyboardHeight
+        
+        if textFieldFrame.maxY > visibleHeight {
+            let targetOffset = textFieldFrame.maxY - visibleHeight + 20 // 20ptのマージンを追加
+            let newContentOffsetY = originalContentOffset.y + targetOffset
+            scrollView.setContentOffset(CGPoint(x: 0, y: newContentOffsetY), animated: true)
+        }
+    }
+    
+    @objc private func keyboardWillHide(notification: NSNotification) {
+        // キーボードが非表示になる際に元の設定に戻す
+        keyboardIsVisible = false
+        scrollView.contentInset = originalContentInset
+        scrollView.scrollIndicatorInsets = originalScrollIndicatorInsets
+        scrollView.setContentOffset(originalContentOffset, animated: true)
+    }
+}
+
+// MARK: - UITextFieldDelegate
+
+extension DenominationView: UITextFieldDelegate {
+    public func textFieldDidBeginEditing(_ textField: UITextField) {
+        activeTextField = textField
+    }
+    
+    public func textFieldDidEndEditing(_ textField: UITextField) {
+        activeTextField = nil
     }
 }
