@@ -746,6 +746,8 @@ private extension LeaveView {
         if self.kidsDayFlag {
             if stayTime > 30 {
                 childUnitPrice = adultUnitPrice / 2
+            } else {
+                childUnitPrice = adultUnitPrice
             }
         } else {
             childUnitPrice = adultUnitPrice
