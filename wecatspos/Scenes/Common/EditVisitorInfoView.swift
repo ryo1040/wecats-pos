@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 
 protocol EditVisitorInfoDelegate: AnyObject  {
-    func tapEditVisitorInfoUpdateButton(id: Int, repeatFlag: Bool, patternId: Int, name: String?, date: String, holidayFlag: Bool, kidsDayFlag: Bool, adultCount: Int, childCount: Int, enterTime: String, leftTime: String, stayTime: Int, calcAmount: Int, discountAmount: Int, salesAmount: Int, gachaAmount: Int, totalAmount: Int, memo: String)
+    func tapEditVisitorInfoUpdateButton(id: Int, repeatFlag: Bool, patternId: Int, name: String?, date: String, holidayFlag: Bool, kidsDayFlag: Bool, adultCount: Int, childCount: Int, enterTime: String, leftTime: String, stayTime: Int, calcAmount: Int, discountAmount: Int, saleAmount: Int, gachaAmount: Int, totalAmount: Int, memo: String)
     func tapEditVisitorInfoBackButton()
 }
 
@@ -54,9 +54,9 @@ public class EditVisitorInfoView: UIView {
     let gachaAmountTitleLabel = UILabel()
     let gachaAmountTextField = UITextField()
     let gachaAmountLastLabel = UILabel()
-    let salesAmountTitleLabel = UILabel()
-    let salesAmountTextField = UITextField()
-    let salesAmountLastLabel = UILabel()
+    let saleAmountTitleLabel = UILabel()
+    let saleAmountTextField = UITextField()
+    let saleAmountLastLabel = UILabel()
     let feeTitleLabel = UILabel()
     let feeTextField = UITextField()
     let feeLastLabel = UILabel()
@@ -119,7 +119,7 @@ public class EditVisitorInfoView: UIView {
         basicPriceTextField.text = String(selectGuestInfo.calcAmount)
         discountAmountTextField.text = String(selectGuestInfo.discountAmount)
         gachaAmountTextField.text = String(selectGuestInfo.gachaAmount)
-        salesAmountTextField.text = String(selectGuestInfo.salesAmount)
+        saleAmountTextField.text = String(selectGuestInfo.saleAmount)
         feeTextField.text = String(selectGuestInfo.totalAmount)
         memoTextField.text = selectGuestInfo.memo ?? ""
     }
@@ -312,15 +312,15 @@ private extension EditVisitorInfoView {
         setupLabel(gachaAmountLastLabel, text: "円")
         contentView.addSubview(gachaAmountLastLabel)
 
-        setupLabel(salesAmountTitleLabel, text: "販売額：")
-        contentView.addSubview(salesAmountTitleLabel)
+        setupLabel(saleAmountTitleLabel, text: "販売額：")
+        contentView.addSubview(saleAmountTitleLabel)
         
-        setupTextField(salesAmountTextField)
-        salesAmountTextField.keyboardType = .numberPad
-        contentView.addSubview(salesAmountTextField)
+        setupTextField(saleAmountTextField)
+        saleAmountTextField.keyboardType = .numberPad
+        contentView.addSubview(saleAmountTextField)
         
-        setupLabel(salesAmountLastLabel, text: "円")
-        contentView.addSubview(salesAmountLastLabel)
+        setupLabel(saleAmountLastLabel, text: "円")
+        contentView.addSubview(saleAmountLastLabel)
         
         setupLabel(feeTitleLabel, text: "料金：")
         contentView.addSubview(feeTitleLabel)
@@ -387,9 +387,9 @@ private extension EditVisitorInfoView {
         gachaAmountTitleLabel.translatesAutoresizingMaskIntoConstraints = false
         gachaAmountTextField.translatesAutoresizingMaskIntoConstraints = false
         gachaAmountLastLabel.translatesAutoresizingMaskIntoConstraints = false
-        salesAmountTitleLabel.translatesAutoresizingMaskIntoConstraints = false
-        salesAmountTextField.translatesAutoresizingMaskIntoConstraints = false
-        salesAmountLastLabel.translatesAutoresizingMaskIntoConstraints = false
+        saleAmountTitleLabel.translatesAutoresizingMaskIntoConstraints = false
+        saleAmountTextField.translatesAutoresizingMaskIntoConstraints = false
+        saleAmountLastLabel.translatesAutoresizingMaskIntoConstraints = false
         feeTitleLabel.translatesAutoresizingMaskIntoConstraints = false
         feeTextField.translatesAutoresizingMaskIntoConstraints = false
         feeLastLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -501,13 +501,13 @@ private extension EditVisitorInfoView {
                 gachaAmountTextField.heightAnchor.constraint(equalToConstant: 25),
                 gachaAmountLastLabel.centerYAnchor.constraint(equalTo: gachaAmountTitleLabel.centerYAnchor),
                 gachaAmountLastLabel.leftAnchor.constraint(equalTo: gachaAmountTextField.rightAnchor, constant: 12),
-                salesAmountTitleLabel.centerYAnchor.constraint(equalTo: gachaAmountTitleLabel.centerYAnchor),
-                salesAmountTitleLabel.leftAnchor.constraint(equalTo: contentView.centerXAnchor),
-                salesAmountTextField.centerYAnchor.constraint(equalTo: salesAmountTitleLabel.centerYAnchor),
-                salesAmountTextField.leftAnchor.constraint(equalTo: salesAmountTitleLabel.rightAnchor, constant: 12),
-                salesAmountTextField.widthAnchor.constraint(equalToConstant: 75),
-                salesAmountLastLabel.centerYAnchor.constraint(equalTo: salesAmountTitleLabel.centerYAnchor),
-                salesAmountLastLabel.leftAnchor.constraint(equalTo: salesAmountTextField.rightAnchor, constant: 12),
+                saleAmountTitleLabel.centerYAnchor.constraint(equalTo: gachaAmountTitleLabel.centerYAnchor),
+                saleAmountTitleLabel.leftAnchor.constraint(equalTo: contentView.centerXAnchor),
+                saleAmountTextField.centerYAnchor.constraint(equalTo: saleAmountTitleLabel.centerYAnchor),
+                saleAmountTextField.leftAnchor.constraint(equalTo: saleAmountTitleLabel.rightAnchor, constant: 12),
+                saleAmountTextField.widthAnchor.constraint(equalToConstant: 75),
+                saleAmountLastLabel.centerYAnchor.constraint(equalTo: saleAmountTitleLabel.centerYAnchor),
+                saleAmountLastLabel.leftAnchor.constraint(equalTo: saleAmountTextField.rightAnchor, constant: 12),
                 
                 feeTitleLabel.topAnchor.constraint(equalTo: gachaAmountTitleLabel.bottomAnchor, constant: 12),
                 feeTitleLabel.rightAnchor.constraint(equalTo: gachaAmountTitleLabel.rightAnchor),
@@ -628,13 +628,13 @@ private extension EditVisitorInfoView {
                 gachaAmountTextField.widthAnchor.constraint(equalToConstant: 150),
                 gachaAmountLastLabel.centerYAnchor.constraint(equalTo: gachaAmountTitleLabel.centerYAnchor),
                 gachaAmountLastLabel.leftAnchor.constraint(equalTo: gachaAmountTextField.rightAnchor, constant: 24),
-                salesAmountTitleLabel.centerYAnchor.constraint(equalTo: gachaAmountTitleLabel.centerYAnchor),
-                salesAmountTitleLabel.leftAnchor.constraint(equalTo: contentView.centerXAnchor),
-                salesAmountTextField.centerYAnchor.constraint(equalTo: salesAmountTitleLabel.centerYAnchor),
-                salesAmountTextField.leftAnchor.constraint(equalTo: salesAmountTitleLabel.rightAnchor, constant: 24),
-                salesAmountTextField.widthAnchor.constraint(equalToConstant: 150),
-                salesAmountLastLabel.centerYAnchor.constraint(equalTo: salesAmountTitleLabel.centerYAnchor),
-                salesAmountLastLabel.leftAnchor.constraint(equalTo: salesAmountTextField.rightAnchor, constant: 24),
+                saleAmountTitleLabel.centerYAnchor.constraint(equalTo: gachaAmountTitleLabel.centerYAnchor),
+                saleAmountTitleLabel.leftAnchor.constraint(equalTo: contentView.centerXAnchor),
+                saleAmountTextField.centerYAnchor.constraint(equalTo: saleAmountTitleLabel.centerYAnchor),
+                saleAmountTextField.leftAnchor.constraint(equalTo: saleAmountTitleLabel.rightAnchor, constant: 24),
+                saleAmountTextField.widthAnchor.constraint(equalToConstant: 150),
+                saleAmountLastLabel.centerYAnchor.constraint(equalTo: saleAmountTitleLabel.centerYAnchor),
+                saleAmountLastLabel.leftAnchor.constraint(equalTo: saleAmountTextField.rightAnchor, constant: 24),
                 
                 feeTitleLabel.topAnchor.constraint(equalTo: gachaAmountTitleLabel.bottomAnchor, constant: 24),
                 feeTitleLabel.rightAnchor.constraint(equalTo: gachaAmountTitleLabel.rightAnchor),
@@ -944,7 +944,7 @@ private extension EditVisitorInfoView {
             errorMessageLabel.text = "割引額を入力してください"
             return
         }
-        if salesAmountTextField.text == "" {
+        if saleAmountTextField.text == "" {
             errorMessageLabel.text = "販売額を入力してください"
             return
         }
@@ -958,7 +958,7 @@ private extension EditVisitorInfoView {
             repeatFlag = true
         }
         
-        delegate?.tapEditVisitorInfoUpdateButton(id: visitorInfo.id, repeatFlag: repeatFlag, patternId: selectedPatternPickerId, name: nameTextField.text ?? "", date: visitorInfo.date, holidayFlag: visitorInfo.holidayFlag, kidsDayFlag: visitorInfo.kidsdayFlag, adultCount: Int(countAdultTextField.text!)!, childCount: Int(countChildTextField.text!)!, enterTime: enterTimeTextField.text!, leftTime: leftTimeTextField.text!, stayTime: Int(stayTimeTextField.text!)!, calcAmount: Int(basicPriceTextField.text!)!, discountAmount: Int(discountAmountTextField.text!)!, salesAmount: Int(salesAmountTextField.text!)!, gachaAmount: Int(gachaAmountTextField.text!)!, totalAmount: Int(feeTextField.text!)!, memo: memoTextField.text ?? "")
+        delegate?.tapEditVisitorInfoUpdateButton(id: visitorInfo.id, repeatFlag: repeatFlag, patternId: selectedPatternPickerId, name: nameTextField.text ?? "", date: visitorInfo.date, holidayFlag: visitorInfo.holidayFlag, kidsDayFlag: visitorInfo.kidsdayFlag, adultCount: Int(countAdultTextField.text!)!, childCount: Int(countChildTextField.text!)!, enterTime: enterTimeTextField.text!, leftTime: leftTimeTextField.text!, stayTime: Int(stayTimeTextField.text!)!, calcAmount: Int(basicPriceTextField.text!)!, discountAmount: Int(discountAmountTextField.text!)!, saleAmount: Int(saleAmountTextField.text!)!, gachaAmount: Int(gachaAmountTextField.text!)!, totalAmount: Int(feeTextField.text!)!, memo: memoTextField.text ?? "")
     }
     
     // キャンセルボタンタップ時のイベント

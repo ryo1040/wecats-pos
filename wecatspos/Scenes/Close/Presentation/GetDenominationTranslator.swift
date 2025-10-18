@@ -10,7 +10,7 @@ final class GetDenominationTranslator {
         
         var denominationModel: [DenominationModel] = []
         for entity in denominationEntity.denominationEntity {
-            let model: DenominationModel = DenominationModel(date: entity.date, branch: entity.branch, tenThousandYenCount: entity.tenThousandYenCount, fiveThousandYenCount: entity.fiveThousandYenCount, twoThousandYenCount: entity.twoThousandYenCount, oneThousandYenCount: entity.oneThousandYenCount, fiveHundredYenCount: entity.fiveHundredYenCount, oneHundredYenCount: entity.oneHundredYenCount, fiftyYenCount: entity.fiftyYenCount, tenYenCount: entity.tenYenCount, fiveYenCount: entity.fiveYenCount, oneYenCount: entity.oneYenCount, ticketCount: entity.ticketAmount, exportAmount: entity.exportAmount, totalAmount: entity.totalAmount, memo: entity.memo)
+            let model: DenominationModel = DenominationModel(date: entity.date, branch: entity.branch, tenThousandYenCount: entity.tenThousandYenCount, fiveThousandYenCount: entity.fiveThousandYenCount, twoThousandYenCount: entity.twoThousandYenCount, oneThousandYenCount: entity.oneThousandYenCount, fiveHundredYenCount: entity.fiveHundredYenCount, oneHundredYenCount: entity.oneHundredYenCount, fiftyYenCount: entity.fiftyYenCount, tenYenCount: entity.tenYenCount, fiveYenCount: entity.fiveYenCount, oneYenCount: entity.oneYenCount, ticketCount: entity.ticketAmount, exportAmount: entity.exportAmount, totalAmount: entity.totalAmount, memo: entity.memo, dailySalesAmount: entity.dailySalesAmount)
             denominationModel.append(model)
         }
         return denominationModel

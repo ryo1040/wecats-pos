@@ -183,7 +183,8 @@ private extension CloseViewController {
         presenter.viewCheckResult
             .subscribe(onNext: { [unowned self] model in
                 stopLoading()
-                if model != 200 {
+                denominationView.dailySalesLabel.text = commaSeparateThreeDigits(model.todaySales) + "円"
+                if model.status != 200 {
                     // TODO: 一時的に登録ボタン非活性化をコメントアウト
 //                    denominationView.changeSubmitButtonEnabled(enabled: false)
                 } else {
@@ -214,6 +215,12 @@ private extension CloseViewController {
     func stopLoading() {
         activityIndicator.stopAnimating() // クルクル終了
         overlayView.isHidden = true // 半透明ビューを非表示
+    }
+    
+    func commaSeparateThreeDigits(_ amount: Int) -> String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        return formatter.string(from: NSNumber(value: amount)) ?? "\(amount)"
     }
 }
 

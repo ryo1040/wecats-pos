@@ -28,6 +28,8 @@ public class DenominationView: UIView {
     let errorMessageLabel = UILabel()
     let dateTitleLabel = UILabel()
     let dateLabel = UILabel()
+    let dailySalesTitleLabel = UILabel()
+    let dailySalesLabel = UILabel()
     let tenThousandYenTitleLabel = UILabel()
     let tenThousandYenCountTextField = UITextField()
     let tenThousandYenMaiLabel = UILabel()
@@ -106,6 +108,7 @@ public class DenominationView: UIView {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd"
         dateLabel.text = formatter.string(from: Date())
+        dailySalesLabel.text = ""
         tenThousandYenCountTextField.text = "0"
         fiveThousandYenCountTextField.text = "0"
         twoThousandYenCountTextField.text = "0"
@@ -119,6 +122,8 @@ public class DenominationView: UIView {
         ticketYenTextField.text = "0"
         exportAmountTextField.text = "0"
         memoTextField.text = ""
+        calcButton.isHidden = false
+        submitButton.isHidden = false
     }
     
     func setDenomination(selectedDenomination: DenominationModel, enable: Bool) {
@@ -139,8 +144,8 @@ public class DenominationView: UIView {
         submitButton.isHidden = !enable
         
         dateLabel.text = selectedDenomination.date
+        dailySalesLabel.text = commaSeparateThreeDigits(selectedDenomination.dailySalesAmount) + "円"
         tenThousandYenCountTextField.text = String(selectedDenomination.tenThousandYenCount)
-        
         tenThousandYenLabel.text = commaSeparateThreeDigits(selectedDenomination.tenThousandYenCount * 10000) + "円"
         fiveThousandYenCountTextField.text = String(selectedDenomination.fiveThousandYenCount)
         fiveThousandYenLabel.text = commaSeparateThreeDigits(selectedDenomination.fiveThousandYenCount * 5000) + "円"
@@ -246,6 +251,12 @@ private extension DenominationView {
         
         setupLabel(dateLabel, text: "")
         scrollView.addSubview(dateLabel)
+        
+        setupLabel(dailySalesTitleLabel, text: "当日売上：")
+        scrollView.addSubview(dailySalesTitleLabel)
+        
+        setupLabel(dailySalesLabel, text: "")
+        scrollView.addSubview(dailySalesLabel)
         
         setupLabel(tenThousandYenTitleLabel, text: "1万円札：")
         scrollView.addSubview(tenThousandYenTitleLabel)
@@ -400,6 +411,7 @@ private extension DenominationView {
         scrollView.addSubview(memoTitleLabel)
         
         setupTextField(memoTextField, text: "")
+        memoTextField.keyboardType = .default
         scrollView.addSubview(memoTextField)
 
         setupButton(submitButton, text: "登録")
@@ -414,6 +426,8 @@ private extension DenominationView {
         errorMessageLabel.translatesAutoresizingMaskIntoConstraints = false
         dateTitleLabel.translatesAutoresizingMaskIntoConstraints = false
         dateLabel.translatesAutoresizingMaskIntoConstraints = false
+        dailySalesTitleLabel.translatesAutoresizingMaskIntoConstraints = false
+        dailySalesLabel.translatesAutoresizingMaskIntoConstraints = false
         tenThousandYenTitleLabel.translatesAutoresizingMaskIntoConstraints = false
         tenThousandYenCountTextField.translatesAutoresizingMaskIntoConstraints = false
         tenThousandYenMaiLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -483,6 +497,11 @@ private extension DenominationView {
                 dateTitleLabel.leftAnchor.constraint(equalTo: scrollView.leftAnchor, constant: 90),
                 dateLabel.centerYAnchor.constraint(equalTo: dateTitleLabel.centerYAnchor),
                 dateLabel.leftAnchor.constraint(equalTo: dateTitleLabel.rightAnchor, constant: 8),
+                
+                dailySalesTitleLabel.centerYAnchor.constraint(equalTo: dateLabel.centerYAnchor),
+                dailySalesTitleLabel.rightAnchor.constraint(equalTo: scrollView.centerXAnchor, constant: 100),
+                dailySalesLabel.centerYAnchor.constraint(equalTo: dailySalesTitleLabel.centerYAnchor),
+                dailySalesLabel.leftAnchor.constraint(equalTo: dailySalesTitleLabel.rightAnchor, constant: 8),
 
                 tenThousandYenTitleLabel.topAnchor.constraint(equalTo: dateTitleLabel.bottomAnchor, constant: 24),
                 tenThousandYenTitleLabel.rightAnchor.constraint(equalTo: dateTitleLabel.rightAnchor),
@@ -553,7 +572,7 @@ private extension DenominationView {
                 ticketYenLabel.leftAnchor.constraint(equalTo: ticketYenTextField.rightAnchor, constant: 8),
                 
                 oneHundredYenTitleLabel.centerYAnchor.constraint(equalTo: tenThousandYenTitleLabel.centerYAnchor),
-                oneHundredYenTitleLabel.rightAnchor.constraint(equalTo: scrollView.centerXAnchor, constant: 100),
+                oneHundredYenTitleLabel.rightAnchor.constraint(equalTo: dailySalesTitleLabel.rightAnchor),
                 oneHundredYenCountTextField.centerYAnchor.constraint(equalTo: oneHundredYenTitleLabel.centerYAnchor),
                 oneHundredYenCountTextField.leftAnchor.constraint(equalTo: oneHundredYenTitleLabel.rightAnchor, constant: 8),
                 oneHundredYenCountTextField.widthAnchor.constraint(equalToConstant: 50),
@@ -663,6 +682,11 @@ private extension DenominationView {
                 dateLabel.centerYAnchor.constraint(equalTo: dateTitleLabel.centerYAnchor),
                 dateLabel.leftAnchor.constraint(equalTo: dateTitleLabel.rightAnchor, constant: 8),
                 
+                dailySalesTitleLabel.rightAnchor.constraint(equalTo: scrollView.centerXAnchor, constant: 200),
+                dailySalesTitleLabel.centerYAnchor.constraint(equalTo: dateLabel.centerYAnchor),
+                dailySalesLabel.centerYAnchor.constraint(equalTo: dailySalesTitleLabel.centerYAnchor),
+                dailySalesLabel.leftAnchor.constraint(equalTo: dailySalesTitleLabel.rightAnchor, constant: 8),
+
                 tenThousandYenTitleLabel.topAnchor.constraint(equalTo: dateTitleLabel.bottomAnchor, constant: 32),
                 tenThousandYenTitleLabel.rightAnchor.constraint(equalTo: dateTitleLabel.rightAnchor),
                 tenThousandYenCountTextField.centerYAnchor.constraint(equalTo: tenThousandYenTitleLabel.centerYAnchor),
@@ -719,7 +743,7 @@ private extension DenominationView {
                 fiveHundredYenLabel.widthAnchor.constraint(equalToConstant: 180),
                 
                 oneHundredYenTitleLabel.centerYAnchor.constraint(equalTo: tenThousandYenTitleLabel.centerYAnchor),
-                oneHundredYenTitleLabel.rightAnchor.constraint(equalTo: scrollView.centerXAnchor, constant: 200),
+                oneHundredYenTitleLabel.rightAnchor.constraint(equalTo: dailySalesTitleLabel.rightAnchor),
                 oneHundredYenCountTextField.centerYAnchor.constraint(equalTo: oneHundredYenTitleLabel.centerYAnchor),
                 oneHundredYenCountTextField.leftAnchor.constraint(equalTo: oneHundredYenTitleLabel.rightAnchor, constant: 8),
                 oneHundredYenCountTextField.widthAnchor.constraint(equalToConstant: 100),

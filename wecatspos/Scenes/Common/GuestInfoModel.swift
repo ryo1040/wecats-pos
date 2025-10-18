@@ -20,13 +20,13 @@ public struct GuestInfoModel {
     public var stayTime: Int
     public var calcAmount: Int
     public var discountAmount: Int
-    public var salesAmount: Int
+    public var saleAmount: Int
     public var gachaAmount: Int
     public var totalAmount: Int
     public var stayingFlag: Bool
     public var memo: String?
     
-    public init(id: Int, repeatFlag: Bool, patternId: Int, name: String?, adultCount: Int, childCount: Int, date: String, holidayFlag: Bool, kidsdayFlag: Bool, enterTime: String, leftTime: String, stayTime: Int, calcAmount: Int, discountAmount: Int, salesAmount: Int, gachaAmount: Int, totalAmount: Int, stayingFlag: Bool, memo: String?){
+    public init(id: Int, repeatFlag: Bool, patternId: Int, name: String?, adultCount: Int, childCount: Int, date: String, holidayFlag: Bool, kidsdayFlag: Bool, enterTime: String, leftTime: String, stayTime: Int, calcAmount: Int, discountAmount: Int, saleAmount: Int, gachaAmount: Int, totalAmount: Int, stayingFlag: Bool, memo: String?){
         self.id = id
         self.repeatFlag = repeatFlag
         self.patternId = patternId
@@ -41,7 +41,7 @@ public struct GuestInfoModel {
         self.stayTime = stayTime
         self.calcAmount = calcAmount
         self.discountAmount = discountAmount
-        self.salesAmount = salesAmount
+        self.saleAmount = saleAmount
         self.gachaAmount = gachaAmount
         self.totalAmount = totalAmount
         self.stayingFlag = stayingFlag
@@ -63,7 +63,7 @@ public struct GuestInfoModel {
         self.stayTime = 0
         self.calcAmount = 0
         self.discountAmount = 0
-        self.salesAmount = 0
+        self.saleAmount = 0
         self.gachaAmount = 0
         self.totalAmount = 0
         self.stayingFlag = false

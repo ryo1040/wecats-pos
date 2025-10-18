@@ -11,7 +11,7 @@ import RxSwift
 
 protocol ClosePresenterProtocol: AnyObject {
     var viewCloseResister: PublishSubject<[DenominationModel]> { get }
-    var viewCheckResult: PublishSubject<Int> { get }
+    var viewCheckResult: PublishSubject<CheckTotalAmountModel> { get }
     func load(month: String)
     func didTapMenuButton()
     func checkTotalAmount(date: String, totalAmount: Int, ticketAmount: Int, exportAmount: Int)
@@ -27,7 +27,7 @@ final class ClosePresenter: ClosePresenterProtocol {
     private let useCase: CloseUseCaseProtocol!
     
     private(set) var viewCloseResister = PublishSubject<[DenominationModel]>()
-    private(set) var viewCheckResult = PublishSubject<Int>()
+    private(set) var viewCheckResult = PublishSubject<CheckTotalAmountModel>()
     
     private let disposeBag = DisposeBag()
     
@@ -82,7 +82,7 @@ final class ClosePresenter: ClosePresenterProtocol {
                     self.wireframe.presentAlert(model.checkResult, buttonTitle: "確認")
                         .subscribe(onNext: { option in
                             if option == "確認" {
-                                self.viewCheckResult.onNext(model.status)
+                                self.viewCheckResult.onNext(model)
                             }
                         })
                         .disposed(by: self.disposeBag)
@@ -90,7 +90,7 @@ final class ClosePresenter: ClosePresenterProtocol {
                     self.wireframe.presentAlert(model.checkResult, buttonTitle: "確認")
                         .subscribe(onNext: { option in
                             if option == "確認" {
-                                self.viewCheckResult.onNext(model.status)
+                                self.viewCheckResult.onNext(model)
                             }
                         })
                         .disposed(by: self.disposeBag)
