@@ -23,8 +23,9 @@ public struct DenominationModel {
     public var exportAmount: Int
     public var totalAmount: Int
     public var memo: String?
+    public var dailySalesAmount: Int
     
-    public init(date: String, branch: Int, tenThousandYenCount: Int, fiveThousandYenCount: Int, twoThousandYenCount: Int, oneThousandYenCount: Int, fiveHundredYenCount: Int, oneHundredYenCount: Int, fiftyYenCount: Int, tenYenCount: Int, fiveYenCount: Int, oneYenCount: Int, ticketCount: Int, exportAmount: Int, totalAmount: Int, memo: String?){
+    public init(date: String, branch: Int, tenThousandYenCount: Int, fiveThousandYenCount: Int, twoThousandYenCount: Int, oneThousandYenCount: Int, fiveHundredYenCount: Int, oneHundredYenCount: Int, fiftyYenCount: Int, tenYenCount: Int, fiveYenCount: Int, oneYenCount: Int, ticketCount: Int, exportAmount: Int, totalAmount: Int, memo: String?, dailySalesAmount: Int){
         self.date = date
         self.branch = branch
         self.tenThousandYenCount = tenThousandYenCount
@@ -41,6 +42,7 @@ public struct DenominationModel {
         self.exportAmount = exportAmount
         self.totalAmount = totalAmount
         self.memo = memo
+        self.dailySalesAmount = dailySalesAmount
     }
     
     public init () {
@@ -60,5 +62,6 @@ public struct DenominationModel {
         self.exportAmount = 0
         self.totalAmount = 0
         self.memo = ""
+        self.dailySalesAmount = 0
     }
 }
