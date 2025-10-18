@@ -264,6 +264,7 @@ private extension OpenViewController {
         presenter.calcedTotalAmount
             .subscribe(onNext: { [unowned self] model in
                 print("Received cat info data: \(model)")
+                leaveView.stayTime = model.stayTime
                 leaveView.stayTimeLabel.text = "\(model.stayTime)" + "分"
                 leaveView.feeLabel.text = "¥" + formatNumber(String(model.totalAmount))
                 stopLoading()
