@@ -400,6 +400,7 @@ private extension DenominationView {
         scrollView.addSubview(memoTitleLabel)
         
         setupTextField(memoTextField, text: "")
+        memoTextField.keyboardType = .default
         scrollView.addSubview(memoTextField)
 
         setupButton(submitButton, text: "登録")
