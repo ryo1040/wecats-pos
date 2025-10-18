@@ -62,7 +62,7 @@ public struct GuestInfoEntity: Codable {
     var stayTime: Int
     var calcAmount: Int
     var discountAmount: Int
-    var salesAmount: Int
+    var saleAmount: Int
     var gachaAmount: Int
     var totalAmount: Int
     var stayingFlag: Bool
@@ -83,7 +83,7 @@ public struct GuestInfoEntity: Codable {
         case stayTime = "stay_time"
         case calcAmount = "calc_amount"
         case discountAmount = "discount_amount"
-        case salesAmount = "sales_amount"
+        case saleAmount = "sales_amount"
         case gachaAmount = "gacha_amount"
         case totalAmount = "total_amount"
         case memo = "memo"

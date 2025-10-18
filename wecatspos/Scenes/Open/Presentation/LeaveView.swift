@@ -9,9 +9,9 @@ import Foundation
 import UIKit
 
 protocol LeaveDelegate: AnyObject  {
-    func tapLeaveSubmitButton(id: Int, repeatFlag: Bool, patternId: Int, name: String?, date: String, holidayFlag: Bool, kidsDayFlag: Bool, adultCount: Int, childCount: Int, enterTime: String, leftTime: String, stayTime: Int, calcAmount: Int, discountAmount: Int, salesAmount: Int, gachaAmount: Int, totalAmount: Int, memo: String)
+    func tapLeaveSubmitButton(id: Int, repeatFlag: Bool, patternId: Int, name: String?, date: String, holidayFlag: Bool, kidsDayFlag: Bool, adultCount: Int, childCount: Int, enterTime: String, leftTime: String, stayTime: Int, calcAmount: Int, discountAmount: Int, saleAmount: Int, gachaAmount: Int, totalAmount: Int, memo: String)
     func tapLeaveCancelButton()
-    func calcTotalAmount(enterTime: String, leftTime: String, adultCount: Int, childCount: Int, discountAmount: String, salesAmount: String)
+    func calcTotalAmount(enterTime: String, leftTime: String, adultCount: Int, childCount: Int, discountAmount: String, saleAmount: String)
 }
 
 public class LeaveView: UIView {
@@ -33,8 +33,8 @@ public class LeaveView: UIView {
     let discountAmountTextField = UITextField()
     let gachaAmountTitleLabel = UILabel()
     let gachaAmountTextField = UITextField()
-    let salesAmountTitleLabel = UILabel()
-    let salesAmountTextField = UITextField()
+    let saleAmountTitleLabel = UILabel()
+    let saleAmountTextField = UITextField()
     let feeTitleLabel = UILabel()
     let feeLabel = UILabel()
     let feeCalcButton = UIButton()
@@ -56,7 +56,7 @@ public class LeaveView: UIView {
     var stayTime: Int = 0
     var calcAmount: Int = 0
     var discountAmount: Int = 0
-    var salesAmount: Int = 0
+    var saleAmount: Int = 0
     var gachaAmount: Int = 0
     var totalAmount: Int = 0
     var adultCount: Int = 0
@@ -107,7 +107,7 @@ public class LeaveView: UIView {
         leftTimeTextField.text = formatter.string(from: Date())
         stayTimeLabel.text = ""
         discountAmountTextField.text = "0"
-        salesAmountTextField.text = "0"
+        saleAmountTextField.text = "0"
         gachaAmountTextField.text = "0"
         feeLabel.text = ""
         memoTextField.text = memo
@@ -271,15 +271,15 @@ private extension LeaveView {
         scrollView.addSubview(gachaAmountTextField)
         setupGachaAmountTextField()
 
-        setupLabel(salesAmountTitleLabel, text: "販売額：")
-        scrollView.addSubview(salesAmountTitleLabel)
+        setupLabel(saleAmountTitleLabel, text: "販売額：")
+        scrollView.addSubview(saleAmountTitleLabel)
         
-        setupTextField(salesAmountTextField, text: "0")
-        salesAmountTextField.keyboardType = .numberPad
-        salesAmountTextField.frame = self.frame
-        salesAmountTextField.tag = 3
-        scrollView.addSubview(salesAmountTextField)
-        setupSalesAmountTextField()
+        setupTextField(saleAmountTextField, text: "0")
+        saleAmountTextField.keyboardType = .numberPad
+        saleAmountTextField.frame = self.frame
+        saleAmountTextField.tag = 3
+        scrollView.addSubview(saleAmountTextField)
+        setupSaleAmountTextField()
         
         setupLabel(feeTitleLabel, text: "レジ精算料金：")
         scrollView.addSubview(feeTitleLabel)
@@ -316,7 +316,7 @@ private extension LeaveView {
         leftTimeTextField.delegate = self
         discountAmountTextField.delegate = self
         gachaAmountTextField.delegate = self
-        salesAmountTextField.delegate = self
+        saleAmountTextField.delegate = self
         
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         errorMessageLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -330,8 +330,8 @@ private extension LeaveView {
         discountAmountTextField.translatesAutoresizingMaskIntoConstraints = false
         gachaAmountTitleLabel.translatesAutoresizingMaskIntoConstraints = false
         gachaAmountTextField.translatesAutoresizingMaskIntoConstraints = false
-        salesAmountTitleLabel.translatesAutoresizingMaskIntoConstraints = false
-        salesAmountTextField.translatesAutoresizingMaskIntoConstraints = false
+        saleAmountTitleLabel.translatesAutoresizingMaskIntoConstraints = false
+        saleAmountTextField.translatesAutoresizingMaskIntoConstraints = false
         feeTitleLabel.translatesAutoresizingMaskIntoConstraints = false
         feeLabel.translatesAutoresizingMaskIntoConstraints = false
         feeCalcButton.translatesAutoresizingMaskIntoConstraints = false
@@ -374,13 +374,13 @@ private extension LeaveView {
                 discountAmountTextField.leftAnchor.constraint(equalTo: discountAmountTitleLabel.rightAnchor, constant: 8),
                 discountAmountTextField.widthAnchor.constraint(equalToConstant: 120),
 
-                salesAmountTitleLabel.topAnchor.constraint(equalTo: discountAmountTitleLabel.bottomAnchor, constant: 16),
-                salesAmountTitleLabel.rightAnchor.constraint(equalTo: enterTimeTitleLabel.rightAnchor),
-                salesAmountTextField.topAnchor.constraint(equalTo: salesAmountTitleLabel.topAnchor),
-                salesAmountTextField.bottomAnchor.constraint(equalTo: salesAmountTitleLabel.bottomAnchor),
-                salesAmountTextField.leftAnchor.constraint(equalTo: salesAmountTitleLabel.rightAnchor, constant: 8),
-                salesAmountTextField.widthAnchor.constraint(equalToConstant: 120),
-                feeTitleLabel.topAnchor.constraint(equalTo: salesAmountTitleLabel.bottomAnchor, constant: 16),
+                saleAmountTitleLabel.topAnchor.constraint(equalTo: discountAmountTitleLabel.bottomAnchor, constant: 16),
+                saleAmountTitleLabel.rightAnchor.constraint(equalTo: enterTimeTitleLabel.rightAnchor),
+                saleAmountTextField.topAnchor.constraint(equalTo: saleAmountTitleLabel.topAnchor),
+                saleAmountTextField.bottomAnchor.constraint(equalTo: saleAmountTitleLabel.bottomAnchor),
+                saleAmountTextField.leftAnchor.constraint(equalTo: saleAmountTitleLabel.rightAnchor, constant: 8),
+                saleAmountTextField.widthAnchor.constraint(equalToConstant: 120),
+                feeTitleLabel.topAnchor.constraint(equalTo: saleAmountTitleLabel.bottomAnchor, constant: 16),
                 feeTitleLabel.rightAnchor.constraint(equalTo: enterTimeTitleLabel.rightAnchor),
                 feeLabel.topAnchor.constraint(equalTo: feeTitleLabel.topAnchor),
                 feeLabel.bottomAnchor.constraint(equalTo: feeTitleLabel.bottomAnchor),
@@ -444,13 +444,13 @@ private extension LeaveView {
                 discountAmountTextField.leftAnchor.constraint(equalTo: discountAmountTitleLabel.rightAnchor, constant: 16),
                 discountAmountTextField.widthAnchor.constraint(equalToConstant: 240),
 
-                salesAmountTitleLabel.topAnchor.constraint(equalTo: discountAmountTitleLabel.bottomAnchor, constant: 32),
-                salesAmountTitleLabel.rightAnchor.constraint(equalTo: enterTimeTitleLabel.rightAnchor),
-                salesAmountTextField.topAnchor.constraint(equalTo: salesAmountTitleLabel.topAnchor),
-                salesAmountTextField.bottomAnchor.constraint(equalTo: salesAmountTitleLabel.bottomAnchor),
-                salesAmountTextField.leftAnchor.constraint(equalTo: salesAmountTitleLabel.rightAnchor, constant: 16),
-                salesAmountTextField.widthAnchor.constraint(equalToConstant: 240),
-                feeTitleLabel.topAnchor.constraint(equalTo: salesAmountTitleLabel.bottomAnchor, constant: 32),
+                saleAmountTitleLabel.topAnchor.constraint(equalTo: discountAmountTitleLabel.bottomAnchor, constant: 32),
+                saleAmountTitleLabel.rightAnchor.constraint(equalTo: enterTimeTitleLabel.rightAnchor),
+                saleAmountTextField.topAnchor.constraint(equalTo: saleAmountTitleLabel.topAnchor),
+                saleAmountTextField.bottomAnchor.constraint(equalTo: saleAmountTitleLabel.bottomAnchor),
+                saleAmountTextField.leftAnchor.constraint(equalTo: saleAmountTitleLabel.rightAnchor, constant: 16),
+                saleAmountTextField.widthAnchor.constraint(equalToConstant: 240),
+                feeTitleLabel.topAnchor.constraint(equalTo: saleAmountTitleLabel.bottomAnchor, constant: 32),
                 feeTitleLabel.rightAnchor.constraint(equalTo: enterTimeTitleLabel.rightAnchor),
                 feeLabel.topAnchor.constraint(equalTo: feeTitleLabel.topAnchor),
                 feeLabel.bottomAnchor.constraint(equalTo: feeTitleLabel.bottomAnchor),
@@ -570,22 +570,22 @@ private extension LeaveView {
         discountAmountTextField.resignFirstResponder() // キーボードを閉じる
     }
     
-    private func setupSalesAmountTextField() {
+    private func setupSaleAmountTextField() {
         // ツールバーを作成
         let toolbar = UIToolbar()
         toolbar.sizeToFit()
         
         // 「完了」ボタンを作成
-        let doneButton = UIBarButtonItem(title: "完了", style: .done, target: self, action: #selector(doneSalesAmountKeyboard))
+        let doneButton = UIBarButtonItem(title: "完了", style: .done, target: self, action: #selector(doneSaleAmountKeyboard))
         let flexibleSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
         toolbar.setItems([flexibleSpace, doneButton], animated: true)
         
         // ツールバーをテキストフィールドに設定
-        salesAmountTextField.inputAccessoryView = toolbar
+        saleAmountTextField.inputAccessoryView = toolbar
     }
     
-    @objc private func doneSalesAmountKeyboard() {
-        salesAmountTextField.resignFirstResponder() // キーボードを閉じる
+    @objc private func doneSaleAmountKeyboard() {
+        saleAmountTextField.resignFirstResponder() // キーボードを閉じる
     }
     
     private func setupGachaAmountTextField() {
@@ -635,7 +635,7 @@ private extension LeaveView {
         }
         
         // 料金計算
-        delegate?.calcTotalAmount(enterTime: enterTimeTextField.text ?? "", leftTime: leftTimeTextField.text ?? "", adultCount: self.adultCount, childCount: self.childCount, discountAmount: discountAmountTextField.text?.replacingOccurrences(of: ",", with: "") ?? "", salesAmount: salesAmountTextField.text?.replacingOccurrences(of: ",", with: "") ?? "")
+        delegate?.calcTotalAmount(enterTime: enterTimeTextField.text ?? "", leftTime: leftTimeTextField.text ?? "", adultCount: self.adultCount, childCount: self.childCount, discountAmount: discountAmountTextField.text?.replacingOccurrences(of: ",", with: "") ?? "", saleAmount: saleAmountTextField.text?.replacingOccurrences(of: ",", with: "") ?? "")
     }
     
     // 退店登録ボタンタップ時のイベント
@@ -654,8 +654,8 @@ private extension LeaveView {
         // ガチャ額も含めたトータル金額を算出
         let discountAmountText = discountAmountTextField.text?.replacingOccurrences(of: ",", with: "") ?? "0"
         self.discountAmount = Int(discountAmountText) ?? 0
-        let salesAmountText = salesAmountTextField.text?.replacingOccurrences(of: ",", with: "") ?? "0"
-        self.salesAmount = Int(salesAmountText) ?? 0
+        let saleAmountText = saleAmountTextField.text?.replacingOccurrences(of: ",", with: "") ?? "0"
+        self.saleAmount = Int(saleAmountText) ?? 0
         let gachaAmountText = gachaAmountTextField.text?.replacingOccurrences(of: ",", with: "") ?? "0"
         self.gachaAmount = Int(gachaAmountText) ?? 0
         let calcAmountText = feeLabel.text?.replacingOccurrences(of: ",", with: "").replacingOccurrences(of: "¥", with: "") ?? "0"
@@ -663,7 +663,7 @@ private extension LeaveView {
         self.totalAmount = self.calcAmount + self.gachaAmount
         
         // 退店データをサーバに登録
-        delegate?.tapLeaveSubmitButton(id: id, repeatFlag: repeatFlag, patternId: patternId, name: name, date: date, holidayFlag: holidayFlag, kidsDayFlag: kidsDayFlag, adultCount: adultCount, childCount: childCount, enterTime: enterTimeTextField.text!, leftTime: leftTimeTextField.text!, stayTime: stayTime, calcAmount: calcAmount, discountAmount: discountAmount, salesAmount: salesAmount, gachaAmount: gachaAmount, totalAmount: totalAmount, memo: memoTextField.text!)
+        delegate?.tapLeaveSubmitButton(id: id, repeatFlag: repeatFlag, patternId: patternId, name: name, date: date, holidayFlag: holidayFlag, kidsDayFlag: kidsDayFlag, adultCount: adultCount, childCount: childCount, enterTime: enterTimeTextField.text!, leftTime: leftTimeTextField.text!, stayTime: stayTime, calcAmount: calcAmount, discountAmount: discountAmount, saleAmount: saleAmount, gachaAmount: gachaAmount, totalAmount: totalAmount, memo: memoTextField.text!)
     }
     
     // キャンセルボタンタップ時のイベント
@@ -672,7 +672,7 @@ private extension LeaveView {
         leftTimeTextField.text = ""
         stayTimeLabel.text = ""
         discountAmountTextField.text = ""
-        salesAmountTextField.text = ""
+        saleAmountTextField.text = ""
         feeLabel.text = ""
         gachaAmountTextField.text = ""
         delegate?.tapLeaveCancelButton()
@@ -688,7 +688,7 @@ private extension LeaveView {
         if discountAmountTextField.text == "" {
             return "割引額を入力してください"
         }
-        if salesAmountTextField.text == "" {
+        if saleAmountTextField.text == "" {
             return "販売額を入力してください"
         }
         return ""
