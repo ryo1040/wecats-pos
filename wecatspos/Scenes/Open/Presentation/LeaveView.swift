@@ -652,10 +652,15 @@ private extension LeaveView {
         }
 
         // ガチャ額も含めたトータル金額を算出
+        let discountAmountText = discountAmountTextField.text?.replacingOccurrences(of: ",", with: "") ?? "0"
+        self.discountAmount = Int(discountAmountText) ?? 0
+        let salesAmountText = salesAmountTextField.text?.replacingOccurrences(of: ",", with: "") ?? "0"
+        self.salesAmount = Int(salesAmountText) ?? 0
         let gachaAmountText = gachaAmountTextField.text?.replacingOccurrences(of: ",", with: "") ?? "0"
         self.gachaAmount = Int(gachaAmountText) ?? 0
-        let totalAmountText = Int(feeLabel.text?.replacingOccurrences(of: ",", with: "").replacingOccurrences(of: "¥", with: "") ?? "0") ?? 0
-        self.totalAmount = totalAmountText + self.gachaAmount
+        let calcAmountText = feeLabel.text?.replacingOccurrences(of: ",", with: "").replacingOccurrences(of: "¥", with: "") ?? "0"
+        self.calcAmount = Int(calcAmountText) ?? 0
+        self.totalAmount = self.calcAmount + self.gachaAmount
         
         // 退店データをサーバに登録
         delegate?.tapLeaveSubmitButton(id: id, repeatFlag: repeatFlag, patternId: patternId, name: name, date: date, holidayFlag: holidayFlag, kidsDayFlag: kidsDayFlag, adultCount: adultCount, childCount: childCount, enterTime: enterTimeTextField.text!, leftTime: leftTimeTextField.text!, stayTime: stayTime, calcAmount: calcAmount, discountAmount: discountAmount, salesAmount: salesAmount, gachaAmount: gachaAmount, totalAmount: totalAmount, memo: memoTextField.text!)
