@@ -89,6 +89,8 @@ private extension CareViewController {
         earCleanButton.setTitleColor(UIColor.white, for: .normal)
         earCleanButton.addTarget(self, action: #selector(self.tapEarCleanButton(_:)), for: UIControl.Event.touchUpInside)
         setupButton(brushingButton, text: "ブラッシング")
+        brushingButton.titleLabel?.numberOfLines = 0
+        brushingButton.titleLabel?.textAlignment = .center
         brushingButton.addTarget(self, action: #selector(self.tapBrushingButton(_:)), for: UIControl.Event.touchUpInside)
         setupButton(pillRemoveButton, text: "毛玉取り")
         pillRemoveButton.addTarget(self, action: #selector(self.tapPillRemoveButton(_:)), for: UIControl.Event.touchUpInside)
@@ -195,12 +197,14 @@ private extension CareViewController {
     }
     
     @objc func tapEarCleanButton(_ sender: UIButton) {
+        startLoading()
         selectedCareType = 1
         presenter.load(careType: selectedCareType)
         updateButtonSelection(selectedButton: earCleanButton)
     }
     
     @objc func tapBrushingButton(_ sender: UIButton) {
+        startLoading()
         selectedCareType = 2
         startLoading()
         presenter.load(careType: selectedCareType)
@@ -208,6 +212,7 @@ private extension CareViewController {
     }
     
     @objc func tapPillRemoveButton(_ sender: UIButton) {
+        startLoading()
         selectedCareType = 3
         startLoading()
         presenter.load(careType: selectedCareType)
@@ -215,6 +220,7 @@ private extension CareViewController {
     }
     
     @objc func tapNailClippersButton(_ sender: UIButton) {
+        startLoading()
         selectedCareType = 4
         startLoading()
         presenter.load(careType: selectedCareType)
@@ -222,6 +228,7 @@ private extension CareViewController {
     }
     
     @objc func tapTeethBrushingButton(_ sender: UIButton) {
+        startLoading()
         selectedCareType = 5
         startLoading()
         presenter.load(careType: selectedCareType)
@@ -414,6 +421,8 @@ extension CareViewController: UITableViewDelegate, UITableViewDataSource {
                 return
             }
             
+            startLoading()
+            
             // 削除データ退避
             let deleteCareInfo = self.careInfoList[indexPath.row]
             
@@ -436,6 +445,8 @@ extension CareViewController: UITableViewDelegate, UITableViewDataSource {
                 return
             }
             
+            startLoading()
+            
             let registerCareInfo = self.careInfoList[indexPath.row]
             
             self.tapRegisterButton(selectedRow: registerCareInfo)
@@ -444,10 +455,93 @@ extension CareViewController: UITableViewDelegate, UITableViewDataSource {
         }
         registerAction.backgroundColor = .systemBlue
         
+        // メモ編集アクション
+        let memoAction = UIContextualAction(style: .normal, title: "メモ\n編集") { [weak self] (action, view, completionHandler) in
+            guard let self = self else {
+                completionHandler(false)
+                return
+            }
+            
+            let careInfo = self.careInfoList[indexPath.row]
+            self.showMemoEditDialog(for: careInfo, at: indexPath)
+            
+            completionHandler(true)
+        }
+        memoAction.backgroundColor = UIColor.systemOrange
+
         // スワイプアクション設定を作成（右から左にスワイプ時）
-        let configuration = UISwipeActionsConfiguration(actions: [deleteAction, registerAction])
+        let configuration = UISwipeActionsConfiguration(actions: [deleteAction, memoAction, registerAction])
         configuration.performsFirstActionWithFullSwipe = false // フルスワイプで自動実行を無効化
         
         return configuration
+    }
+}
+
+// MARK: - メモ編集機能
+private extension CareViewController {
+    
+    /// メモ編集ダイアログを表示
+    func showMemoEditDialog(for careInfo: CareInfoModel, at indexPath: IndexPath) {
+        let alertController = UIAlertController(
+            title: "メモ編集",
+            message: "\(careInfo.catName)のメモを編集してください",
+            preferredStyle: .alert
+        )
+        
+        // テキストフィールドを追加
+        alertController.addTextField { textField in
+            textField.text = careInfo.memo
+            textField.placeholder = "メモを入力してください"
+            textField.clearButtonMode = .whileEditing
+            
+            // レスポンシブルデザイン対応
+            if self.screenWidth < 668 {
+                textField.font = UIFont.systemFont(ofSize: 14)
+            } else {
+                textField.font = UIFont.systemFont(ofSize: 16)
+            }
+        }
+        
+        // 保存ボタン
+        let saveAction = UIAlertAction(title: "保存", style: .default) { [weak self] _ in
+            guard let self = self,
+                  let textField = alertController.textFields?.first,
+                  let newMemo = textField.text else { return }
+            
+            self.updateMemo(for: careInfo, newMemo: newMemo, at: indexPath)
+        }
+        
+        // キャンセルボタン
+        let cancelAction = UIAlertAction(title: "キャンセル", style: .cancel)
+        
+        alertController.addAction(saveAction)
+        alertController.addAction(cancelAction)
+        
+        // iPadでの表示対応
+        if let popover = alertController.popoverPresentationController {
+            popover.sourceView = self.view
+            popover.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
+            popover.permittedArrowDirections = []
+        }
+        
+        present(alertController, animated: true)
+    }
+    
+    /// メモを更新
+    func updateMemo(for careInfo: CareInfoModel, newMemo: String, at indexPath: IndexPath) {
+        startLoading()
+        
+        // メモを更新したCareInfoModelを作成
+        let updatedCareInfo = CareInfoModel(
+            catId: careInfo.catId,
+            catName: careInfo.catName,
+            careType: careInfo.careType,
+            branch: careInfo.branch,
+            careDate: careInfo.careDate,
+            memo: newMemo
+        )
+        
+        // プレゼンターにメモ更新を依頼
+        presenter.editCareMemo(selectedCareType: careInfo.careType, selectedRow: updatedCareInfo)
     }
 }

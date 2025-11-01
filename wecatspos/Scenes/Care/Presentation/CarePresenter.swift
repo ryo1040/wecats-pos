@@ -14,6 +14,7 @@ protocol CarePresenterProtocol: AnyObject {
     func load(careType: Int)
     func didTapMenuButton()
     func setCareInfo(selectedCareType: Int, selectedRow: CareInfoModel)
+    func editCareMemo(selectedCareType: Int, selectedRow: CareInfoModel)
     func deleteCareInfo(selectedCareType: Int, selectedRow: CareInfoModel)
 }
 
@@ -69,7 +70,7 @@ final class CarePresenter: CarePresenterProtocol {
     func setCareInfo(selectedCareType: Int, selectedRow: CareInfoModel) {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd"
-        let param = SetCareInfoRequestParam(catId: selectedRow.catId, careType: selectedCareType, careDate: formatter.string(from: Date()), memo: selectedRow.memo)
+        let param = SetCareInfoRequestParam(catId: selectedRow.catId, careType: selectedCareType, careDate: formatter.string(from: Date()), memo: "")
         
         Observable.just(Void())
             .flatMap { [unowned self] in
@@ -92,6 +93,35 @@ final class CarePresenter: CarePresenterProtocol {
                 if option == Sentence.DIALOG_BTN_RETRY {
                     // ボタンタップ時に再試行
                     self.setCareInfo(selectedCareType: selectedCareType, selectedRow: selectedRow)
+                }
+            })
+            .disposed(by: self.disposeBag)
+    }
+    
+    func editCareMemo(selectedCareType: Int, selectedRow: CareInfoModel) {
+        let param = SetCareInfoRequestParam(catId: selectedRow.catId, careType: selectedCareType, careDate: selectedRow.careDate, memo: selectedRow.memo)
+        
+        Observable.just(Void())
+            .flatMap { [unowned self] in
+                self.useCase.setCareInfoList(param: param)
+            }
+            .subscribe(onNext: {
+                [unowned self] model in
+                print(model)
+                self.viewCareInfo.onNext(model)
+            }, onError: { error in
+                self.handleSetCareInfoError(error, selectedCareType: selectedCareType, selectedRow: selectedRow)
+                print(error)
+            })
+            .disposed(by: self.disposeBag)
+    }
+    
+    func handleEditCareMemoError(_ error: Error, selectedCareType: Int, selectedRow: CareInfoModel) {
+        self.wireframe.presentAlert(Sentence.MSG_NETWORK_ERROR, buttonTitle: Sentence.DIALOG_BTN_RETRY)
+            .subscribe(onNext: { option in
+                if option == Sentence.DIALOG_BTN_RETRY {
+                    // ボタンタップ時に再試行
+                    self.editCareMemo(selectedCareType: selectedCareType, selectedRow: selectedRow)
                 }
             })
             .disposed(by: self.disposeBag)
