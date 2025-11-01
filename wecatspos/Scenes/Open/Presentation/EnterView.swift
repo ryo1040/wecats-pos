@@ -45,6 +45,21 @@ public class EnterView: UIView {
     let updateButton = UIButton()
     let cancelButton = UIButton()
     
+    let screenWidth = UIScreen.main.bounds.width
+    
+    // 制約管理用のプロパティを追加
+    private var currentConstraints: [NSLayoutConstraint] = []
+    
+    // 画面向きを判定するプロパティ
+    private var isPortrait: Bool {
+        return UIScreen.main.bounds.height > UIScreen.main.bounds.width
+    }
+    
+    // 動的に更新されるscreenWidthプロパティ
+    private var dynamicScreenWidth: CGFloat {
+        return UIScreen.main.bounds.width
+    }
+    
     // ドラムロールの選択肢
     let repeatPickerData = [(id: 1, name: "新規"), (id: 2, name: "リピーター")]
     let patternPickerData = [(id: 1, name: "家族"), (id: 2, name: "友人"), (id: 3, name: "おひとり"), (id: 4, name: "その他")]
@@ -65,6 +80,8 @@ public class EnterView: UIView {
         super.init(frame: .zero)
                 
         setupViews()
+        
+        setupOrientationObserver()
 
         enterTimePicker.date = Date()
         
@@ -77,7 +94,12 @@ public class EnterView: UIView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
+    deinit {
+        // NotificationCenterの監視を解除
+        removeOrientationObserver()
+    }
+
     func setEnterInfo() {
         repeatTextField.text = ""
         patternTextField.text = ""
@@ -133,377 +155,454 @@ private extension EnterView {
     func setupViews() {
         self.backgroundColor = UIColor(red: 239/255, green: 236/255, blue: 231/255, alpha: 1.0)
 
+        // UI要素の基本設定のみ行う（制約は後で動的に設定）
+        setupUIElements()
+        
+        // 初回レイアウト設定
+        updateLayoutForCurrentOrientation()
+//
+//        func setupTextField(_ textField: UITextField, text: String = "") {
+//            textField.backgroundColor = UIColor.white
+//            textField.text = text
+//            textField.textColor = UIColor.black
+//            textField.keyboardType = .default
+//            textField.returnKeyType = .next
+//            textField.textAlignment = .center
+//            if screenWidth < 668 {
+//                textField.font = UIFont.systemFont(ofSize: 16)
+//            } else {
+//                textField.font = UIFont.systemFont(ofSize: 32)
+//            }
+//            textField.borderStyle = .roundedRect
+//            textField.layer.borderColor = UIColor.black.cgColor
+//            textField.layer.borderWidth = 1.0
+//            textField.translatesAutoresizingMaskIntoConstraints = false
+//        }
+//        
+//        func setupLabel(_ label: UILabel, text: String = "") {
+//            label.text = text
+//            label.textColor = UIColor.black
+//            if screenWidth < 668 {
+//                label.font = UIFont.systemFont(ofSize: 16)
+//            } else {
+//                label.font = UIFont.systemFont(ofSize: 32)
+//            }
+//            label.translatesAutoresizingMaskIntoConstraints = false
+//        }
+//        
+//        func setupButton(_ button: UIButton, text: String = "") {
+//            button.setTitle(text, for: .normal)
+//            button.setTitleColor(UIColor.black, for: .normal)
+//            button.backgroundColor = UIColor.white
+//            button.layer.borderColor = UIColor.black.cgColor
+//            button.layer.borderWidth = 1.0
+//            button.layer.cornerRadius = 10
+//            button.translatesAutoresizingMaskIntoConstraints = false
+//        }
+//        
+//        scrollView.isScrollEnabled = true
+////        scrollView.delegate = self
+//        scrollView.contentInsetAdjustmentBehavior = .never
+//        self.addSubview(scrollView)
+//        
+//        pickerBackgroundView.backgroundColor = UIColor.black.withAlphaComponent(0.5) // 半透明のグレー
+//        pickerBackgroundView.isHidden = true
+//        self.addSubview(pickerBackgroundView)
+//        
+//        errorMessageLabel.text = " "
+//        errorMessageLabel.textColor = UIColor.red
+//        errorMessageLabel.translatesAutoresizingMaskIntoConstraints = false
+//        scrollView.addSubview(errorMessageLabel)
+//        
+//        setupLabel(repeatTitleLabel, text: "新規/リピーター：")
+//        scrollView.addSubview(repeatTitleLabel)
+//        
+//        setupTextField(repeatTextField)
+//        repeatTextField.frame = self.frame
+//        repeatTextField.tag = 1
+//        scrollView.addSubview(repeatTextField)
+//        
+//        setupLabel(patternTitleLabel, text: "パターン：")
+//        scrollView.addSubview(patternTitleLabel)
+//
+//        setupTextField(patternTextField)
+//        patternTextField.frame = self.frame
+//        patternTextField.tag = 1
+//        scrollView.addSubview(patternTextField)
+//        
+//        setupRepeatTextField()
+//        
+//        setupLabel(nameTitleLabel, text: "氏名（わかれば）：")
+//        scrollView.addSubview(nameTitleLabel)
+//        
+//        setupTextField(nameTextField)
+//        nameTextField.frame = self.frame
+//        nameTextField.tag = 1
+//        scrollView.addSubview(nameTextField)
+//        
+//        setupPatternTextField()
+//        
+//        setupLabel(countTitleLabel, text: "人数：")
+//        countTitleLabel.textColor = UIColor.black
+//        scrollView.addSubview(countTitleLabel)
+//        
+//        setupLabel(countAdultTitleLabel, text: "大人：")
+//        scrollView.addSubview(countAdultTitleLabel)
+//        
+//        setupTextField(countAdultTextField)
+//        countAdultTextField.frame = self.frame
+//        countAdultTextField.tag = 2
+//        scrollView.addSubview(countAdultTextField)
+//        
+//        setupCountAdultTextField()
+//        
+//        setupLabel(countChildTitleLabel, text: "子供：")
+//        scrollView.addSubview(countChildTitleLabel)
+//        
+//        setupTextField(countChildTextField)
+//        countChildTextField.frame = self.frame
+//        countChildTextField.tag = 3
+//        scrollView.addSubview(countChildTextField)
+//        
+//        setupCountChildTextField()
+//        
+//        setupLabel(enterTimeLabel, text: "入店時間：")
+//        enterTimeLabel.textColor = UIColor.black
+//        scrollView.addSubview(enterTimeLabel)
+//        
+//        setupTextField(enterTimeTextField)
+//        enterTimeTextField.frame = self.frame
+//        enterTimeTextField.tag = 3
+//        scrollView.addSubview(enterTimeTextField)
+//        
+//        setupEnterTimeTextField()
+//
+//        setupLabel(memoTitleLabel, text: "メモ：")
+//        scrollView.addSubview(memoTitleLabel)
+//        
+//        setupTextField(memoTextField)
+//        let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 8, height: 0))
+//        paddingView.backgroundColor = UIColor.clear
+//        memoTextField.leftView = paddingView
+//        memoTextField.leftViewMode = .always
+//        memoTextField.frame = self.frame
+//        memoTextField.tag = 4
+//        scrollView.addSubview(memoTextField)
+//        
+//        submitButton.setTitle("入店", for: .normal)
+//        submitButton.setTitleColor(UIColor.black, for: .normal)
+//        submitButton.backgroundColor = UIColor.white
+//        submitButton.layer.borderColor = UIColor.black.cgColor
+//        submitButton.layer.borderWidth = 1.0
+//        submitButton.layer.cornerRadius = 10
+//        submitButton.addTarget(self, action: #selector(self.tapSubmitButton), for: .touchUpInside)
+//        self.addSubview(submitButton)
+//        
+//        updateButton.setTitle("更新", for: .normal)
+//        updateButton.setTitleColor(UIColor.black, for: .normal)
+//        updateButton.backgroundColor = UIColor.white
+//        updateButton.layer.borderColor = UIColor.black.cgColor
+//        updateButton.layer.borderWidth = 1.0
+//        updateButton.layer.cornerRadius = 10
+//        updateButton.addTarget(self, action: #selector(self.tapUpdateButton), for: .touchUpInside)
+//        self.addSubview(updateButton)
+//        
+//        cancelButton.setTitle("キャンセル", for: .normal)
+//        cancelButton.setTitleColor(UIColor.black, for: .normal)
+//        cancelButton.backgroundColor = UIColor.white
+//        cancelButton.layer.borderColor = UIColor.black.cgColor
+//        cancelButton.layer.borderWidth = 1.0
+//        cancelButton.layer.cornerRadius = 10
+//        cancelButton.addTarget(self, action: #selector(self.tapCancelButton), for: .touchUpInside)
+//        self.addSubview(cancelButton)
+//        
+//        scrollView.translatesAutoresizingMaskIntoConstraints = false
+//        pickerBackgroundView.translatesAutoresizingMaskIntoConstraints = false
+//        submitButton.translatesAutoresizingMaskIntoConstraints = false
+//        updateButton.translatesAutoresizingMaskIntoConstraints = false
+//        cancelButton.translatesAutoresizingMaskIntoConstraints = false
+//        
+//        NSLayoutConstraint.activate([
+//            scrollView.topAnchor.constraint(equalTo: self.safeAreaLayoutGuide.topAnchor),
+//            scrollView.bottomAnchor.constraint(equalTo: self.safeAreaLayoutGuide.bottomAnchor),
+//            scrollView.leftAnchor.constraint(equalTo: self.safeAreaLayoutGuide.leftAnchor),
+//            scrollView.rightAnchor.constraint(equalTo: self.safeAreaLayoutGuide.rightAnchor),
+//            pickerBackgroundView.topAnchor.constraint(equalTo: self.safeAreaLayoutGuide.topAnchor),
+//            pickerBackgroundView.bottomAnchor.constraint(equalTo: self.safeAreaLayoutGuide.bottomAnchor),
+//            pickerBackgroundView.leftAnchor.constraint(equalTo: self.safeAreaLayoutGuide.leftAnchor),
+//            pickerBackgroundView.rightAnchor.constraint(equalTo: self.safeAreaLayoutGuide.rightAnchor),
+//        ])
+//        
+//        // レスポンシブルデザイン対応
+//        if screenWidth < 668 { // 小さい画面の場合
+//            NSLayoutConstraint.activate([
+//                errorMessageLabel.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 8),
+//                errorMessageLabel.leftAnchor.constraint(equalTo: scrollView.leftAnchor, constant: 32),
+//                repeatTitleLabel.topAnchor.constraint(equalTo: errorMessageLabel.bottomAnchor, constant: 8),
+//                repeatTitleLabel.rightAnchor.constraint(equalTo: scrollView.leftAnchor, constant: 200),
+//                repeatTextField.topAnchor.constraint(equalTo: repeatTitleLabel.topAnchor),
+//                repeatTextField.bottomAnchor.constraint(equalTo: repeatTitleLabel.bottomAnchor),
+//                repeatTextField.leftAnchor.constraint(equalTo: repeatTitleLabel.rightAnchor, constant: 8),
+//                repeatTextField.widthAnchor.constraint(equalToConstant: 120),
+//                patternTitleLabel.topAnchor.constraint(equalTo: repeatTitleLabel.bottomAnchor, constant: 8),
+//                patternTitleLabel.rightAnchor.constraint(equalTo: repeatTitleLabel.rightAnchor),
+//                patternTextField.topAnchor.constraint(equalTo: patternTitleLabel.topAnchor),
+//                patternTextField.bottomAnchor.constraint(equalTo: patternTitleLabel.bottomAnchor),
+//                patternTextField.leftAnchor.constraint(equalTo: patternTitleLabel.rightAnchor, constant: 8),
+//                patternTextField.widthAnchor.constraint(equalToConstant: 120),
+//                nameTitleLabel.topAnchor.constraint(equalTo: patternTitleLabel.bottomAnchor, constant: 8),
+//                nameTitleLabel.rightAnchor.constraint(equalTo: repeatTitleLabel.rightAnchor),
+//                nameTextField.topAnchor.constraint(equalTo: nameTitleLabel.topAnchor),
+//                nameTextField.bottomAnchor.constraint(equalTo: nameTitleLabel.bottomAnchor),
+//                nameTextField.leftAnchor.constraint(equalTo: nameTitleLabel.rightAnchor, constant: 8),
+//                nameTextField.widthAnchor.constraint(equalToConstant: 120),
+//                countTitleLabel.topAnchor.constraint(equalTo: nameTitleLabel.bottomAnchor, constant: 8),
+//                countTitleLabel.rightAnchor.constraint(equalTo: repeatTitleLabel.rightAnchor),
+//                countAdultTitleLabel.topAnchor.constraint(equalTo: countTitleLabel.topAnchor),
+//                countAdultTitleLabel.bottomAnchor.constraint(equalTo: countTitleLabel.bottomAnchor),
+//                countAdultTitleLabel.leftAnchor.constraint(equalTo: countTitleLabel.rightAnchor, constant: 8),
+//                countAdultTextField.topAnchor.constraint(equalTo: countAdultTitleLabel.topAnchor),
+//                countAdultTextField.bottomAnchor.constraint(equalTo: countAdultTitleLabel.bottomAnchor),
+//                countAdultTextField.leftAnchor.constraint(equalTo: countAdultTitleLabel.rightAnchor),
+//                countAdultTextField.widthAnchor.constraint(equalToConstant: 40),
+//                countChildTitleLabel.topAnchor.constraint(equalTo: countAdultTitleLabel.topAnchor),
+//                countChildTitleLabel.bottomAnchor.constraint(equalTo: countAdultTitleLabel.bottomAnchor),
+//                countChildTitleLabel.leftAnchor.constraint(equalTo: countAdultTextField.rightAnchor, constant: 40),
+//                countChildTextField.topAnchor.constraint(equalTo: countChildTitleLabel.topAnchor),
+//                countChildTextField.bottomAnchor.constraint(equalTo: countChildTitleLabel.bottomAnchor),
+//                countChildTextField.leftAnchor.constraint(equalTo: countChildTitleLabel.rightAnchor, constant: 8),
+//                countChildTextField.widthAnchor.constraint(equalToConstant: 40),
+//                enterTimeLabel.topAnchor.constraint(equalTo: countAdultTitleLabel.bottomAnchor, constant: 8),
+//                enterTimeLabel.rightAnchor.constraint(equalTo: repeatTitleLabel.rightAnchor),
+//                enterTimeTextField.topAnchor.constraint(equalTo: enterTimeLabel.topAnchor),
+//                enterTimeTextField.bottomAnchor.constraint(equalTo: enterTimeLabel.bottomAnchor),
+//                enterTimeTextField.leftAnchor.constraint(equalTo: enterTimeLabel.rightAnchor, constant: 8),
+//                enterTimeTextField.widthAnchor.constraint(equalToConstant: 80),
+//                memoTitleLabel.topAnchor.constraint(equalTo: enterTimeLabel.bottomAnchor, constant: 8),
+//                memoTitleLabel.rightAnchor.constraint(equalTo: enterTimeLabel.rightAnchor),
+//                memoTextField.topAnchor.constraint(equalTo: memoTitleLabel.topAnchor),
+//                memoTextField.bottomAnchor.constraint(equalTo: memoTitleLabel.bottomAnchor),
+//                memoTextField.leftAnchor.constraint(equalTo: memoTitleLabel.rightAnchor, constant: 8),
+//                memoTextField.widthAnchor.constraint(equalToConstant: 200),
+//                submitButton.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: -8),
+//                submitButton.rightAnchor.constraint(equalTo: scrollView.rightAnchor, constant: -16),
+//                submitButton.heightAnchor.constraint(equalToConstant: 24),
+//                submitButton.widthAnchor.constraint(equalToConstant: 120),
+//                updateButton.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: -8),
+//                updateButton.rightAnchor.constraint(equalTo: scrollView.rightAnchor, constant: -16),
+//                updateButton.heightAnchor.constraint(equalToConstant: 24),
+//                updateButton.widthAnchor.constraint(equalToConstant: 120),
+//                cancelButton.bottomAnchor.constraint(equalTo: submitButton.bottomAnchor),
+//                cancelButton.rightAnchor.constraint(equalTo: submitButton.leftAnchor, constant: -16),
+//                cancelButton.heightAnchor.constraint(equalToConstant: 24),
+//                cancelButton.widthAnchor.constraint(equalToConstant: 120)
+//            ])
+//        } else { // 通常の画面の場合
+//            NSLayoutConstraint.activate([
+//                errorMessageLabel.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 32),
+//                errorMessageLabel.leftAnchor.constraint(equalTo: scrollView.leftAnchor, constant: 64),
+//                repeatTitleLabel.topAnchor.constraint(equalTo: errorMessageLabel.bottomAnchor, constant: 32),
+//                repeatTitleLabel.rightAnchor.constraint(equalTo: scrollView.leftAnchor, constant: 400),
+//                repeatTextField.topAnchor.constraint(equalTo: repeatTitleLabel.topAnchor),
+//                repeatTextField.bottomAnchor.constraint(equalTo: repeatTitleLabel.bottomAnchor),
+//                repeatTextField.leftAnchor.constraint(equalTo: repeatTitleLabel.rightAnchor, constant: 16),
+//                repeatTextField.widthAnchor.constraint(equalToConstant: 240),
+//                patternTitleLabel.topAnchor.constraint(equalTo: repeatTitleLabel.bottomAnchor, constant: 32),
+//                patternTitleLabel.rightAnchor.constraint(equalTo: repeatTitleLabel.rightAnchor),
+//                patternTextField.topAnchor.constraint(equalTo: patternTitleLabel.topAnchor),
+//                patternTextField.bottomAnchor.constraint(equalTo: patternTitleLabel.bottomAnchor),
+//                patternTextField.leftAnchor.constraint(equalTo: patternTitleLabel.rightAnchor, constant: 16),
+//                patternTextField.widthAnchor.constraint(equalToConstant: 240),
+//                nameTitleLabel.topAnchor.constraint(equalTo: patternTitleLabel.bottomAnchor, constant: 32),
+//                nameTitleLabel.rightAnchor.constraint(equalTo: repeatTitleLabel.rightAnchor),
+//                nameTextField.topAnchor.constraint(equalTo: nameTitleLabel.topAnchor),
+//                nameTextField.bottomAnchor.constraint(equalTo: nameTitleLabel.bottomAnchor),
+//                nameTextField.leftAnchor.constraint(equalTo: nameTitleLabel.rightAnchor, constant: 16),
+//                nameTextField.widthAnchor.constraint(equalToConstant: 240),
+//                countTitleLabel.topAnchor.constraint(equalTo: nameTitleLabel.bottomAnchor, constant: 32),
+//                countTitleLabel.rightAnchor.constraint(equalTo: repeatTitleLabel.rightAnchor),
+//                countAdultTitleLabel.topAnchor.constraint(equalTo: countTitleLabel.topAnchor),
+//                countAdultTitleLabel.bottomAnchor.constraint(equalTo: countTitleLabel.bottomAnchor),
+//                countAdultTitleLabel.leftAnchor.constraint(equalTo: countTitleLabel.rightAnchor, constant: 16),
+//                countAdultTextField.topAnchor.constraint(equalTo: countAdultTitleLabel.topAnchor),
+//                countAdultTextField.bottomAnchor.constraint(equalTo: countAdultTitleLabel.bottomAnchor),
+//                countAdultTextField.leftAnchor.constraint(equalTo: countAdultTitleLabel.rightAnchor),
+//                countAdultTextField.widthAnchor.constraint(equalToConstant: 80),
+//                countChildTitleLabel.topAnchor.constraint(equalTo: countAdultTitleLabel.topAnchor),
+//                countChildTitleLabel.bottomAnchor.constraint(equalTo: countAdultTitleLabel.bottomAnchor),
+//                countChildTitleLabel.leftAnchor.constraint(equalTo: countAdultTextField.rightAnchor, constant: 80),
+//                countChildTextField.topAnchor.constraint(equalTo: countChildTitleLabel.topAnchor),
+//                countChildTextField.bottomAnchor.constraint(equalTo: countChildTitleLabel.bottomAnchor),
+//                countChildTextField.leftAnchor.constraint(equalTo: countChildTitleLabel.rightAnchor, constant: 16),
+//                countChildTextField.widthAnchor.constraint(equalToConstant: 80),
+//                enterTimeLabel.topAnchor.constraint(equalTo: countAdultTitleLabel.bottomAnchor, constant: 32),
+//                enterTimeLabel.rightAnchor.constraint(equalTo: repeatTitleLabel.rightAnchor),
+//                enterTimeTextField.topAnchor.constraint(equalTo: enterTimeLabel.topAnchor),
+//                enterTimeTextField.bottomAnchor.constraint(equalTo: enterTimeLabel.bottomAnchor),
+//                enterTimeTextField.leftAnchor.constraint(equalTo: enterTimeLabel.rightAnchor, constant: 16),
+//                enterTimeTextField.widthAnchor.constraint(equalToConstant: 160),
+//                memoTitleLabel.topAnchor.constraint(equalTo: enterTimeLabel.bottomAnchor, constant: 32),
+//                memoTitleLabel.rightAnchor.constraint(equalTo: enterTimeLabel.rightAnchor),
+//                memoTextField.topAnchor.constraint(equalTo: memoTitleLabel.topAnchor),
+//                memoTextField.bottomAnchor.constraint(equalTo: memoTitleLabel.bottomAnchor),
+//                memoTextField.leftAnchor.constraint(equalTo: memoTitleLabel.rightAnchor, constant: 16),
+//                memoTextField.widthAnchor.constraint(equalToConstant: 400),
+//                submitButton.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: -32),
+//                submitButton.rightAnchor.constraint(equalTo: scrollView.rightAnchor, constant: -32),
+//                submitButton.heightAnchor.constraint(equalToConstant: 48),
+//                submitButton.widthAnchor.constraint(equalToConstant: 160),
+//                updateButton.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: -32),
+//                updateButton.rightAnchor.constraint(equalTo: scrollView.rightAnchor, constant: -32),
+//                updateButton.heightAnchor.constraint(equalToConstant: 48),
+//                updateButton.widthAnchor.constraint(equalToConstant: 160),
+//                cancelButton.bottomAnchor.constraint(equalTo: submitButton.bottomAnchor),
+//                cancelButton.rightAnchor.constraint(equalTo: submitButton.leftAnchor, constant: -32),
+//                cancelButton.heightAnchor.constraint(equalToConstant: 48),
+//                cancelButton.widthAnchor.constraint(equalToConstant: 160)
+//            ])
+//        }
+    }
+
+    /// UI要素の基本設定
+    func setupUIElements() {
+        func setupTextField(_ textField: UITextField, text: String = "") {
+            textField.backgroundColor = UIColor.white
+            textField.text = text
+            textField.textColor = UIColor.black
+            textField.keyboardType = .default
+            textField.returnKeyType = .next
+            textField.textAlignment = .center
+            textField.borderStyle = .roundedRect
+            textField.layer.borderColor = UIColor.black.cgColor
+            textField.layer.borderWidth = 1.0
+            textField.translatesAutoresizingMaskIntoConstraints = false
+        }
+        
+        func setupLabel(_ label: UILabel, text: String = "") {
+            label.text = text
+            label.textColor = UIColor.black
+            label.translatesAutoresizingMaskIntoConstraints = false
+        }
+        
+        func setupButton(_ button: UIButton, text: String = "") {
+            button.setTitle(text, for: .normal)
+            button.setTitleColor(UIColor.black, for: .normal)
+            button.backgroundColor = UIColor.white
+            button.layer.borderColor = UIColor.black.cgColor
+            button.layer.borderWidth = 1.0
+            button.layer.cornerRadius = 10
+            button.translatesAutoresizingMaskIntoConstraints = false
+        }
+        
+        // ScrollView設定
         scrollView.isScrollEnabled = true
-//        scrollView.delegate = self
         scrollView.contentInsetAdjustmentBehavior = .never
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
         self.addSubview(scrollView)
         
-        pickerBackgroundView.backgroundColor = UIColor.black.withAlphaComponent(0.5) // 半透明のグレー
+        // PickerBackgroundView設定
+        pickerBackgroundView.backgroundColor = UIColor.black.withAlphaComponent(0.5)
         pickerBackgroundView.isHidden = true
+        pickerBackgroundView.translatesAutoresizingMaskIntoConstraints = false
         self.addSubview(pickerBackgroundView)
         
+        // 全てのUI要素を設定
         errorMessageLabel.text = " "
         errorMessageLabel.textColor = UIColor.red
+        errorMessageLabel.translatesAutoresizingMaskIntoConstraints = false
         scrollView.addSubview(errorMessageLabel)
         
-        repeatTitleLabel.text = "新規/リピーター："
-        repeatTitleLabel.textColor = UIColor.black
+        setupLabel(repeatTitleLabel, text: "新規/リピーター：")
         scrollView.addSubview(repeatTitleLabel)
         
-        repeatTextField.keyboardType = .default
-        repeatTextField.returnKeyType = .next
-        repeatTextField.textColor = UIColor.black
-        repeatTextField.backgroundColor = UIColor.white
-        repeatTextField.textAlignment = .center
-        repeatTextField.borderStyle = .roundedRect
-        repeatTextField.layer.borderColor = UIColor.black.cgColor
-        repeatTextField.layer.borderWidth = 1.0
-        repeatTextField.frame = self.frame
+        setupTextField(repeatTextField)
         repeatTextField.tag = 1
         scrollView.addSubview(repeatTextField)
         
-        patternTitleLabel.text = "パターン："
-        patternTitleLabel.textColor = UIColor.black
+        setupLabel(patternTitleLabel, text: "パターン：")
         scrollView.addSubview(patternTitleLabel)
 
-        patternTextField.keyboardType = .default
-        patternTextField.returnKeyType = .next
-        patternTextField.textColor = UIColor.black
-        patternTextField.backgroundColor = UIColor.white
-        patternTextField.textAlignment = .center
-        patternTextField.borderStyle = .roundedRect
-        patternTextField.layer.borderColor = UIColor.black.cgColor
-        patternTextField.layer.borderWidth = 1.0
-        patternTextField.frame = self.frame
+        setupTextField(patternTextField)
         patternTextField.tag = 1
         scrollView.addSubview(patternTextField)
         
         setupRepeatTextField()
         
-        nameTitleLabel.text = "氏名（わかれば）："
-        nameTitleLabel.textColor = UIColor.black
+        setupLabel(nameTitleLabel, text: "氏名（わかれば）：")
         scrollView.addSubview(nameTitleLabel)
         
-        nameTextField.keyboardType = .default
-        nameTextField.returnKeyType = .next
-        nameTextField.textColor = UIColor.black
-        nameTextField.backgroundColor = UIColor.white
-        nameTextField.leftViewMode = .always
-        nameTextField.textAlignment = .center
-        nameTextField.borderStyle = .roundedRect
-        nameTextField.layer.borderColor = UIColor.black.cgColor
-        nameTextField.layer.borderWidth = 1.0
-        nameTextField.frame = self.frame
+        setupTextField(nameTextField)
         nameTextField.tag = 1
         scrollView.addSubview(nameTextField)
         
         setupPatternTextField()
         
-        countTitleLabel.text = "人数："
-        countTitleLabel.textColor = UIColor.black
+        setupLabel(countTitleLabel, text: "人数：")
         scrollView.addSubview(countTitleLabel)
         
-        countAdultTitleLabel.text = "大人："
-        countAdultTitleLabel.textColor = UIColor.black
+        setupLabel(countAdultTitleLabel, text: "大人：")
         scrollView.addSubview(countAdultTitleLabel)
         
-        countAdultTextField.keyboardType = .default
-        countAdultTextField.returnKeyType = .next
-        countAdultTextField.textColor = UIColor.black
-        countAdultTextField.backgroundColor = UIColor.white
-        countAdultTextField.textAlignment = .center
-        countAdultTextField.borderStyle = .roundedRect
-        countAdultTextField.layer.borderColor = UIColor.black.cgColor
-        countAdultTextField.layer.borderWidth = 1.0
-        countAdultTextField.frame = self.frame
+        setupTextField(countAdultTextField)
         countAdultTextField.tag = 2
         scrollView.addSubview(countAdultTextField)
         
         setupCountAdultTextField()
         
-        countChildTitleLabel.text = "子供："
-        countChildTitleLabel.textColor = UIColor.black
+        setupLabel(countChildTitleLabel, text: "子供：")
         scrollView.addSubview(countChildTitleLabel)
         
-        countChildTextField.keyboardType = .default
-        countChildTextField.returnKeyType = .next
-        countChildTextField.textColor = UIColor.black
-        countChildTextField.backgroundColor = UIColor.white
-        countChildTextField.textAlignment = .center
-        countChildTextField.borderStyle = .roundedRect
-        countChildTextField.layer.borderColor = UIColor.black.cgColor
-        countChildTextField.layer.borderWidth = 1.0
-        countChildTextField.frame = self.frame
+        setupTextField(countChildTextField)
         countChildTextField.tag = 3
         scrollView.addSubview(countChildTextField)
         
         setupCountChildTextField()
         
-        enterTimeLabel.text = "入店時間："
-        enterTimeLabel.textColor = UIColor.black
+        setupLabel(enterTimeLabel, text: "入店時間：")
         scrollView.addSubview(enterTimeLabel)
         
-        enterTimeTextField.keyboardType = .default
-        enterTimeTextField.returnKeyType = .next
-        enterTimeTextField.textColor = UIColor.black
-        enterTimeTextField.backgroundColor = UIColor.white
-        enterTimeTextField.textAlignment = .center
-        enterTimeTextField.borderStyle = .roundedRect
-        enterTimeTextField.layer.borderColor = UIColor.black.cgColor
-        enterTimeTextField.layer.borderWidth = 1.0
-        enterTimeTextField.frame = self.frame
+        setupTextField(enterTimeTextField)
         enterTimeTextField.tag = 3
         scrollView.addSubview(enterTimeTextField)
         
         setupEnterTimeTextField()
 
-        memoTitleLabel.text = "メモ："
-        memoTitleLabel.textColor = UIColor.black
+        setupLabel(memoTitleLabel, text: "メモ：")
         scrollView.addSubview(memoTitleLabel)
         
-        memoTextField.keyboardType = .default
-        memoTextField.returnKeyType = .next
-        memoTextField.textColor = UIColor.black
-        memoTextField.backgroundColor = UIColor.white
+        setupTextField(memoTextField)
         let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 8, height: 0))
         paddingView.backgroundColor = UIColor.clear
         memoTextField.leftView = paddingView
         memoTextField.leftViewMode = .always
-        memoTextField.borderStyle = .roundedRect
-        memoTextField.layer.borderColor = UIColor.black.cgColor
-        memoTextField.layer.borderWidth = 1.0
-        memoTextField.frame = self.frame
         memoTextField.tag = 4
         scrollView.addSubview(memoTextField)
         
-        submitButton.setTitle("入店", for: .normal)
-        submitButton.setTitleColor(UIColor.black, for: .normal)
-        submitButton.backgroundColor = UIColor.white
-        submitButton.layer.borderColor = UIColor.black.cgColor
-        submitButton.layer.borderWidth = 1.0
-        submitButton.layer.cornerRadius = 10
+        // ボタン設定
+        setupButton(submitButton, text: "入店")
         submitButton.addTarget(self, action: #selector(self.tapSubmitButton), for: .touchUpInside)
         self.addSubview(submitButton)
         
-        updateButton.setTitle("更新", for: .normal)
-        updateButton.setTitleColor(UIColor.black, for: .normal)
-        updateButton.backgroundColor = UIColor.white
-        updateButton.layer.borderColor = UIColor.black.cgColor
-        updateButton.layer.borderWidth = 1.0
-        updateButton.layer.cornerRadius = 10
+        setupButton(updateButton, text: "更新")
         updateButton.addTarget(self, action: #selector(self.tapUpdateButton), for: .touchUpInside)
         self.addSubview(updateButton)
         
-        cancelButton.setTitle("キャンセル", for: .normal)
-        cancelButton.setTitleColor(UIColor.black, for: .normal)
-        cancelButton.backgroundColor = UIColor.white
-        cancelButton.layer.borderColor = UIColor.black.cgColor
-        cancelButton.layer.borderWidth = 1.0
-        cancelButton.layer.cornerRadius = 10
+        setupButton(cancelButton, text: "キャンセル")
         cancelButton.addTarget(self, action: #selector(self.tapCancelButton), for: .touchUpInside)
         self.addSubview(cancelButton)
         
-        scrollView.translatesAutoresizingMaskIntoConstraints = false
-        pickerBackgroundView.translatesAutoresizingMaskIntoConstraints = false
-        errorMessageLabel.translatesAutoresizingMaskIntoConstraints = false
-        repeatTitleLabel.translatesAutoresizingMaskIntoConstraints = false
-        repeatTextField.translatesAutoresizingMaskIntoConstraints = false
-        patternTitleLabel.translatesAutoresizingMaskIntoConstraints = false
-        patternTextField.translatesAutoresizingMaskIntoConstraints = false
-        nameTitleLabel.translatesAutoresizingMaskIntoConstraints = false
-        nameTextField.translatesAutoresizingMaskIntoConstraints = false
-        countTitleLabel.translatesAutoresizingMaskIntoConstraints = false
-        countAdultTitleLabel.translatesAutoresizingMaskIntoConstraints = false
-        countAdultTextField.translatesAutoresizingMaskIntoConstraints = false
-        countChildTitleLabel.translatesAutoresizingMaskIntoConstraints = false
-        countChildTextField.translatesAutoresizingMaskIntoConstraints = false
-        enterTimeLabel.translatesAutoresizingMaskIntoConstraints = false
-        enterTimeTextField.translatesAutoresizingMaskIntoConstraints = false
-        memoTitleLabel.translatesAutoresizingMaskIntoConstraints = false
-        memoTextField.translatesAutoresizingMaskIntoConstraints = false
-        submitButton.translatesAutoresizingMaskIntoConstraints = false
-        updateButton.translatesAutoresizingMaskIntoConstraints = false
-        cancelButton.translatesAutoresizingMaskIntoConstraints = false
-        
-        // レスポンシブルデザイン対応
-        let screenWidth = UIScreen.main.bounds.width
-        if screenWidth < 668 { // 小さい画面の場合
-            errorMessageLabel.font = UIFont.systemFont(ofSize: 16)
-            repeatTitleLabel.font = UIFont.systemFont(ofSize: 16)
-            repeatTextField.font = UIFont.systemFont(ofSize: 16)
-            patternTitleLabel.font = UIFont.systemFont(ofSize: 16)
-            patternTextField.font = UIFont.systemFont(ofSize: 16)
-            nameTitleLabel.font = UIFont.systemFont(ofSize: 16)
-            nameTextField.font = UIFont.systemFont(ofSize: 16)
-            countTitleLabel.font = UIFont.systemFont(ofSize: 16)
-            countAdultTitleLabel.font = UIFont.systemFont(ofSize: 16)
-            countAdultTextField.font = UIFont.systemFont(ofSize: 16)
-            countChildTitleLabel.font = UIFont.systemFont(ofSize: 16)
-            countChildTextField.font = UIFont.systemFont(ofSize: 16)
-            enterTimeLabel.font = UIFont.systemFont(ofSize: 16)
-            enterTimeTextField.font = UIFont.systemFont(ofSize: 16)
-            memoTitleLabel.font = UIFont.systemFont(ofSize: 16)
-            memoTextField.font = UIFont.systemFont(ofSize: 16)
+        // 基本的な制約（ScrollViewとPickerBackgroundView）
+        NSLayoutConstraint.activate([
+            scrollView.topAnchor.constraint(equalTo: self.safeAreaLayoutGuide.topAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: self.safeAreaLayoutGuide.bottomAnchor),
+            scrollView.leftAnchor.constraint(equalTo: self.safeAreaLayoutGuide.leftAnchor),
+            scrollView.rightAnchor.constraint(equalTo: self.safeAreaLayoutGuide.rightAnchor),
             
-            NSLayoutConstraint.activate([
-                scrollView.topAnchor.constraint(equalTo: self.safeAreaLayoutGuide.topAnchor),
-                scrollView.bottomAnchor.constraint(equalTo: self.safeAreaLayoutGuide.bottomAnchor),
-                scrollView.leftAnchor.constraint(equalTo: self.safeAreaLayoutGuide.leftAnchor),
-                scrollView.rightAnchor.constraint(equalTo: self.safeAreaLayoutGuide.rightAnchor),
-                pickerBackgroundView.topAnchor.constraint(equalTo: self.safeAreaLayoutGuide.topAnchor),
-                pickerBackgroundView.bottomAnchor.constraint(equalTo: self.safeAreaLayoutGuide.bottomAnchor),
-                pickerBackgroundView.leftAnchor.constraint(equalTo: self.safeAreaLayoutGuide.leftAnchor),
-                pickerBackgroundView.rightAnchor.constraint(equalTo: self.safeAreaLayoutGuide.rightAnchor),
-                errorMessageLabel.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 8),
-                errorMessageLabel.leftAnchor.constraint(equalTo: scrollView.leftAnchor, constant: 32),
-                repeatTitleLabel.topAnchor.constraint(equalTo: errorMessageLabel.bottomAnchor, constant: 8),
-                repeatTitleLabel.rightAnchor.constraint(equalTo: scrollView.leftAnchor, constant: 200),
-                repeatTextField.topAnchor.constraint(equalTo: repeatTitleLabel.topAnchor),
-                repeatTextField.bottomAnchor.constraint(equalTo: repeatTitleLabel.bottomAnchor),
-                repeatTextField.leftAnchor.constraint(equalTo: repeatTitleLabel.rightAnchor, constant: 8),
-                repeatTextField.widthAnchor.constraint(equalToConstant: 120),
-                patternTitleLabel.topAnchor.constraint(equalTo: repeatTitleLabel.bottomAnchor, constant: 8),
-                patternTitleLabel.rightAnchor.constraint(equalTo: repeatTitleLabel.rightAnchor),
-                patternTextField.topAnchor.constraint(equalTo: patternTitleLabel.topAnchor),
-                patternTextField.bottomAnchor.constraint(equalTo: patternTitleLabel.bottomAnchor),
-                patternTextField.leftAnchor.constraint(equalTo: patternTitleLabel.rightAnchor, constant: 8),
-                patternTextField.widthAnchor.constraint(equalToConstant: 120),
-                nameTitleLabel.topAnchor.constraint(equalTo: patternTitleLabel.bottomAnchor, constant: 8),
-                nameTitleLabel.rightAnchor.constraint(equalTo: repeatTitleLabel.rightAnchor),
-                nameTextField.topAnchor.constraint(equalTo: nameTitleLabel.topAnchor),
-                nameTextField.bottomAnchor.constraint(equalTo: nameTitleLabel.bottomAnchor),
-                nameTextField.leftAnchor.constraint(equalTo: nameTitleLabel.rightAnchor, constant: 8),
-                nameTextField.widthAnchor.constraint(equalToConstant: 120),
-                countTitleLabel.topAnchor.constraint(equalTo: nameTitleLabel.bottomAnchor, constant: 8),
-                countTitleLabel.rightAnchor.constraint(equalTo: repeatTitleLabel.rightAnchor),
-                countAdultTitleLabel.topAnchor.constraint(equalTo: countTitleLabel.topAnchor),
-                countAdultTitleLabel.bottomAnchor.constraint(equalTo: countTitleLabel.bottomAnchor),
-                countAdultTitleLabel.leftAnchor.constraint(equalTo: countTitleLabel.rightAnchor, constant: 8),
-                countAdultTextField.topAnchor.constraint(equalTo: countAdultTitleLabel.topAnchor),
-                countAdultTextField.bottomAnchor.constraint(equalTo: countAdultTitleLabel.bottomAnchor),
-                countAdultTextField.leftAnchor.constraint(equalTo: countAdultTitleLabel.rightAnchor),
-                countAdultTextField.widthAnchor.constraint(equalToConstant: 40),
-                countChildTitleLabel.topAnchor.constraint(equalTo: countAdultTitleLabel.topAnchor),
-                countChildTitleLabel.bottomAnchor.constraint(equalTo: countAdultTitleLabel.bottomAnchor),
-                countChildTitleLabel.leftAnchor.constraint(equalTo: countAdultTextField.rightAnchor, constant: 40),
-                countChildTextField.topAnchor.constraint(equalTo: countChildTitleLabel.topAnchor),
-                countChildTextField.bottomAnchor.constraint(equalTo: countChildTitleLabel.bottomAnchor),
-                countChildTextField.leftAnchor.constraint(equalTo: countChildTitleLabel.rightAnchor, constant: 8),
-                countChildTextField.widthAnchor.constraint(equalToConstant: 40),
-                enterTimeLabel.topAnchor.constraint(equalTo: countAdultTitleLabel.bottomAnchor, constant: 8),
-                enterTimeLabel.rightAnchor.constraint(equalTo: repeatTitleLabel.rightAnchor),
-                enterTimeTextField.topAnchor.constraint(equalTo: enterTimeLabel.topAnchor),
-                enterTimeTextField.bottomAnchor.constraint(equalTo: enterTimeLabel.bottomAnchor),
-                enterTimeTextField.leftAnchor.constraint(equalTo: enterTimeLabel.rightAnchor, constant: 8),
-                enterTimeTextField.widthAnchor.constraint(equalToConstant: 80),
-                memoTitleLabel.topAnchor.constraint(equalTo: enterTimeLabel.bottomAnchor, constant: 8),
-                memoTitleLabel.rightAnchor.constraint(equalTo: enterTimeLabel.rightAnchor),
-                memoTextField.topAnchor.constraint(equalTo: memoTitleLabel.topAnchor),
-                memoTextField.bottomAnchor.constraint(equalTo: memoTitleLabel.bottomAnchor),
-                memoTextField.leftAnchor.constraint(equalTo: memoTitleLabel.rightAnchor, constant: 8),
-                memoTextField.widthAnchor.constraint(equalToConstant: 200),
-                submitButton.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: -8),
-                submitButton.rightAnchor.constraint(equalTo: scrollView.rightAnchor, constant: -16),
-                submitButton.heightAnchor.constraint(equalToConstant: 24),
-                submitButton.widthAnchor.constraint(equalToConstant: 120),
-                updateButton.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: -8),
-                updateButton.rightAnchor.constraint(equalTo: scrollView.rightAnchor, constant: -16),
-                updateButton.heightAnchor.constraint(equalToConstant: 24),
-                updateButton.widthAnchor.constraint(equalToConstant: 120),
-                cancelButton.bottomAnchor.constraint(equalTo: submitButton.bottomAnchor),
-                cancelButton.rightAnchor.constraint(equalTo: submitButton.leftAnchor, constant: -16),
-                cancelButton.heightAnchor.constraint(equalToConstant: 24),
-                cancelButton.widthAnchor.constraint(equalToConstant: 120)
-            ])
-        } else { // 通常の画面の場合
-            errorMessageLabel.font = UIFont.systemFont(ofSize: 32)
-            repeatTitleLabel.font = UIFont.systemFont(ofSize: 32)
-            repeatTextField.font = UIFont.systemFont(ofSize: 32)
-            patternTitleLabel.font = UIFont.systemFont(ofSize: 32)
-            patternTextField.font = UIFont.systemFont(ofSize: 32)
-            nameTitleLabel.font = UIFont.systemFont(ofSize: 32)
-            nameTextField.font = UIFont.systemFont(ofSize: 32)
-            countTitleLabel.font = UIFont.systemFont(ofSize: 32)
-            countAdultTitleLabel.font = UIFont.systemFont(ofSize: 32)
-            countAdultTextField.font = UIFont.systemFont(ofSize: 32)
-            countChildTitleLabel.font = UIFont.systemFont(ofSize: 32)
-            countChildTextField.font = UIFont.systemFont(ofSize: 32)
-            enterTimeLabel.font = UIFont.systemFont(ofSize: 32)
-            enterTimeTextField.font = UIFont.systemFont(ofSize: 32)
-            memoTitleLabel.font = UIFont.systemFont(ofSize: 32)
-            memoTextField.font = UIFont.systemFont(ofSize: 32)
-            
-            NSLayoutConstraint.activate([
-                scrollView.topAnchor.constraint(equalTo: self.safeAreaLayoutGuide.topAnchor),
-                scrollView.bottomAnchor.constraint(equalTo: self.safeAreaLayoutGuide.bottomAnchor),
-                scrollView.leftAnchor.constraint(equalTo: self.safeAreaLayoutGuide.leftAnchor),
-                scrollView.rightAnchor.constraint(equalTo: self.safeAreaLayoutGuide.rightAnchor),
-                pickerBackgroundView.topAnchor.constraint(equalTo: self.safeAreaLayoutGuide.topAnchor),
-                pickerBackgroundView.bottomAnchor.constraint(equalTo: self.safeAreaLayoutGuide.bottomAnchor),
-                pickerBackgroundView.leftAnchor.constraint(equalTo: self.safeAreaLayoutGuide.leftAnchor),
-                pickerBackgroundView.rightAnchor.constraint(equalTo: self.safeAreaLayoutGuide.rightAnchor),
-                errorMessageLabel.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 32),
-                errorMessageLabel.leftAnchor.constraint(equalTo: scrollView.leftAnchor, constant: 64),
-                repeatTitleLabel.topAnchor.constraint(equalTo: errorMessageLabel.bottomAnchor, constant: 32),
-                repeatTitleLabel.rightAnchor.constraint(equalTo: scrollView.leftAnchor, constant: 400),
-                repeatTextField.topAnchor.constraint(equalTo: repeatTitleLabel.topAnchor),
-                repeatTextField.bottomAnchor.constraint(equalTo: repeatTitleLabel.bottomAnchor),
-                repeatTextField.leftAnchor.constraint(equalTo: repeatTitleLabel.rightAnchor, constant: 16),
-                repeatTextField.widthAnchor.constraint(equalToConstant: 240),
-                patternTitleLabel.topAnchor.constraint(equalTo: repeatTitleLabel.bottomAnchor, constant: 32),
-                patternTitleLabel.rightAnchor.constraint(equalTo: repeatTitleLabel.rightAnchor),
-                patternTextField.topAnchor.constraint(equalTo: patternTitleLabel.topAnchor),
-                patternTextField.bottomAnchor.constraint(equalTo: patternTitleLabel.bottomAnchor),
-                patternTextField.leftAnchor.constraint(equalTo: patternTitleLabel.rightAnchor, constant: 16),
-                patternTextField.widthAnchor.constraint(equalToConstant: 240),
-                nameTitleLabel.topAnchor.constraint(equalTo: patternTitleLabel.bottomAnchor, constant: 32),
-                nameTitleLabel.rightAnchor.constraint(equalTo: repeatTitleLabel.rightAnchor),
-                nameTextField.topAnchor.constraint(equalTo: nameTitleLabel.topAnchor),
-                nameTextField.bottomAnchor.constraint(equalTo: nameTitleLabel.bottomAnchor),
-                nameTextField.leftAnchor.constraint(equalTo: nameTitleLabel.rightAnchor, constant: 16),
-                nameTextField.widthAnchor.constraint(equalToConstant: 240),
-                countTitleLabel.topAnchor.constraint(equalTo: nameTitleLabel.bottomAnchor, constant: 32),
-                countTitleLabel.rightAnchor.constraint(equalTo: repeatTitleLabel.rightAnchor),
-                countAdultTitleLabel.topAnchor.constraint(equalTo: countTitleLabel.topAnchor),
-                countAdultTitleLabel.bottomAnchor.constraint(equalTo: countTitleLabel.bottomAnchor),
-                countAdultTitleLabel.leftAnchor.constraint(equalTo: countTitleLabel.rightAnchor, constant: 16),
-                countAdultTextField.topAnchor.constraint(equalTo: countAdultTitleLabel.topAnchor),
-                countAdultTextField.bottomAnchor.constraint(equalTo: countAdultTitleLabel.bottomAnchor),
-                countAdultTextField.leftAnchor.constraint(equalTo: countAdultTitleLabel.rightAnchor),
-                countAdultTextField.widthAnchor.constraint(equalToConstant: 80),
-                countChildTitleLabel.topAnchor.constraint(equalTo: countAdultTitleLabel.topAnchor),
-                countChildTitleLabel.bottomAnchor.constraint(equalTo: countAdultTitleLabel.bottomAnchor),
-                countChildTitleLabel.leftAnchor.constraint(equalTo: countAdultTextField.rightAnchor, constant: 80),
-                countChildTextField.topAnchor.constraint(equalTo: countChildTitleLabel.topAnchor),
-                countChildTextField.bottomAnchor.constraint(equalTo: countChildTitleLabel.bottomAnchor),
-                countChildTextField.leftAnchor.constraint(equalTo: countChildTitleLabel.rightAnchor, constant: 16),
-                countChildTextField.widthAnchor.constraint(equalToConstant: 80),
-                enterTimeLabel.topAnchor.constraint(equalTo: countAdultTitleLabel.bottomAnchor, constant: 32),
-                enterTimeLabel.rightAnchor.constraint(equalTo: repeatTitleLabel.rightAnchor),
-                enterTimeTextField.topAnchor.constraint(equalTo: enterTimeLabel.topAnchor),
-                enterTimeTextField.bottomAnchor.constraint(equalTo: enterTimeLabel.bottomAnchor),
-                enterTimeTextField.leftAnchor.constraint(equalTo: enterTimeLabel.rightAnchor, constant: 16),
-                enterTimeTextField.widthAnchor.constraint(equalToConstant: 160),
-                memoTitleLabel.topAnchor.constraint(equalTo: enterTimeLabel.bottomAnchor, constant: 32),
-                memoTitleLabel.rightAnchor.constraint(equalTo: enterTimeLabel.rightAnchor),
-                memoTextField.topAnchor.constraint(equalTo: memoTitleLabel.topAnchor),
-                memoTextField.bottomAnchor.constraint(equalTo: memoTitleLabel.bottomAnchor),
-                memoTextField.leftAnchor.constraint(equalTo: memoTitleLabel.rightAnchor, constant: 16),
-                memoTextField.widthAnchor.constraint(equalToConstant: 400),
-                submitButton.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: -32),
-                submitButton.rightAnchor.constraint(equalTo: scrollView.rightAnchor, constant: -32),
-                submitButton.heightAnchor.constraint(equalToConstant: 48),
-                submitButton.widthAnchor.constraint(equalToConstant: 160),
-                updateButton.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: -32),
-                updateButton.rightAnchor.constraint(equalTo: scrollView.rightAnchor, constant: -32),
-                updateButton.heightAnchor.constraint(equalToConstant: 48),
-                updateButton.widthAnchor.constraint(equalToConstant: 160),
-                cancelButton.bottomAnchor.constraint(equalTo: submitButton.bottomAnchor),
-                cancelButton.rightAnchor.constraint(equalTo: submitButton.leftAnchor, constant: -32),
-                cancelButton.heightAnchor.constraint(equalToConstant: 48),
-                cancelButton.widthAnchor.constraint(equalToConstant: 160)
-            ])
-        }
+            pickerBackgroundView.topAnchor.constraint(equalTo: self.safeAreaLayoutGuide.topAnchor),
+            pickerBackgroundView.bottomAnchor.constraint(equalTo: self.safeAreaLayoutGuide.bottomAnchor),
+            pickerBackgroundView.leftAnchor.constraint(equalTo: self.safeAreaLayoutGuide.leftAnchor),
+            pickerBackgroundView.rightAnchor.constraint(equalTo: self.safeAreaLayoutGuide.rightAnchor),
+        ])
     }
     
     private func setupRepeatTextField() {
@@ -810,5 +909,439 @@ extension EnterView: UIPickerViewDelegate, UIPickerViewDataSource {
         } else if pickerView == countChildPickerView {
             countChildTextField.text = countChildPickerData[row] // countChildPickerViewの選択された値を表示
         }
+    }
+}
+
+// MARK: - 画面回転処理
+private extension EnterView {
+    
+    /// 画面回転の監視を開始
+    func setupOrientationObserver() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(orientationDidChange),
+            name: UIDevice.orientationDidChangeNotification,
+            object: nil
+        )
+    }
+    
+    /// 画面回転の監視を解除
+    func removeOrientationObserver() {
+        NotificationCenter.default.removeObserver(
+            self,
+            name: UIDevice.orientationDidChangeNotification,
+            object: nil
+        )
+    }
+    
+    /// 画面回転時の処理
+    @objc func orientationDidChange() {
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            // レイアウトを更新
+            self.updateLayoutForCurrentOrientation()
+        }
+    }
+    
+    /// 現在の画面向きに応じてレイアウトを更新
+    func updateLayoutForCurrentOrientation() {
+        // 既存の制約を削除
+        NSLayoutConstraint.deactivate(currentConstraints)
+        currentConstraints.removeAll()
+        
+        // フォントサイズを更新
+        updateFontSizesForOrientation()
+        
+        // 新しい制約を設定
+        setupConstraintsForCurrentOrientation()
+        
+        // アニメーション付きでレイアウトを更新
+        UIView.animate(withDuration: 0.3) {
+            self.layoutIfNeeded()
+        }
+    }
+    
+    /// 画面向きに応じてフォントサイズを更新
+    func updateFontSizesForOrientation() {
+        let currentScreenWidth = dynamicScreenWidth
+        let fontSize: CGFloat = currentScreenWidth < 668 ? 16 : 32
+        
+        // 全てのラベルのフォントサイズを更新
+        [repeatTitleLabel, patternTitleLabel, nameTitleLabel, countTitleLabel,
+         countAdultTitleLabel, countChildTitleLabel, enterTimeLabel, memoTitleLabel
+        ].forEach { label in
+            label.font = UIFont.systemFont(ofSize: fontSize)
+        }
+        
+        // 全てのテキストフィールドのフォントサイズを更新
+        [repeatTextField, patternTextField, nameTextField, countAdultTextField,
+         countChildTextField, enterTimeTextField, memoTextField
+        ].forEach { textField in
+            textField.font = UIFont.systemFont(ofSize: fontSize)
+        }
+    }
+    
+    /// 現在の画面向きに応じて制約を設定
+    func setupConstraintsForCurrentOrientation() {
+        let currentScreenWidth = dynamicScreenWidth
+        
+        if currentScreenWidth < 668 {
+            if isPortrait {
+                setupSmallScreenPortraitConstraints()
+            } else {
+                setupSmallScreenLandscapeConstraints()
+            }
+        } else if isPortrait {
+            setupPortraitConstraints()
+        } else {
+            setupLandscapeConstraints()
+        }
+    }
+    
+    /// 縦向き（スマホ）用の制約
+    func setupSmallScreenPortraitConstraints() {
+        let constraints = [
+            errorMessageLabel.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 8),
+            errorMessageLabel.leftAnchor.constraint(equalTo: scrollView.leftAnchor, constant: 32),
+            
+            repeatTitleLabel.topAnchor.constraint(equalTo: errorMessageLabel.bottomAnchor, constant: 16),
+            repeatTitleLabel.rightAnchor.constraint(equalTo: scrollView.leftAnchor, constant: 150),
+            
+            repeatTextField.topAnchor.constraint(equalTo: repeatTitleLabel.topAnchor),
+            repeatTextField.bottomAnchor.constraint(equalTo: repeatTitleLabel.bottomAnchor),
+            repeatTextField.leftAnchor.constraint(equalTo: repeatTitleLabel.rightAnchor, constant: 8),
+            repeatTextField.widthAnchor.constraint(equalToConstant: 120),
+            
+            patternTitleLabel.topAnchor.constraint(equalTo: repeatTitleLabel.bottomAnchor, constant: 16),
+            patternTitleLabel.rightAnchor.constraint(equalTo: repeatTitleLabel.rightAnchor),
+            
+            patternTextField.topAnchor.constraint(equalTo: patternTitleLabel.topAnchor),
+            patternTextField.bottomAnchor.constraint(equalTo: patternTitleLabel.bottomAnchor),
+            patternTextField.leftAnchor.constraint(equalTo: patternTitleLabel.rightAnchor, constant: 8),
+            patternTextField.widthAnchor.constraint(equalToConstant: 120),
+            
+            nameTitleLabel.topAnchor.constraint(equalTo: patternTitleLabel.bottomAnchor, constant: 16),
+            nameTitleLabel.rightAnchor.constraint(equalTo: repeatTitleLabel.rightAnchor),
+            
+            nameTextField.topAnchor.constraint(equalTo: nameTitleLabel.topAnchor),
+            nameTextField.bottomAnchor.constraint(equalTo: nameTitleLabel.bottomAnchor),
+            nameTextField.leftAnchor.constraint(equalTo: nameTitleLabel.rightAnchor, constant: 8),
+            nameTextField.widthAnchor.constraint(equalToConstant: 120),
+            
+            countTitleLabel.topAnchor.constraint(equalTo: nameTitleLabel.bottomAnchor, constant: 16),
+            countTitleLabel.rightAnchor.constraint(equalTo: repeatTitleLabel.rightAnchor),
+            
+            countAdultTitleLabel.topAnchor.constraint(equalTo: countTitleLabel.topAnchor),
+            countAdultTitleLabel.bottomAnchor.constraint(equalTo: countTitleLabel.bottomAnchor),
+            countAdultTitleLabel.leftAnchor.constraint(equalTo: countTitleLabel.rightAnchor, constant: 8),
+            
+            countAdultTextField.topAnchor.constraint(equalTo: countAdultTitleLabel.topAnchor),
+            countAdultTextField.bottomAnchor.constraint(equalTo: countAdultTitleLabel.bottomAnchor),
+            countAdultTextField.leftAnchor.constraint(equalTo: countAdultTitleLabel.rightAnchor, constant: 8),
+            countAdultTextField.widthAnchor.constraint(equalToConstant: 40),
+            
+            countChildTitleLabel.topAnchor.constraint(equalTo: countAdultTitleLabel.bottomAnchor, constant: 16),
+            countChildTitleLabel.rightAnchor.constraint(equalTo: countAdultTitleLabel.rightAnchor),
+            
+            countChildTextField.topAnchor.constraint(equalTo: countChildTitleLabel.topAnchor),
+            countChildTextField.bottomAnchor.constraint(equalTo: countChildTitleLabel.bottomAnchor),
+            countChildTextField.leftAnchor.constraint(equalTo: countChildTitleLabel.rightAnchor, constant: 8),
+            countChildTextField.widthAnchor.constraint(equalToConstant: 40),
+            
+            enterTimeLabel.topAnchor.constraint(equalTo: countChildTitleLabel.bottomAnchor, constant: 16),
+            enterTimeLabel.rightAnchor.constraint(equalTo: repeatTitleLabel.rightAnchor),
+            
+            enterTimeTextField.topAnchor.constraint(equalTo: enterTimeLabel.topAnchor),
+            enterTimeTextField.bottomAnchor.constraint(equalTo: enterTimeLabel.bottomAnchor),
+            enterTimeTextField.leftAnchor.constraint(equalTo: enterTimeLabel.rightAnchor, constant: 8),
+            enterTimeTextField.widthAnchor.constraint(equalToConstant: 80),
+            
+            memoTitleLabel.topAnchor.constraint(equalTo: enterTimeLabel.bottomAnchor, constant: 16),
+            memoTitleLabel.rightAnchor.constraint(equalTo: enterTimeLabel.rightAnchor),
+            
+            memoTextField.topAnchor.constraint(equalTo: memoTitleLabel.topAnchor),
+            memoTextField.bottomAnchor.constraint(equalTo: memoTitleLabel.bottomAnchor),
+            memoTextField.leftAnchor.constraint(equalTo: memoTitleLabel.rightAnchor, constant: 8),
+            memoTextField.widthAnchor.constraint(equalToConstant: 200),
+            
+            submitButton.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: -8),
+            submitButton.rightAnchor.constraint(equalTo: scrollView.rightAnchor, constant: -16),
+            submitButton.heightAnchor.constraint(equalToConstant: 24),
+            submitButton.widthAnchor.constraint(equalToConstant: 120),
+            
+            updateButton.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: -8),
+            updateButton.rightAnchor.constraint(equalTo: scrollView.rightAnchor, constant: -16),
+            updateButton.heightAnchor.constraint(equalToConstant: 24),
+            updateButton.widthAnchor.constraint(equalToConstant: 120),
+            
+            cancelButton.bottomAnchor.constraint(equalTo: submitButton.bottomAnchor),
+            cancelButton.rightAnchor.constraint(equalTo: submitButton.leftAnchor, constant: -16),
+            cancelButton.heightAnchor.constraint(equalToConstant: 24),
+            cancelButton.widthAnchor.constraint(equalToConstant: 120)
+        ]
+        
+        currentConstraints.append(contentsOf: constraints)
+        NSLayoutConstraint.activate(constraints)
+    }
+
+    /// 横向き（スマホ）用の制約
+    func setupSmallScreenLandscapeConstraints() {
+        let constraints = [
+            errorMessageLabel.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 8),
+            errorMessageLabel.leftAnchor.constraint(equalTo: scrollView.leftAnchor, constant: 32),
+            
+            repeatTitleLabel.topAnchor.constraint(equalTo: errorMessageLabel.bottomAnchor, constant: 8),
+            repeatTitleLabel.rightAnchor.constraint(equalTo: scrollView.leftAnchor, constant: 200),
+            
+            repeatTextField.topAnchor.constraint(equalTo: repeatTitleLabel.topAnchor),
+            repeatTextField.bottomAnchor.constraint(equalTo: repeatTitleLabel.bottomAnchor),
+            repeatTextField.leftAnchor.constraint(equalTo: repeatTitleLabel.rightAnchor, constant: 8),
+            repeatTextField.widthAnchor.constraint(equalToConstant: 120),
+            
+            patternTitleLabel.topAnchor.constraint(equalTo: repeatTitleLabel.bottomAnchor, constant: 8),
+            patternTitleLabel.rightAnchor.constraint(equalTo: repeatTitleLabel.rightAnchor),
+            
+            patternTextField.topAnchor.constraint(equalTo: patternTitleLabel.topAnchor),
+            patternTextField.bottomAnchor.constraint(equalTo: patternTitleLabel.bottomAnchor),
+            patternTextField.leftAnchor.constraint(equalTo: patternTitleLabel.rightAnchor, constant: 8),
+            patternTextField.widthAnchor.constraint(equalToConstant: 120),
+            
+            nameTitleLabel.topAnchor.constraint(equalTo: patternTitleLabel.bottomAnchor, constant: 8),
+            nameTitleLabel.rightAnchor.constraint(equalTo: repeatTitleLabel.rightAnchor),
+            
+            nameTextField.topAnchor.constraint(equalTo: nameTitleLabel.topAnchor),
+            nameTextField.bottomAnchor.constraint(equalTo: nameTitleLabel.bottomAnchor),
+            nameTextField.leftAnchor.constraint(equalTo: nameTitleLabel.rightAnchor, constant: 8),
+            nameTextField.widthAnchor.constraint(equalToConstant: 120),
+            
+            countTitleLabel.topAnchor.constraint(equalTo: nameTitleLabel.bottomAnchor, constant: 8),
+            countTitleLabel.rightAnchor.constraint(equalTo: repeatTitleLabel.rightAnchor),
+            
+            countAdultTitleLabel.topAnchor.constraint(equalTo: countTitleLabel.topAnchor),
+            countAdultTitleLabel.bottomAnchor.constraint(equalTo: countTitleLabel.bottomAnchor),
+            countAdultTitleLabel.leftAnchor.constraint(equalTo: countTitleLabel.rightAnchor, constant: 8),
+            
+            countAdultTextField.topAnchor.constraint(equalTo: countAdultTitleLabel.topAnchor),
+            countAdultTextField.bottomAnchor.constraint(equalTo: countAdultTitleLabel.bottomAnchor),
+            countAdultTextField.leftAnchor.constraint(equalTo: countAdultTitleLabel.rightAnchor),
+            countAdultTextField.widthAnchor.constraint(equalToConstant: 40),
+            
+            countChildTitleLabel.topAnchor.constraint(equalTo: countAdultTitleLabel.topAnchor),
+            countChildTitleLabel.bottomAnchor.constraint(equalTo: countAdultTitleLabel.bottomAnchor),
+            countChildTitleLabel.leftAnchor.constraint(equalTo: countAdultTextField.rightAnchor, constant: 40),
+            
+            countChildTextField.topAnchor.constraint(equalTo: countChildTitleLabel.topAnchor),
+            countChildTextField.bottomAnchor.constraint(equalTo: countChildTitleLabel.bottomAnchor),
+            countChildTextField.leftAnchor.constraint(equalTo: countChildTitleLabel.rightAnchor, constant: 8),
+            countChildTextField.widthAnchor.constraint(equalToConstant: 40),
+            
+            enterTimeLabel.topAnchor.constraint(equalTo: countAdultTitleLabel.bottomAnchor, constant: 8),
+            enterTimeLabel.rightAnchor.constraint(equalTo: repeatTitleLabel.rightAnchor),
+            
+            enterTimeTextField.topAnchor.constraint(equalTo: enterTimeLabel.topAnchor),
+            enterTimeTextField.bottomAnchor.constraint(equalTo: enterTimeLabel.bottomAnchor),
+            enterTimeTextField.leftAnchor.constraint(equalTo: enterTimeLabel.rightAnchor, constant: 8),
+            enterTimeTextField.widthAnchor.constraint(equalToConstant: 80),
+            
+            memoTitleLabel.topAnchor.constraint(equalTo: enterTimeLabel.bottomAnchor, constant: 8),
+            memoTitleLabel.rightAnchor.constraint(equalTo: enterTimeLabel.rightAnchor),
+            
+            memoTextField.topAnchor.constraint(equalTo: memoTitleLabel.topAnchor),
+            memoTextField.bottomAnchor.constraint(equalTo: memoTitleLabel.bottomAnchor),
+            memoTextField.leftAnchor.constraint(equalTo: memoTitleLabel.rightAnchor, constant: 8),
+            memoTextField.widthAnchor.constraint(equalToConstant: 200),
+            
+            submitButton.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: -8),
+            submitButton.rightAnchor.constraint(equalTo: scrollView.rightAnchor, constant: -16),
+            submitButton.heightAnchor.constraint(equalToConstant: 24),
+            submitButton.widthAnchor.constraint(equalToConstant: 120),
+            
+            updateButton.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: -8),
+            updateButton.rightAnchor.constraint(equalTo: scrollView.rightAnchor, constant: -16),
+            updateButton.heightAnchor.constraint(equalToConstant: 24),
+            updateButton.widthAnchor.constraint(equalToConstant: 120),
+            
+            cancelButton.bottomAnchor.constraint(equalTo: submitButton.bottomAnchor),
+            cancelButton.rightAnchor.constraint(equalTo: submitButton.leftAnchor, constant: -16),
+            cancelButton.heightAnchor.constraint(equalToConstant: 24),
+            cancelButton.widthAnchor.constraint(equalToConstant: 120)
+        ]
+        
+        currentConstraints.append(contentsOf: constraints)
+        NSLayoutConstraint.activate(constraints)
+    }
+    
+    /// 縦向き（タブレット）用の制約
+    func setupPortraitConstraints() {
+        let constraints = [
+            errorMessageLabel.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 32),
+            errorMessageLabel.leftAnchor.constraint(equalTo: scrollView.leftAnchor, constant: 64),
+            
+            repeatTitleLabel.topAnchor.constraint(equalTo: errorMessageLabel.bottomAnchor, constant: 32),
+            repeatTitleLabel.rightAnchor.constraint(equalTo: scrollView.leftAnchor, constant: 350),
+            
+            repeatTextField.topAnchor.constraint(equalTo: repeatTitleLabel.topAnchor),
+            repeatTextField.bottomAnchor.constraint(equalTo: repeatTitleLabel.bottomAnchor),
+            repeatTextField.leftAnchor.constraint(equalTo: repeatTitleLabel.rightAnchor, constant: 16),
+            repeatTextField.widthAnchor.constraint(equalToConstant: 240),
+            
+            patternTitleLabel.topAnchor.constraint(equalTo: repeatTitleLabel.bottomAnchor, constant: 32),
+            patternTitleLabel.rightAnchor.constraint(equalTo: repeatTitleLabel.rightAnchor),
+            
+            patternTextField.topAnchor.constraint(equalTo: patternTitleLabel.topAnchor),
+            patternTextField.bottomAnchor.constraint(equalTo: patternTitleLabel.bottomAnchor),
+            patternTextField.leftAnchor.constraint(equalTo: patternTitleLabel.rightAnchor, constant: 16),
+            patternTextField.widthAnchor.constraint(equalToConstant: 240),
+            
+            nameTitleLabel.topAnchor.constraint(equalTo: patternTitleLabel.bottomAnchor, constant: 32),
+            nameTitleLabel.rightAnchor.constraint(equalTo: repeatTitleLabel.rightAnchor),
+            
+            nameTextField.topAnchor.constraint(equalTo: nameTitleLabel.topAnchor),
+            nameTextField.bottomAnchor.constraint(equalTo: nameTitleLabel.bottomAnchor),
+            nameTextField.leftAnchor.constraint(equalTo: nameTitleLabel.rightAnchor, constant: 16),
+            nameTextField.widthAnchor.constraint(equalToConstant: 240),
+            
+            countTitleLabel.topAnchor.constraint(equalTo: nameTitleLabel.bottomAnchor, constant: 32),
+            countTitleLabel.rightAnchor.constraint(equalTo: repeatTitleLabel.rightAnchor),
+            
+            countAdultTitleLabel.topAnchor.constraint(equalTo: countTitleLabel.topAnchor),
+            countAdultTitleLabel.bottomAnchor.constraint(equalTo: countTitleLabel.bottomAnchor),
+            countAdultTitleLabel.leftAnchor.constraint(equalTo: countTitleLabel.rightAnchor, constant: 16),
+            
+            countAdultTextField.topAnchor.constraint(equalTo: countAdultTitleLabel.topAnchor),
+            countAdultTextField.bottomAnchor.constraint(equalTo: countAdultTitleLabel.bottomAnchor),
+            countAdultTextField.leftAnchor.constraint(equalTo: countAdultTitleLabel.rightAnchor,constant: 16),
+            countAdultTextField.widthAnchor.constraint(equalToConstant: 80),
+            
+            countChildTitleLabel.topAnchor.constraint(equalTo: countAdultTitleLabel.bottomAnchor, constant: 32),
+            countChildTitleLabel.rightAnchor.constraint(equalTo: countAdultTitleLabel.rightAnchor),
+            
+            countChildTextField.topAnchor.constraint(equalTo: countChildTitleLabel.topAnchor),
+            countChildTextField.bottomAnchor.constraint(equalTo: countChildTitleLabel.bottomAnchor),
+            countChildTextField.leftAnchor.constraint(equalTo: countChildTitleLabel.rightAnchor, constant: 16),
+            countChildTextField.widthAnchor.constraint(equalToConstant: 80),
+            
+            enterTimeLabel.topAnchor.constraint(equalTo: countChildTitleLabel.bottomAnchor, constant: 32),
+            enterTimeLabel.rightAnchor.constraint(equalTo: repeatTitleLabel.rightAnchor),
+            
+            enterTimeTextField.topAnchor.constraint(equalTo: enterTimeLabel.topAnchor),
+            enterTimeTextField.bottomAnchor.constraint(equalTo: enterTimeLabel.bottomAnchor),
+            enterTimeTextField.leftAnchor.constraint(equalTo: enterTimeLabel.rightAnchor, constant: 16),
+            enterTimeTextField.widthAnchor.constraint(equalToConstant: 160),
+            
+            memoTitleLabel.topAnchor.constraint(equalTo: enterTimeLabel.bottomAnchor, constant: 32),
+            memoTitleLabel.rightAnchor.constraint(equalTo: enterTimeLabel.rightAnchor),
+            
+            memoTextField.topAnchor.constraint(equalTo: memoTitleLabel.topAnchor),
+            memoTextField.bottomAnchor.constraint(equalTo: memoTitleLabel.bottomAnchor),
+            memoTextField.leftAnchor.constraint(equalTo: memoTitleLabel.rightAnchor, constant: 16),
+            memoTextField.widthAnchor.constraint(equalToConstant: 400),
+            
+            submitButton.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: -32),
+            submitButton.rightAnchor.constraint(equalTo: scrollView.rightAnchor, constant: -32),
+            submitButton.heightAnchor.constraint(equalToConstant: 48),
+            submitButton.widthAnchor.constraint(equalToConstant: 160),
+            
+            updateButton.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: -32),
+            updateButton.rightAnchor.constraint(equalTo: scrollView.rightAnchor, constant: -32),
+            updateButton.heightAnchor.constraint(equalToConstant: 48),
+            updateButton.widthAnchor.constraint(equalToConstant: 160),
+            
+            cancelButton.bottomAnchor.constraint(equalTo: submitButton.bottomAnchor),
+            cancelButton.rightAnchor.constraint(equalTo: submitButton.leftAnchor, constant: -32),
+            cancelButton.heightAnchor.constraint(equalToConstant: 48),
+            cancelButton.widthAnchor.constraint(equalToConstant: 160)
+        ]
+        
+        currentConstraints.append(contentsOf: constraints)
+        NSLayoutConstraint.activate(constraints)
+    }
+    
+    /// 横向き（タブレット）用の制約
+    func setupLandscapeConstraints() {
+        let constraints = [
+            errorMessageLabel.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 16),
+            errorMessageLabel.leftAnchor.constraint(equalTo: scrollView.leftAnchor, constant: 32),
+            
+            repeatTitleLabel.topAnchor.constraint(equalTo: errorMessageLabel.bottomAnchor, constant: 32),
+            repeatTitleLabel.rightAnchor.constraint(equalTo: scrollView.leftAnchor, constant: 400),
+            
+            repeatTextField.topAnchor.constraint(equalTo: repeatTitleLabel.topAnchor),
+            repeatTextField.bottomAnchor.constraint(equalTo: repeatTitleLabel.bottomAnchor),
+            repeatTextField.leftAnchor.constraint(equalTo: repeatTitleLabel.rightAnchor, constant: 8),
+            repeatTextField.widthAnchor.constraint(equalToConstant: 180),
+            
+            patternTitleLabel.topAnchor.constraint(equalTo: repeatTitleLabel.bottomAnchor, constant: 32),
+            patternTitleLabel.rightAnchor.constraint(equalTo: repeatTitleLabel.rightAnchor),
+            
+            patternTextField.topAnchor.constraint(equalTo: patternTitleLabel.topAnchor),
+            patternTextField.bottomAnchor.constraint(equalTo: patternTitleLabel.bottomAnchor),
+            patternTextField.leftAnchor.constraint(equalTo: patternTitleLabel.rightAnchor, constant: 8),
+            patternTextField.widthAnchor.constraint(equalToConstant: 180),
+            
+            countTitleLabel.topAnchor.constraint(equalTo: patternTitleLabel.bottomAnchor, constant: 32),
+            countTitleLabel.rightAnchor.constraint(equalTo: repeatTitleLabel.rightAnchor),
+            
+            countAdultTitleLabel.topAnchor.constraint(equalTo: countTitleLabel.topAnchor),
+            countAdultTitleLabel.bottomAnchor.constraint(equalTo: countTitleLabel.bottomAnchor),
+            countAdultTitleLabel.leftAnchor.constraint(equalTo: countTitleLabel.rightAnchor, constant: 8),
+            
+            countAdultTextField.topAnchor.constraint(equalTo: countAdultTitleLabel.topAnchor),
+            countAdultTextField.bottomAnchor.constraint(equalTo: countAdultTitleLabel.bottomAnchor),
+            countAdultTextField.leftAnchor.constraint(equalTo: countAdultTitleLabel.rightAnchor),
+            countAdultTextField.widthAnchor.constraint(equalToConstant: 80),
+            
+            countChildTitleLabel.topAnchor.constraint(equalTo: countAdultTitleLabel.topAnchor),
+            countChildTitleLabel.bottomAnchor.constraint(equalTo: countAdultTitleLabel.bottomAnchor),
+            countChildTitleLabel.leftAnchor.constraint(equalTo: countAdultTextField.rightAnchor, constant: 32),
+            
+            countChildTextField.topAnchor.constraint(equalTo: countChildTitleLabel.topAnchor),
+            countChildTextField.bottomAnchor.constraint(equalTo: countChildTitleLabel.bottomAnchor),
+            countChildTextField.leftAnchor.constraint(equalTo: countChildTitleLabel.rightAnchor),
+            countChildTextField.widthAnchor.constraint(equalToConstant: 80),
+            
+            nameTitleLabel.topAnchor.constraint(equalTo: countTitleLabel.bottomAnchor, constant: 32),
+            nameTitleLabel.rightAnchor.constraint(equalTo: repeatTitleLabel.rightAnchor),
+            
+            nameTextField.topAnchor.constraint(equalTo: nameTitleLabel.topAnchor),
+            nameTextField.bottomAnchor.constraint(equalTo: nameTitleLabel.bottomAnchor),
+            nameTextField.leftAnchor.constraint(equalTo: nameTitleLabel.rightAnchor, constant: 8),
+            nameTextField.widthAnchor.constraint(equalToConstant: 200),
+            
+            enterTimeLabel.topAnchor.constraint(equalTo: nameTitleLabel.bottomAnchor, constant: 32),
+            enterTimeLabel.rightAnchor.constraint(equalTo: repeatTitleLabel.rightAnchor),
+            
+            enterTimeTextField.topAnchor.constraint(equalTo: enterTimeLabel.topAnchor),
+            enterTimeTextField.bottomAnchor.constraint(equalTo: enterTimeLabel.bottomAnchor),
+            enterTimeTextField.leftAnchor.constraint(equalTo: enterTimeLabel.rightAnchor, constant: 8),
+            enterTimeTextField.widthAnchor.constraint(equalToConstant: 120),
+            
+            memoTitleLabel.topAnchor.constraint(equalTo: enterTimeLabel.bottomAnchor, constant: 32),
+            memoTitleLabel.rightAnchor.constraint(equalTo: repeatTitleLabel.rightAnchor),
+            
+            memoTextField.topAnchor.constraint(equalTo: memoTitleLabel.topAnchor),
+            memoTextField.bottomAnchor.constraint(equalTo: memoTitleLabel.bottomAnchor),
+            memoTextField.leftAnchor.constraint(equalTo: memoTitleLabel.rightAnchor, constant: 8),
+            memoTextField.widthAnchor.constraint(equalToConstant: 300),
+            
+            // ボタン
+            submitButton.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: -20),
+            submitButton.rightAnchor.constraint(equalTo: scrollView.rightAnchor, constant: -32),
+            submitButton.heightAnchor.constraint(equalToConstant: 40),
+            submitButton.widthAnchor.constraint(equalToConstant: 120),
+            
+            updateButton.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: -20),
+            updateButton.rightAnchor.constraint(equalTo: scrollView.rightAnchor, constant: -32),
+            updateButton.heightAnchor.constraint(equalToConstant: 40),
+            updateButton.widthAnchor.constraint(equalToConstant: 120),
+            
+            cancelButton.bottomAnchor.constraint(equalTo: submitButton.bottomAnchor),
+            cancelButton.rightAnchor.constraint(equalTo: submitButton.leftAnchor, constant: -20),
+            cancelButton.heightAnchor.constraint(equalToConstant: 40),
+            cancelButton.widthAnchor.constraint(equalToConstant: 120)
+        ]
+        
+        currentConstraints.append(contentsOf: constraints)
+        NSLayoutConstraint.activate(constraints)
     }
 }

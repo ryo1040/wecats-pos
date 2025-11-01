@@ -295,7 +295,7 @@ public class CloseRegisterView: UIView, UITableViewDelegate, UITableViewDataSour
             completionHandler(true)
         }
         editAction.backgroundColor = .systemBlue
-        
+
         // スワイプアクション設定を作成（右から左にスワイプ時）
         let configuration = UISwipeActionsConfiguration(actions: [deleteAction, editAction])
         configuration.performsFirstActionWithFullSwipe = false // フルスワイプで自動実行を無効化
