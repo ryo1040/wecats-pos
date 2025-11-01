@@ -23,6 +23,9 @@ final class MenuViewController: UIViewController, MenuViewControllerProtocol {
     let openButton = UIButton()
     let totalButton = UIButton()
     let closeButton = UIButton()
+    let careButton = UIButton()
+    
+    let screenWidth = UIScreen.main.bounds.width
     
     public func inject(presenter: MenuPresenterProtocol) {
         self.presenter = presenter
@@ -54,9 +57,14 @@ private extension MenuViewController {
             button.backgroundColor = UIColor.white
             button.layer.borderColor = UIColor.black.cgColor
             button.layer.borderWidth = 2.0
-            button.layer.cornerRadius = 25
             button.setTitle(text, for: .normal)
-            button.titleLabel?.font = UIFont.systemFont(ofSize: 48)
+            if screenWidth < 668 {
+                button.titleLabel?.font = UIFont.systemFont(ofSize: 24)
+                button.layer.cornerRadius = 15
+            } else {
+                button.titleLabel?.font = UIFont.systemFont(ofSize: 48)
+                button.layer.cornerRadius = 25
+            }
             button.setTitleColor(UIColor.black, for: .normal)
         }
 
@@ -75,17 +83,20 @@ private extension MenuViewController {
         setupButton(totalButton, text: "統計")
         totalButton.addTarget(self, action: #selector(self.tapTotalButton(_:)), for: UIControl.Event.touchUpInside)
         mainLabel.addSubview(totalButton)
+        
+        setupButton(careButton, text: "お手入れ")
+        careButton.addTarget(self, action: #selector(self.tapCareButton(_:)), for: UIControl.Event.touchUpInside)
+        mainLabel.addSubview(careButton)
 
         // 2行×3列（空のUIViewで隙間を埋める）
         let dummy1 = UIView()
-        let dummy2 = UIView()
 
         let row1Stack = UIStackView(arrangedSubviews: [catInfoButton, openButton, closeButton])
         row1Stack.axis = .horizontal
         row1Stack.distribution = .fillEqually
         row1Stack.spacing = 96
 
-        let row2Stack = UIStackView(arrangedSubviews: [totalButton, dummy1, dummy2])
+        let row2Stack = UIStackView(arrangedSubviews: [totalButton, careButton, dummy1])
         row2Stack.axis = .horizontal
         row2Stack.distribution = .fillEqually
         row2Stack.spacing = 96
@@ -102,18 +113,7 @@ private extension MenuViewController {
         mainStack.translatesAutoresizingMaskIntoConstraints = false
         
         // レスポンシブルデザイン対応
-        let screenWidth = UIScreen.main.bounds.width
         if screenWidth < 668 { // 小さい画面の場合
-            catInfoButton.titleLabel?.font = UIFont.systemFont(ofSize: 24)
-            openButton.titleLabel?.font = UIFont.systemFont(ofSize: 24)
-            totalButton.titleLabel?.font = UIFont.systemFont(ofSize: 24)
-            closeButton.titleLabel?.font = UIFont.systemFont(ofSize: 24)
-            
-            catInfoButton.layer.cornerRadius = 15
-            openButton.layer.cornerRadius = 15
-            totalButton.layer.cornerRadius = 15
-            closeButton.layer.cornerRadius = 15
-            
             row1Stack.spacing = 48
             row2Stack.spacing = 48
             mainStack.spacing = 48
@@ -133,11 +133,6 @@ private extension MenuViewController {
                 mainStack.heightAnchor.constraint(equalTo: mainLabel.heightAnchor, multiplier: 0.7),
             ])
         } else { // 通常の画面の場合
-            catInfoButton.titleLabel?.font = UIFont.systemFont(ofSize: 48)
-            openButton.titleLabel?.font = UIFont.systemFont(ofSize: 48)
-            totalButton.titleLabel?.font = UIFont.systemFont(ofSize: 48)
-            closeButton.titleLabel?.font = UIFont.systemFont(ofSize: 48)
-            
             NSLayoutConstraint.activate([
                 titleView.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor),
                 titleView.leftAnchor.constraint(equalTo: self.view.leftAnchor),
@@ -169,6 +164,10 @@ private extension MenuViewController {
     
     @objc func tapCloseButton(_ sender: UIButton){
         presenter.didTapCloseButton()
+    }
+    
+    @objc func tapCareButton(_ sender: UIButton){
+        presenter.didTapCareButton()
     }
 }
 
