@@ -13,7 +13,7 @@ protocol CloseRegisterDelegate: AnyObject  {
     func changeMonth(month: String)
     func tapTableViewRow(selectedDenomination: DenominationModel)
     func tapEditTableViewRow(selectedDenomination: DenominationModel)
-    func tapDeleteTableVieRow(selectedDenomination: DenominationModel)
+    func tapDeleteTableViewRow(selectedDenomination: DenominationModel)
 }
 
 public class CloseRegisterView: UIView, UITableViewDelegate, UITableViewDataSource {
@@ -71,7 +71,7 @@ public class CloseRegisterView: UIView, UITableViewDelegate, UITableViewDataSour
         
         let denomination = denominationList[indexPath.row]
         let dateLabel = UILabel()
-        dateLabel.text = denomination.date
+        dateLabel.text = convertToShortDateWithDayFormat(denomination.date)
         dateLabel.textAlignment = .center
         dateLabel.textColor = UIColor.black
         
@@ -114,7 +114,7 @@ public class CloseRegisterView: UIView, UITableViewDelegate, UITableViewDataSour
         }
 
         NSLayoutConstraint.activate([
-            dateLabel.leftAnchor.constraint(equalTo: cell.contentView.leftAnchor, constant: 32),
+            dateLabel.leftAnchor.constraint(equalTo: cell.contentView.leftAnchor, constant: 16),
             dateLabel.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor),
             dateLabel.widthAnchor.constraint(equalTo: cell.contentView.widthAnchor, multiplier: 0.18),
             totalLabel.leftAnchor.constraint(equalTo: dateLabel.rightAnchor),
@@ -124,7 +124,7 @@ public class CloseRegisterView: UIView, UITableViewDelegate, UITableViewDataSour
             dailySalesLabel.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor),
             dailySalesLabel.widthAnchor.constraint(equalTo: cell.contentView.widthAnchor, multiplier: 0.25),
             memoLabel.leftAnchor.constraint(equalTo: totalLabel.rightAnchor),
-            memoLabel.rightAnchor.constraint(equalTo: cell.contentView.rightAnchor, constant: -32),
+            memoLabel.rightAnchor.constraint(equalTo: cell.contentView.rightAnchor, constant: -16),
             memoLabel.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor),
             memoLabel.widthAnchor.constraint(equalTo: cell.contentView.widthAnchor, multiplier: 0.32)
         ])
@@ -182,7 +182,7 @@ public class CloseRegisterView: UIView, UITableViewDelegate, UITableViewDataSour
         }
 
         NSLayoutConstraint.activate([
-            dateLabel.leftAnchor.constraint(equalTo: headerView.leftAnchor, constant: 32),
+            dateLabel.leftAnchor.constraint(equalTo: headerView.leftAnchor, constant: 16),
             dateLabel.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
             dateLabel.widthAnchor.constraint(equalTo: headerView.widthAnchor, multiplier: 0.18),
             totalLabel.leftAnchor.constraint(equalTo: dateLabel.rightAnchor),
@@ -192,7 +192,7 @@ public class CloseRegisterView: UIView, UITableViewDelegate, UITableViewDataSour
             dailySalesLabel.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
             dailySalesLabel.widthAnchor.constraint(equalTo: headerView.widthAnchor, multiplier: 0.25),
             memoLabel.leftAnchor.constraint(equalTo: totalLabel.rightAnchor, constant: 32),
-            memoLabel.rightAnchor.constraint(equalTo: headerView.rightAnchor, constant: -32),
+            memoLabel.rightAnchor.constraint(equalTo: headerView.rightAnchor, constant: -16),
             memoLabel.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
             memoLabel.widthAnchor.constraint(equalTo: headerView.widthAnchor, multiplier: 0.32)
         ])
@@ -259,7 +259,7 @@ public class CloseRegisterView: UIView, UITableViewDelegate, UITableViewDataSour
             }
             
             // デリゲートに削除を通知
-            self.delegate?.tapDeleteTableVieRow(selectedDenomination: deleteDenomination)
+            self.delegate?.tapDeleteTableViewRow(selectedDenomination: deleteDenomination)
             
             completionHandler(true)
         }
@@ -619,5 +619,28 @@ extension CloseRegisterView: UIPickerViewDelegate, UIPickerViewDataSource {
     // 列の中央寄せ
     public func pickerView(_ pickerView: UIPickerView, rowHeightForComponent component: Int) -> CGFloat {
         return 44.0 // 行の高さを指定（デフォルトは44）
+    }
+}
+
+// MARK: - Date Conversion
+extension CloseRegisterView {
+    
+    /// yyyy-MM-dd形式の文字列をMM/dd（aaa）形式に変換
+    /// - Parameter dateString: yyyy-MM-dd形式の日付文字列
+    /// - Returns: MM/dd（aaa）形式の日付文字列、変換に失敗した場合はnil
+    func convertToShortDateWithDayFormat(_ dateString: String) -> String? {
+        let inputFormatter = DateFormatter()
+        inputFormatter.dateFormat = "yyyy-MM-dd"
+        inputFormatter.locale = Locale(identifier: "ja_JP")
+        
+        let outputFormatter = DateFormatter()
+        outputFormatter.dateFormat = "MM/dd（EEE）"
+        outputFormatter.locale = Locale(identifier: "ja_JP")
+        
+        if let date = inputFormatter.date(from: dateString) {
+            return outputFormatter.string(from: date)
+        }
+        
+        return nil
     }
 }

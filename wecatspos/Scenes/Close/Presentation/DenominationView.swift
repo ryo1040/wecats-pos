@@ -17,6 +17,7 @@ protocol DenominationDelegate: AnyObject  {
 public class DenominationView: UIView {
     
     let scrollView = UIScrollView()
+    let contentView = UIView()
     
     // キーボード対応用のプロパティ
     var activeTextField: UITextField?
@@ -84,7 +85,12 @@ public class DenominationView: UIView {
     let submitButton = UIButton()
     let cancelButton = UIButton()
     
-    let screenWidth = UIScreen.main.bounds.width
+    private var currentConstraints: [NSLayoutConstraint] = []
+    var screenWidth = UIScreen.main.bounds.width
+    // 画面向きを判定するプロパティ
+    private var isPortrait: Bool {
+        return UIScreen.main.bounds.height > UIScreen.main.bounds.width
+    }
     var editId = -1
     
     weak var delegate: DenominationDelegate?
@@ -94,6 +100,7 @@ public class DenominationView: UIView {
         
         setupViews()
         setupKeyboardObservers()
+        setupOrientationObserver()
     }
     
     required init?(coder: NSCoder) {
@@ -102,6 +109,7 @@ public class DenominationView: UIView {
     
     deinit {
         removeKeyboardObservers()
+        removeOrientationObserver()
     }
     
     func setInitialDenomination() {
@@ -181,6 +189,11 @@ public class DenominationView: UIView {
             submitButton.backgroundColor = UIColor.lightGray
         }
     }
+    
+    /// スクロール位置を初期化するメソッド
+    public func resetScrollPosition() {
+        scrollView.setContentOffset(CGPoint.zero, animated: false)
+    }
 }
 
 private extension DenominationView {
@@ -193,15 +206,48 @@ private extension DenominationView {
         tapGesture.cancelsTouchesInView = false
         self.addGestureRecognizer(tapGesture)
         
-        // 共通設定用の関数
+        scrollView.isScrollEnabled = true
+        scrollView.showsVerticalScrollIndicator = true
+        scrollView.showsHorizontalScrollIndicator = false
+        scrollView.bounces = true
+        scrollView.alwaysBounceVertical = false
+        scrollView.decelerationRate = UIScrollView.DecelerationRate.normal
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        self.addSubview(scrollView)
+        
+        // コンテンツ用のコンテナビューを作成
+        contentView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.addSubview(contentView)
+        
+        // ScrollView と ContentView の基本制約
+        NSLayoutConstraint.activate([
+            // ScrollViewの制約
+            scrollView.topAnchor.constraint(equalTo: self.safeAreaLayoutGuide.topAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: self.safeAreaLayoutGuide.bottomAnchor),
+            scrollView.leftAnchor.constraint(equalTo: self.safeAreaLayoutGuide.leftAnchor),
+            scrollView.rightAnchor.constraint(equalTo: self.safeAreaLayoutGuide.rightAnchor),
+            
+            // ContentViewの制約
+            contentView.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor),
+            contentView.bottomAnchor.constraint(equalTo: scrollView.contentLayoutGuide.bottomAnchor),
+            contentView.leftAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leftAnchor),
+            contentView.rightAnchor.constraint(equalTo: scrollView.contentLayoutGuide.rightAnchor),
+            contentView.widthAnchor.constraint(equalTo: scrollView.frameLayoutGuide.widthAnchor),
+        ])
+        
+        // UI要素の設定（制約は後で動的に設定するため、ここでは基本設定のみ）
+        setupUIElements()
+        
+        // 初回レイアウト設定
+        updateLayoutForCurrentOrientation()
+    }
+    
+    func setupUIElements() {
+        // UI要素の基本設定のみ行う（制約は除く）
+        
         func setupTextField(_ textField: UITextField, text: String = "") {
             textField.backgroundColor = UIColor.white
             textField.text = text
-            if screenWidth < 668 {
-                textField.font = UIFont.systemFont(ofSize: 12)
-            } else {
-                textField.font = UIFont.systemFont(ofSize: 32)
-            }
             textField.textColor = UIColor.black
             textField.keyboardType = .numberPad
             textField.returnKeyType = .next
@@ -210,219 +256,206 @@ private extension DenominationView {
             textField.layer.borderColor = UIColor.black.cgColor
             textField.layer.borderWidth = 1.0
             textField.delegate = self
+            textField.translatesAutoresizingMaskIntoConstraints = false
         }
         
         func setupLabel(_ label: UILabel, text: String = "") {
             label.text = text
-            if screenWidth < 668 {
-                label.font = UIFont.systemFont(ofSize: 12)
-            } else {
-                label.font = UIFont.systemFont(ofSize: 32)
-            }
             label.textColor = UIColor.black
             label.textAlignment = .right
+            label.translatesAutoresizingMaskIntoConstraints = false
         }
         
         func setupButton(_ button: UIButton, text: String = "") {
             button.setTitle(text, for: .normal)
-            if screenWidth < 668 {
-                button.titleLabel?.font = UIFont.systemFont(ofSize: 12)
-            } else {
-                button.titleLabel?.font = UIFont.systemFont(ofSize: 24)
-            }
             button.setTitleColor(UIColor.black, for: .normal)
             button.backgroundColor = UIColor.white
             button.layer.borderColor = UIColor.black.cgColor
             button.layer.borderWidth = 1.0
             button.layer.cornerRadius = 10
+            button.translatesAutoresizingMaskIntoConstraints = false
         }
-        
-        scrollView.isScrollEnabled = true
-        //        scrollView.delegate = self
-        scrollView.contentInsetAdjustmentBehavior = .never
-        self.addSubview(scrollView)
         
         setupLabel(errorMessageLabel, text: " ")
         errorMessageLabel.textColor = UIColor.red
-        scrollView.addSubview(errorMessageLabel)
+        contentView.addSubview(errorMessageLabel)
         
         setupLabel(dateTitleLabel, text: "日付：")
-        scrollView.addSubview(dateTitleLabel)
+        contentView.addSubview(dateTitleLabel)
         
         setupLabel(dateLabel, text: "")
-        scrollView.addSubview(dateLabel)
+        contentView.addSubview(dateLabel)
         
         setupLabel(dailySalesTitleLabel, text: "当日売上：")
-        scrollView.addSubview(dailySalesTitleLabel)
+        contentView.addSubview(dailySalesTitleLabel)
         
         setupLabel(dailySalesLabel, text: "")
-        scrollView.addSubview(dailySalesLabel)
+        contentView.addSubview(dailySalesLabel)
         
         setupLabel(tenThousandYenTitleLabel, text: "1万円札：")
-        scrollView.addSubview(tenThousandYenTitleLabel)
+        contentView.addSubview(tenThousandYenTitleLabel)
         
         setupTextField(tenThousandYenCountTextField, text: "")
-        scrollView.addSubview(tenThousandYenCountTextField)
+        contentView.addSubview(tenThousandYenCountTextField)
         
         setupLabel(tenThousandYenMaiLabel, text: "枚")
-        scrollView.addSubview(tenThousandYenMaiLabel)
+        contentView.addSubview(tenThousandYenMaiLabel)
         
         setupLabel(tenThousandYenLabel, text: "0円")
-        scrollView.addSubview(tenThousandYenLabel)
+        contentView.addSubview(tenThousandYenLabel)
         
         setupLabel(fiveThousandYenTitleLabel, text: "5千円札：")
-        scrollView.addSubview(fiveThousandYenTitleLabel)
+        contentView.addSubview(fiveThousandYenTitleLabel)
         
         setupTextField(fiveThousandYenCountTextField, text: "")
-        scrollView.addSubview(fiveThousandYenCountTextField)
+        contentView.addSubview(fiveThousandYenCountTextField)
         
         setupLabel(fiveThousandYenMaiLabel, text: "枚")
-        scrollView.addSubview(fiveThousandYenMaiLabel)
+        contentView.addSubview(fiveThousandYenMaiLabel)
         
         setupLabel(fiveThousandYenLabel, text: "0円")
-        scrollView.addSubview(fiveThousandYenLabel)
+        contentView.addSubview(fiveThousandYenLabel)
         
         setupLabel(twoThousandYenTitleLabel, text: "2千円札：")
-        scrollView.addSubview(twoThousandYenTitleLabel)
+        contentView.addSubview(twoThousandYenTitleLabel)
         
         setupTextField(twoThousandYenCountTextField, text: "")
-        scrollView.addSubview(twoThousandYenCountTextField)
+        contentView.addSubview(twoThousandYenCountTextField)
         
         setupLabel(twoThousandYenMaiLabel, text: "枚")
-        scrollView.addSubview(twoThousandYenMaiLabel)
+        contentView.addSubview(twoThousandYenMaiLabel)
         
         setupLabel(twoThousandYenLabel, text: "0円")
-        scrollView.addSubview(twoThousandYenLabel)
+        contentView.addSubview(twoThousandYenLabel)
         
         setupLabel(oneThousandYenTitleLabel, text: "千円札：")
-        scrollView.addSubview(oneThousandYenTitleLabel)
+        contentView.addSubview(oneThousandYenTitleLabel)
         
         setupTextField(oneThousandYenCountTextField, text: "")
-        scrollView.addSubview(oneThousandYenCountTextField)
+        contentView.addSubview(oneThousandYenCountTextField)
         
         setupLabel(oneThousandYenMaiLabel, text: "枚")
-        scrollView.addSubview(oneThousandYenMaiLabel)
+        contentView.addSubview(oneThousandYenMaiLabel)
         
         setupLabel(oneThousandYenLabel, text: "0円")
-        scrollView.addSubview(oneThousandYenLabel)
+        contentView.addSubview(oneThousandYenLabel)
         
         setupLabel(fiveHundredYenTitleLabel, text: "500円玉：")
-        scrollView.addSubview(fiveHundredYenTitleLabel)
+        contentView.addSubview(fiveHundredYenTitleLabel)
         
         setupTextField(fiveHundredYenCountTextField, text: "")
-        scrollView.addSubview(fiveHundredYenCountTextField)
+        contentView.addSubview(fiveHundredYenCountTextField)
         
         setupLabel(fiveHundredYenMaiLabel, text: "枚")
-        scrollView.addSubview(fiveHundredYenMaiLabel)
+        contentView.addSubview(fiveHundredYenMaiLabel)
         
         setupLabel(fiveHundredYenLabel, text: "0円")
-        scrollView.addSubview(fiveHundredYenLabel)
+        contentView.addSubview(fiveHundredYenLabel)
         
         setupLabel(oneHundredYenTitleLabel, text: "100円玉：")
-        scrollView.addSubview(oneHundredYenTitleLabel)
+        contentView.addSubview(oneHundredYenTitleLabel)
         
         setupTextField(oneHundredYenCountTextField, text: "")
-        scrollView.addSubview(oneHundredYenCountTextField)
+        contentView.addSubview(oneHundredYenCountTextField)
         
         setupLabel(oneHundredYenMaiLabel, text: "枚")
-        scrollView.addSubview(oneHundredYenMaiLabel)
+        contentView.addSubview(oneHundredYenMaiLabel)
         
         setupLabel(oneHundredYenLabel, text: "0円")
-        scrollView.addSubview(oneHundredYenLabel)
+        contentView.addSubview(oneHundredYenLabel)
         
         setupLabel(fiftyYenTitleLabel, text: "50円玉：")
-        scrollView.addSubview(fiftyYenTitleLabel)
+        contentView.addSubview(fiftyYenTitleLabel)
         
         setupTextField(fiftyYenCountTextField, text: "")
-        scrollView.addSubview(fiftyYenCountTextField)
+        contentView.addSubview(fiftyYenCountTextField)
         
         setupLabel(fiftyYenMaiLabel, text: "枚")
-        scrollView.addSubview(fiftyYenMaiLabel)
+        contentView.addSubview(fiftyYenMaiLabel)
         
         setupLabel(fiftyYenLabel, text: "0円")
-        scrollView.addSubview(fiftyYenLabel)
+        contentView.addSubview(fiftyYenLabel)
         
         setupLabel(tenYenTitleLabel, text: "10円玉：")
-        scrollView.addSubview(tenYenTitleLabel)
+        contentView.addSubview(tenYenTitleLabel)
         
         setupTextField(tenYenCountTextField, text: "")
-        scrollView.addSubview(tenYenCountTextField)
+        contentView.addSubview(tenYenCountTextField)
         
         setupLabel(tenYenMaiLabel, text: "枚")
-        scrollView.addSubview(tenYenMaiLabel)
+        contentView.addSubview(tenYenMaiLabel)
         
         setupLabel(tenYenLabel, text: "0円")
-        scrollView.addSubview(tenYenLabel)
+        contentView.addSubview(tenYenLabel)
         
         setupLabel(fiveYenTitleLabel, text: "5円玉：")
-        scrollView.addSubview(fiveYenTitleLabel)
+        contentView.addSubview(fiveYenTitleLabel)
         
         setupTextField(fiveYenCountTextField, text: "")
-        scrollView.addSubview(fiveYenCountTextField)
+        contentView.addSubview(fiveYenCountTextField)
         
         setupLabel(fiveYenMaiLabel, text: "枚")
-        scrollView.addSubview(fiveYenMaiLabel)
+        contentView.addSubview(fiveYenMaiLabel)
         
         setupLabel(fiveYenLabel, text: "0円")
-        scrollView.addSubview(fiveYenLabel)
+        contentView.addSubview(fiveYenLabel)
         
         setupLabel(oneYenTitleLabel, text: "1円玉：")
-        scrollView.addSubview(oneYenTitleLabel)
+        contentView.addSubview(oneYenTitleLabel)
         
         setupTextField(oneYenCountTextField, text: "")
-        scrollView.addSubview(oneYenCountTextField)
+        contentView.addSubview(oneYenCountTextField)
         
         setupLabel(oneYenMaiLabel, text: "枚")
-        scrollView.addSubview(oneYenMaiLabel)
+        contentView.addSubview(oneYenMaiLabel)
         
         setupLabel(oneYenLabel, text: "0円")
-        scrollView.addSubview(oneYenLabel)
+        contentView.addSubview(oneYenLabel)
         
         setupLabel(ticketTitleLabel, text: "応援券など：")
-        scrollView.addSubview(ticketTitleLabel)
+        contentView.addSubview(ticketTitleLabel)
         
         setupTextField(ticketYenTextField, text: "0")
-        scrollView.addSubview(ticketYenTextField)
+        contentView.addSubview(ticketYenTextField)
         
         setupLabel(ticketYenLabel, text: "円")
-        scrollView.addSubview(ticketYenLabel)
+        contentView.addSubview(ticketYenLabel)
     
         setupLabel(exportAmountTitleLabel, text: "持ち帰り額：")
-        scrollView.addSubview(exportAmountTitleLabel)
+        contentView.addSubview(exportAmountTitleLabel)
         
         setupTextField(exportAmountTextField, text: "")
-        scrollView.addSubview(exportAmountTextField)
+        contentView.addSubview(exportAmountTextField)
         
         setupLabel(exportAmountYenLabel, text: "円")
-        scrollView.addSubview(exportAmountYenLabel)
+        contentView.addSubview(exportAmountYenLabel)
         
         setupLabel(totalYenAmountLabel, text: "合計金額：")
-        scrollView.addSubview(totalYenAmountLabel)
+        contentView.addSubview(totalYenAmountLabel)
         
         setupLabel(totalAmountLabel, text: "0円")
         totalAmountLabel.textAlignment = .center
-        scrollView.addSubview(totalAmountLabel)
+        contentView.addSubview(totalAmountLabel)
         
         setupButton(calcButton, text: "料金計算＆チェック")
         calcButton.addTarget(self, action: #selector(self.tapCalcButton), for: .touchUpInside)
-        self.addSubview(calcButton)
+        contentView.addSubview(calcButton)
         
         setupLabel(memoTitleLabel, text: "メモ：")
-        scrollView.addSubview(memoTitleLabel)
+        contentView.addSubview(memoTitleLabel)
         
         setupTextField(memoTextField, text: "")
         memoTextField.keyboardType = .default
-        scrollView.addSubview(memoTextField)
+        contentView.addSubview(memoTextField)
 
         setupButton(submitButton, text: "登録")
         submitButton.addTarget(self, action: #selector(self.tapSubmitButton), for: .touchUpInside)
-        self.addSubview(submitButton)
+        contentView.addSubview(submitButton)
 
         setupButton(cancelButton, text: "キャンセル")
         cancelButton.addTarget(self, action: #selector(self.tapCancelButton), for: .touchUpInside)
-        self.addSubview(cancelButton)
+        contentView.addSubview(cancelButton)
         
-        scrollView.translatesAutoresizingMaskIntoConstraints = false
         errorMessageLabel.translatesAutoresizingMaskIntoConstraints = false
         dateTitleLabel.translatesAutoresizingMaskIntoConstraints = false
         dateLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -481,365 +514,6 @@ private extension DenominationView {
         memoTextField.translatesAutoresizingMaskIntoConstraints = false
         submitButton.translatesAutoresizingMaskIntoConstraints = false
         cancelButton.translatesAutoresizingMaskIntoConstraints = false
-        
-        // レスポンシブルデザイン対応
-
-        if screenWidth < 668 { // 小さい画面の場合
-            NSLayoutConstraint.activate([
-                scrollView.topAnchor.constraint(equalTo: self.safeAreaLayoutGuide.topAnchor),
-                scrollView.bottomAnchor.constraint(equalTo: self.safeAreaLayoutGuide.bottomAnchor),
-                scrollView.leftAnchor.constraint(equalTo: self.safeAreaLayoutGuide.leftAnchor),
-                scrollView.rightAnchor.constraint(equalTo: self.safeAreaLayoutGuide.rightAnchor),
-                errorMessageLabel.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 8),
-                errorMessageLabel.leftAnchor.constraint(equalTo: scrollView.leftAnchor, constant: 32),
-                
-                dateTitleLabel.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 16),
-                dateTitleLabel.leftAnchor.constraint(equalTo: scrollView.leftAnchor, constant: 90),
-                dateLabel.centerYAnchor.constraint(equalTo: dateTitleLabel.centerYAnchor),
-                dateLabel.leftAnchor.constraint(equalTo: dateTitleLabel.rightAnchor, constant: 8),
-                
-                dailySalesTitleLabel.centerYAnchor.constraint(equalTo: dateLabel.centerYAnchor),
-                dailySalesTitleLabel.rightAnchor.constraint(equalTo: scrollView.centerXAnchor, constant: 100),
-                dailySalesLabel.centerYAnchor.constraint(equalTo: dailySalesTitleLabel.centerYAnchor),
-                dailySalesLabel.leftAnchor.constraint(equalTo: dailySalesTitleLabel.rightAnchor, constant: 8),
-
-                tenThousandYenTitleLabel.topAnchor.constraint(equalTo: dateTitleLabel.bottomAnchor, constant: 24),
-                tenThousandYenTitleLabel.rightAnchor.constraint(equalTo: dateTitleLabel.rightAnchor),
-                tenThousandYenCountTextField.centerYAnchor.constraint(equalTo: tenThousandYenTitleLabel.centerYAnchor),
-                tenThousandYenCountTextField.leftAnchor.constraint(equalTo: tenThousandYenTitleLabel.rightAnchor, constant: 8),
-                tenThousandYenCountTextField.widthAnchor.constraint(equalToConstant: 50),
-                tenThousandYenCountTextField.heightAnchor.constraint(equalToConstant: 25),                tenThousandYenMaiLabel.centerYAnchor.constraint(equalTo: tenThousandYenTitleLabel.centerYAnchor),
-                tenThousandYenMaiLabel.leftAnchor.constraint(equalTo: tenThousandYenCountTextField.rightAnchor, constant: 8),
-                tenThousandYenLabel.centerYAnchor.constraint(equalTo: tenThousandYenTitleLabel.centerYAnchor),
-                tenThousandYenLabel.leftAnchor.constraint(equalTo: tenThousandYenMaiLabel.rightAnchor, constant: 16),
-                tenThousandYenLabel.widthAnchor.constraint(equalToConstant: 60),
-                
-                fiveThousandYenTitleLabel.topAnchor.constraint(equalTo: tenThousandYenTitleLabel.bottomAnchor, constant: 16),
-                fiveThousandYenTitleLabel.rightAnchor.constraint(equalTo: dateTitleLabel.rightAnchor),
-                fiveThousandYenCountTextField.centerYAnchor.constraint(equalTo: fiveThousandYenTitleLabel.centerYAnchor),
-                fiveThousandYenCountTextField.leftAnchor.constraint(equalTo: fiveThousandYenTitleLabel.rightAnchor, constant: 8),
-                fiveThousandYenCountTextField.widthAnchor.constraint(equalToConstant: 50),
-                fiveThousandYenCountTextField.heightAnchor.constraint(equalToConstant: 25),
-                fiveThousandYenMaiLabel.centerYAnchor.constraint(equalTo: fiveThousandYenTitleLabel.centerYAnchor),
-                fiveThousandYenMaiLabel.leftAnchor.constraint(equalTo: fiveThousandYenCountTextField.rightAnchor, constant: 8),
-                fiveThousandYenLabel.centerYAnchor.constraint(equalTo: fiveThousandYenTitleLabel.centerYAnchor),
-                fiveThousandYenLabel.leftAnchor.constraint(equalTo: fiveThousandYenMaiLabel.rightAnchor, constant: 16),
-                fiveThousandYenLabel.widthAnchor.constraint(equalToConstant: 60),
-                
-                twoThousandYenTitleLabel.topAnchor.constraint(equalTo: fiveThousandYenTitleLabel.bottomAnchor, constant: 16),
-                twoThousandYenTitleLabel.rightAnchor.constraint(equalTo: dateTitleLabel.rightAnchor),
-                twoThousandYenCountTextField.centerYAnchor.constraint(equalTo: twoThousandYenTitleLabel.centerYAnchor),
-                twoThousandYenCountTextField.leftAnchor.constraint(equalTo: twoThousandYenTitleLabel.rightAnchor, constant: 8),
-                twoThousandYenCountTextField.widthAnchor.constraint(equalToConstant: 50),
-                twoThousandYenCountTextField.heightAnchor.constraint(equalToConstant: 25),
-                twoThousandYenMaiLabel.centerYAnchor.constraint(equalTo: twoThousandYenTitleLabel.centerYAnchor),
-                twoThousandYenMaiLabel.leftAnchor.constraint(equalTo: twoThousandYenCountTextField.rightAnchor, constant: 8),
-                twoThousandYenLabel.centerYAnchor.constraint(equalTo: twoThousandYenTitleLabel.centerYAnchor),
-                twoThousandYenLabel.leftAnchor.constraint(equalTo: twoThousandYenMaiLabel.rightAnchor, constant: 16),
-                twoThousandYenLabel.widthAnchor.constraint(equalToConstant: 60),
-                
-                oneThousandYenTitleLabel.topAnchor.constraint(equalTo: twoThousandYenTitleLabel.bottomAnchor, constant: 16),
-                oneThousandYenTitleLabel.rightAnchor.constraint(equalTo: dateTitleLabel.rightAnchor),
-                oneThousandYenCountTextField.centerYAnchor.constraint(equalTo: oneThousandYenTitleLabel.centerYAnchor),
-                oneThousandYenCountTextField.leftAnchor.constraint(equalTo: oneThousandYenTitleLabel.rightAnchor, constant: 8),
-                oneThousandYenCountTextField.widthAnchor.constraint(equalToConstant: 50),
-                oneThousandYenCountTextField.heightAnchor.constraint(equalToConstant: 25),
-                oneThousandYenMaiLabel.centerYAnchor.constraint(equalTo: oneThousandYenTitleLabel.centerYAnchor),
-                oneThousandYenMaiLabel.leftAnchor.constraint(equalTo: oneThousandYenCountTextField.rightAnchor, constant: 8),
-                oneThousandYenLabel.centerYAnchor.constraint(equalTo: oneThousandYenTitleLabel.centerYAnchor),
-                oneThousandYenLabel.leftAnchor.constraint(equalTo: oneThousandYenMaiLabel.rightAnchor, constant: 16),
-                oneThousandYenLabel.widthAnchor.constraint(equalToConstant: 60),
-                
-                fiveHundredYenTitleLabel.topAnchor.constraint(equalTo: oneThousandYenTitleLabel.bottomAnchor, constant: 16),
-                fiveHundredYenTitleLabel.rightAnchor.constraint(equalTo: dateTitleLabel.rightAnchor),
-                fiveHundredYenCountTextField.centerYAnchor.constraint(equalTo: fiveHundredYenTitleLabel.centerYAnchor),
-                fiveHundredYenCountTextField.leftAnchor.constraint(equalTo: fiveHundredYenTitleLabel.rightAnchor, constant: 8),
-                fiveHundredYenCountTextField.widthAnchor.constraint(equalToConstant: 50),
-                fiveHundredYenCountTextField.heightAnchor.constraint(equalToConstant: 25),
-                fiveHundredYenMaiLabel.centerYAnchor.constraint(equalTo: fiveHundredYenTitleLabel.centerYAnchor),
-                fiveHundredYenMaiLabel.leftAnchor.constraint(equalTo: fiveHundredYenCountTextField.rightAnchor, constant: 8),
-                fiveHundredYenLabel.centerYAnchor.constraint(equalTo: fiveHundredYenTitleLabel.centerYAnchor),
-                fiveHundredYenLabel.leftAnchor.constraint(equalTo: fiveHundredYenMaiLabel.rightAnchor, constant: 16),
-                fiveHundredYenLabel.widthAnchor.constraint(equalToConstant: 60),
-                
-                ticketTitleLabel.topAnchor.constraint(equalTo: fiveHundredYenTitleLabel.bottomAnchor, constant: 16),
-                ticketTitleLabel.rightAnchor.constraint(equalTo: dateTitleLabel.rightAnchor),
-                ticketYenTextField.centerYAnchor.constraint(equalTo: ticketTitleLabel.centerYAnchor),
-                ticketYenTextField.leftAnchor.constraint(equalTo: ticketTitleLabel.rightAnchor, constant: 8),
-                ticketYenTextField.widthAnchor.constraint(equalToConstant: 100),
-                ticketYenTextField.heightAnchor.constraint(equalToConstant: 25),
-                ticketYenLabel.centerYAnchor.constraint(equalTo: ticketYenTextField.centerYAnchor),
-                ticketYenLabel.leftAnchor.constraint(equalTo: ticketYenTextField.rightAnchor, constant: 8),
-                
-                oneHundredYenTitleLabel.centerYAnchor.constraint(equalTo: tenThousandYenTitleLabel.centerYAnchor),
-                oneHundredYenTitleLabel.rightAnchor.constraint(equalTo: dailySalesTitleLabel.rightAnchor),
-                oneHundredYenCountTextField.centerYAnchor.constraint(equalTo: oneHundredYenTitleLabel.centerYAnchor),
-                oneHundredYenCountTextField.leftAnchor.constraint(equalTo: oneHundredYenTitleLabel.rightAnchor, constant: 8),
-                oneHundredYenCountTextField.widthAnchor.constraint(equalToConstant: 50),
-                oneHundredYenCountTextField.heightAnchor.constraint(equalToConstant: 25),
-                oneHundredYenMaiLabel.centerYAnchor.constraint(equalTo: oneHundredYenTitleLabel.centerYAnchor),
-                oneHundredYenMaiLabel.leftAnchor.constraint(equalTo: oneHundredYenCountTextField.rightAnchor, constant: 8),
-                oneHundredYenLabel.centerYAnchor.constraint(equalTo: oneHundredYenTitleLabel.centerYAnchor),
-                oneHundredYenLabel.leftAnchor.constraint(equalTo: oneHundredYenMaiLabel.rightAnchor, constant: 16),
-                oneHundredYenLabel.widthAnchor.constraint(equalToConstant: 60),
-                
-                fiftyYenTitleLabel.centerYAnchor.constraint(equalTo: fiveThousandYenTitleLabel.centerYAnchor),
-                fiftyYenTitleLabel.rightAnchor.constraint(equalTo: scrollView.centerXAnchor, constant: 100),
-                fiftyYenCountTextField.centerYAnchor.constraint(equalTo: fiftyYenTitleLabel.centerYAnchor),
-                fiftyYenCountTextField.leftAnchor.constraint(equalTo: fiftyYenTitleLabel.rightAnchor, constant: 8),
-                fiftyYenCountTextField.widthAnchor.constraint(equalToConstant: 50),
-                fiftyYenCountTextField.heightAnchor.constraint(equalToConstant: 25),
-                fiftyYenMaiLabel.centerYAnchor.constraint(equalTo: fiftyYenTitleLabel.centerYAnchor),
-                fiftyYenMaiLabel.leftAnchor.constraint(equalTo: fiftyYenCountTextField.rightAnchor, constant: 8),
-                fiftyYenLabel.centerYAnchor.constraint(equalTo: fiftyYenTitleLabel.centerYAnchor),
-                fiftyYenLabel.leftAnchor.constraint(equalTo: fiftyYenMaiLabel.rightAnchor, constant: 16),
-                fiftyYenLabel.widthAnchor.constraint(equalToConstant: 60),
-                
-                tenYenTitleLabel.centerYAnchor.constraint(equalTo: twoThousandYenTitleLabel.centerYAnchor),
-                tenYenTitleLabel.rightAnchor.constraint(equalTo: fiftyYenTitleLabel.rightAnchor),
-                tenYenCountTextField.centerYAnchor.constraint(equalTo: tenYenTitleLabel.centerYAnchor),
-                tenYenCountTextField.leftAnchor.constraint(equalTo: tenYenTitleLabel.rightAnchor, constant: 8),
-                tenYenCountTextField.widthAnchor.constraint(equalToConstant: 50),
-                tenYenCountTextField.heightAnchor.constraint(equalToConstant: 25),
-                tenYenMaiLabel.centerYAnchor.constraint(equalTo: tenYenTitleLabel.centerYAnchor),
-                tenYenMaiLabel.leftAnchor.constraint(equalTo: tenYenCountTextField.rightAnchor, constant: 8),
-                tenYenLabel.centerYAnchor.constraint(equalTo: tenYenTitleLabel.centerYAnchor),
-                tenYenLabel.leftAnchor.constraint(equalTo: tenYenMaiLabel.rightAnchor, constant: 16),
-                tenYenLabel.widthAnchor.constraint(equalToConstant: 60),
-                
-                fiveYenTitleLabel.centerYAnchor.constraint(equalTo: oneThousandYenTitleLabel.centerYAnchor),
-                fiveYenTitleLabel.rightAnchor.constraint(equalTo: fiftyYenTitleLabel.rightAnchor),
-                fiveYenCountTextField.centerYAnchor.constraint(equalTo: fiveYenTitleLabel.centerYAnchor),
-                fiveYenCountTextField.leftAnchor.constraint(equalTo: fiveYenTitleLabel.rightAnchor, constant: 8),
-                fiveYenCountTextField.widthAnchor.constraint(equalToConstant: 50),
-                fiveYenCountTextField.heightAnchor.constraint(equalToConstant: 25),
-                fiveYenMaiLabel.centerYAnchor.constraint(equalTo: fiveYenTitleLabel.centerYAnchor),
-                fiveYenMaiLabel.leftAnchor.constraint(equalTo: fiveYenCountTextField.rightAnchor, constant: 8),
-                fiveYenLabel.centerYAnchor.constraint(equalTo: fiveYenTitleLabel.centerYAnchor),
-                fiveYenLabel.leftAnchor.constraint(equalTo: fiveYenMaiLabel.rightAnchor, constant: 16),
-                fiveYenLabel.widthAnchor.constraint(equalToConstant: 60),
-                
-                oneYenTitleLabel.centerYAnchor.constraint(equalTo: fiveHundredYenTitleLabel.centerYAnchor),
-                oneYenTitleLabel.rightAnchor.constraint(equalTo: fiftyYenTitleLabel.rightAnchor),
-                oneYenCountTextField.centerYAnchor.constraint(equalTo: oneYenTitleLabel.centerYAnchor),
-                oneYenCountTextField.leftAnchor.constraint(equalTo: oneYenTitleLabel.rightAnchor, constant: 8),
-                oneYenCountTextField.widthAnchor.constraint(equalToConstant: 50),
-                oneYenCountTextField.heightAnchor.constraint(equalToConstant: 25),
-                oneYenMaiLabel.centerYAnchor.constraint(equalTo: oneYenTitleLabel.centerYAnchor),
-                oneYenMaiLabel.leftAnchor.constraint(equalTo: oneYenCountTextField.rightAnchor, constant: 8),
-                oneYenLabel.centerYAnchor.constraint(equalTo: oneYenTitleLabel.centerYAnchor),
-                oneYenLabel.leftAnchor.constraint(equalTo: oneYenMaiLabel.rightAnchor, constant: 16),
-                oneYenLabel.widthAnchor.constraint(equalToConstant: 60),
-                
-                exportAmountTitleLabel.centerYAnchor.constraint(equalTo: ticketTitleLabel.centerYAnchor),
-                exportAmountTitleLabel.rightAnchor.constraint(equalTo: fiftyYenTitleLabel.rightAnchor),
-                exportAmountTextField.centerYAnchor.constraint(equalTo: exportAmountTitleLabel.centerYAnchor),
-                exportAmountTextField.leftAnchor.constraint(equalTo: exportAmountTitleLabel.rightAnchor, constant: 8),
-                exportAmountTextField.widthAnchor.constraint(equalToConstant: 100),
-                exportAmountTextField.heightAnchor.constraint(equalToConstant: 25),
-                exportAmountYenLabel.centerYAnchor.constraint(equalTo: exportAmountTitleLabel.centerYAnchor),
-                exportAmountYenLabel.leftAnchor.constraint(equalTo: exportAmountTextField.rightAnchor, constant: 8),
-                
-                totalYenAmountLabel.topAnchor.constraint(equalTo: ticketTitleLabel.bottomAnchor, constant: 24),
-                totalYenAmountLabel.rightAnchor.constraint(equalTo: dateTitleLabel.rightAnchor),
-                totalAmountLabel.centerYAnchor.constraint(equalTo: totalYenAmountLabel.centerYAnchor),
-                totalAmountLabel.leftAnchor.constraint(equalTo: totalYenAmountLabel.rightAnchor, constant: 16),
-                
-                totalAmountLabel.heightAnchor.constraint(equalToConstant: 25),
-                
-                calcButton.centerYAnchor.constraint(equalTo: totalYenAmountLabel.centerYAnchor),
-                calcButton.leftAnchor.constraint(equalTo: totalAmountLabel.rightAnchor, constant: 32),
-                calcButton.heightAnchor.constraint(equalToConstant: 24),
-                calcButton.widthAnchor.constraint(equalToConstant: 150),
-                
-                memoTitleLabel.topAnchor.constraint(equalTo: totalYenAmountLabel.bottomAnchor, constant:    16),
-                memoTitleLabel.rightAnchor.constraint(equalTo: totalYenAmountLabel.rightAnchor),
-                memoTextField.topAnchor.constraint(equalTo: memoTitleLabel.topAnchor),
-                memoTextField.bottomAnchor.constraint(equalTo: memoTitleLabel.bottomAnchor),
-                memoTextField.leftAnchor.constraint(equalTo: memoTitleLabel.rightAnchor, constant: 8),
-                memoTextField.widthAnchor.constraint(equalToConstant: 250),
-                memoTextField.heightAnchor.constraint(equalToConstant: 25),
-                submitButton.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: -8),
-                submitButton.rightAnchor.constraint(equalTo: scrollView.rightAnchor, constant: -16),
-                submitButton.heightAnchor.constraint(equalToConstant: 24),
-                submitButton.widthAnchor.constraint(equalToConstant: 80),
-                cancelButton.bottomAnchor.constraint(equalTo: submitButton.bottomAnchor),
-                cancelButton.rightAnchor.constraint(equalTo: submitButton.leftAnchor, constant: -32),
-                cancelButton.heightAnchor.constraint(equalToConstant: 24),
-                cancelButton.widthAnchor.constraint(equalToConstant: 80)
-            ])
-        } else { // 通常の画面の場合            
-            NSLayoutConstraint.activate([
-                scrollView.topAnchor.constraint(equalTo: self.safeAreaLayoutGuide.topAnchor),
-                scrollView.bottomAnchor.constraint(equalTo: self.safeAreaLayoutGuide.bottomAnchor),
-                scrollView.leftAnchor.constraint(equalTo: self.safeAreaLayoutGuide.leftAnchor),
-                scrollView.rightAnchor.constraint(equalTo: self.safeAreaLayoutGuide.rightAnchor),
-                errorMessageLabel.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 32),
-                errorMessageLabel.leftAnchor.constraint(equalTo: scrollView.leftAnchor, constant: 64),
-                
-                dateTitleLabel.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 24),
-                dateTitleLabel.leftAnchor.constraint(equalTo: scrollView.leftAnchor, constant: 120),
-                dateLabel.centerYAnchor.constraint(equalTo: dateTitleLabel.centerYAnchor),
-                dateLabel.leftAnchor.constraint(equalTo: dateTitleLabel.rightAnchor, constant: 8),
-                
-                dailySalesTitleLabel.rightAnchor.constraint(equalTo: scrollView.centerXAnchor, constant: 200),
-                dailySalesTitleLabel.centerYAnchor.constraint(equalTo: dateLabel.centerYAnchor),
-                dailySalesLabel.centerYAnchor.constraint(equalTo: dailySalesTitleLabel.centerYAnchor),
-                dailySalesLabel.leftAnchor.constraint(equalTo: dailySalesTitleLabel.rightAnchor, constant: 8),
-
-                tenThousandYenTitleLabel.topAnchor.constraint(equalTo: dateTitleLabel.bottomAnchor, constant: 32),
-                tenThousandYenTitleLabel.rightAnchor.constraint(equalTo: dateTitleLabel.rightAnchor),
-                tenThousandYenCountTextField.centerYAnchor.constraint(equalTo: tenThousandYenTitleLabel.centerYAnchor),
-                tenThousandYenCountTextField.leftAnchor.constraint(equalTo: tenThousandYenTitleLabel.rightAnchor, constant: 8),
-                tenThousandYenCountTextField.widthAnchor.constraint(equalToConstant: 100),
-                tenThousandYenMaiLabel.centerYAnchor.constraint(equalTo: tenThousandYenTitleLabel.centerYAnchor),
-                tenThousandYenMaiLabel.leftAnchor.constraint(equalTo: tenThousandYenCountTextField.rightAnchor, constant: 8),
-                tenThousandYenLabel.centerYAnchor.constraint(equalTo: tenThousandYenTitleLabel.centerYAnchor),
-                tenThousandYenLabel.leftAnchor.constraint(equalTo: tenThousandYenMaiLabel.rightAnchor, constant: 16),
-                tenThousandYenLabel.widthAnchor.constraint(equalToConstant: 180),
-                
-                fiveThousandYenTitleLabel.topAnchor.constraint(equalTo: tenThousandYenTitleLabel.bottomAnchor, constant: 32),
-                fiveThousandYenTitleLabel.rightAnchor.constraint(equalTo: dateTitleLabel.rightAnchor),
-                fiveThousandYenCountTextField.centerYAnchor.constraint(equalTo: fiveThousandYenTitleLabel.centerYAnchor),
-                fiveThousandYenCountTextField.leftAnchor.constraint(equalTo: fiveThousandYenTitleLabel.rightAnchor, constant: 8),
-                fiveThousandYenCountTextField.widthAnchor.constraint(equalToConstant: 100),
-                fiveThousandYenMaiLabel.centerYAnchor.constraint(equalTo: fiveThousandYenTitleLabel.centerYAnchor),
-                fiveThousandYenMaiLabel.leftAnchor.constraint(equalTo: fiveThousandYenCountTextField.rightAnchor, constant: 8),
-                fiveThousandYenLabel.centerYAnchor.constraint(equalTo: fiveThousandYenTitleLabel.centerYAnchor),
-                fiveThousandYenLabel.leftAnchor.constraint(equalTo: fiveThousandYenMaiLabel.rightAnchor, constant: 16),
-                fiveThousandYenLabel.widthAnchor.constraint(equalToConstant: 180),
-                
-                twoThousandYenTitleLabel.topAnchor.constraint(equalTo: fiveThousandYenTitleLabel.bottomAnchor, constant: 32),
-                twoThousandYenTitleLabel.rightAnchor.constraint(equalTo: dateTitleLabel.rightAnchor),
-                twoThousandYenCountTextField.centerYAnchor.constraint(equalTo: twoThousandYenTitleLabel.centerYAnchor),
-                twoThousandYenCountTextField.leftAnchor.constraint(equalTo: twoThousandYenTitleLabel.rightAnchor, constant: 8),
-                twoThousandYenCountTextField.widthAnchor.constraint(equalToConstant: 100),
-                twoThousandYenMaiLabel.centerYAnchor.constraint(equalTo: twoThousandYenTitleLabel.centerYAnchor),
-                twoThousandYenMaiLabel.leftAnchor.constraint(equalTo: twoThousandYenCountTextField.rightAnchor, constant: 8),
-                twoThousandYenLabel.centerYAnchor.constraint(equalTo: twoThousandYenTitleLabel.centerYAnchor),
-                twoThousandYenLabel.leftAnchor.constraint(equalTo: twoThousandYenMaiLabel.rightAnchor, constant: 16),
-                twoThousandYenLabel.widthAnchor.constraint(equalToConstant: 180),
-                
-                oneThousandYenTitleLabel.topAnchor.constraint(equalTo: twoThousandYenTitleLabel.bottomAnchor, constant: 32),
-                oneThousandYenTitleLabel.rightAnchor.constraint(equalTo: dateTitleLabel.rightAnchor),
-                oneThousandYenCountTextField.centerYAnchor.constraint(equalTo: oneThousandYenTitleLabel.centerYAnchor),
-                oneThousandYenCountTextField.leftAnchor.constraint(equalTo: oneThousandYenTitleLabel.rightAnchor, constant: 8),
-                oneThousandYenCountTextField.widthAnchor.constraint(equalToConstant: 100),
-                oneThousandYenMaiLabel.centerYAnchor.constraint(equalTo: oneThousandYenTitleLabel.centerYAnchor),
-                oneThousandYenMaiLabel.leftAnchor.constraint(equalTo: oneThousandYenCountTextField.rightAnchor, constant: 8),
-                oneThousandYenLabel.centerYAnchor.constraint(equalTo: oneThousandYenTitleLabel.centerYAnchor),
-                oneThousandYenLabel.leftAnchor.constraint(equalTo: oneThousandYenMaiLabel.rightAnchor, constant: 16),
-                oneThousandYenLabel.widthAnchor.constraint(equalToConstant: 180),
-                
-                fiveHundredYenTitleLabel.topAnchor.constraint(equalTo: oneThousandYenTitleLabel.bottomAnchor, constant: 32),
-                fiveHundredYenTitleLabel.rightAnchor.constraint(equalTo: dateTitleLabel.rightAnchor),
-                fiveHundredYenCountTextField.centerYAnchor.constraint(equalTo: fiveHundredYenTitleLabel.centerYAnchor),
-                fiveHundredYenCountTextField.leftAnchor.constraint(equalTo: fiveHundredYenTitleLabel.rightAnchor, constant: 8),
-                fiveHundredYenCountTextField.widthAnchor.constraint(equalToConstant: 100),
-                fiveHundredYenMaiLabel.centerYAnchor.constraint(equalTo: fiveHundredYenTitleLabel.centerYAnchor),
-                fiveHundredYenMaiLabel.leftAnchor.constraint(equalTo: fiveHundredYenCountTextField.rightAnchor, constant: 8),
-                fiveHundredYenLabel.centerYAnchor.constraint(equalTo: fiveHundredYenTitleLabel.centerYAnchor),
-                fiveHundredYenLabel.leftAnchor.constraint(equalTo: fiveHundredYenMaiLabel.rightAnchor, constant: 16),
-                fiveHundredYenLabel.widthAnchor.constraint(equalToConstant: 180),
-                
-                oneHundredYenTitleLabel.centerYAnchor.constraint(equalTo: tenThousandYenTitleLabel.centerYAnchor),
-                oneHundredYenTitleLabel.rightAnchor.constraint(equalTo: dailySalesTitleLabel.rightAnchor),
-                oneHundredYenCountTextField.centerYAnchor.constraint(equalTo: oneHundredYenTitleLabel.centerYAnchor),
-                oneHundredYenCountTextField.leftAnchor.constraint(equalTo: oneHundredYenTitleLabel.rightAnchor, constant: 8),
-                oneHundredYenCountTextField.widthAnchor.constraint(equalToConstant: 100),
-                oneHundredYenMaiLabel.centerYAnchor.constraint(equalTo: oneHundredYenTitleLabel.centerYAnchor),
-                oneHundredYenMaiLabel.leftAnchor.constraint(equalTo: oneHundredYenCountTextField.rightAnchor, constant: 8),
-                oneHundredYenLabel.centerYAnchor.constraint(equalTo: oneHundredYenTitleLabel.centerYAnchor),
-                oneHundredYenLabel.leftAnchor.constraint(equalTo: oneHundredYenMaiLabel.rightAnchor, constant: 16),
-                oneHundredYenLabel.widthAnchor.constraint(equalToConstant: 180),
-                
-                fiftyYenTitleLabel.centerYAnchor.constraint(equalTo: fiveThousandYenTitleLabel.centerYAnchor),
-                fiftyYenTitleLabel.rightAnchor.constraint(equalTo: scrollView.centerXAnchor, constant: 200),
-                fiftyYenCountTextField.centerYAnchor.constraint(equalTo: fiftyYenTitleLabel.centerYAnchor),
-                fiftyYenCountTextField.leftAnchor.constraint(equalTo: fiftyYenTitleLabel.rightAnchor, constant: 8),
-                fiftyYenCountTextField.widthAnchor.constraint(equalToConstant: 100),
-                fiftyYenMaiLabel.centerYAnchor.constraint(equalTo: fiftyYenTitleLabel.centerYAnchor),
-                fiftyYenMaiLabel.leftAnchor.constraint(equalTo: fiftyYenCountTextField.rightAnchor, constant: 8),
-                fiftyYenLabel.centerYAnchor.constraint(equalTo: fiftyYenTitleLabel.centerYAnchor),
-                fiftyYenLabel.leftAnchor.constraint(equalTo: fiftyYenMaiLabel.rightAnchor, constant: 16),
-                fiftyYenLabel.widthAnchor.constraint(equalToConstant: 180),
-                
-                tenYenTitleLabel.centerYAnchor.constraint(equalTo: twoThousandYenTitleLabel.centerYAnchor),
-                tenYenTitleLabel.rightAnchor.constraint(equalTo: fiftyYenTitleLabel.rightAnchor),
-                tenYenCountTextField.centerYAnchor.constraint(equalTo: tenYenTitleLabel.centerYAnchor),
-                tenYenCountTextField.leftAnchor.constraint(equalTo: tenYenTitleLabel.rightAnchor, constant: 8),
-                tenYenCountTextField.widthAnchor.constraint(equalToConstant: 100),
-                tenYenMaiLabel.centerYAnchor.constraint(equalTo: tenYenTitleLabel.centerYAnchor),
-                tenYenMaiLabel.leftAnchor.constraint(equalTo: tenYenCountTextField.rightAnchor, constant: 8),
-                tenYenLabel.centerYAnchor.constraint(equalTo: tenYenTitleLabel.centerYAnchor),
-                tenYenLabel.leftAnchor.constraint(equalTo: tenYenMaiLabel.rightAnchor, constant: 16),
-                tenYenLabel.widthAnchor.constraint(equalToConstant: 180),
-                
-                fiveYenTitleLabel.centerYAnchor.constraint(equalTo: oneThousandYenTitleLabel.centerYAnchor),
-                fiveYenTitleLabel.rightAnchor.constraint(equalTo: fiftyYenTitleLabel.rightAnchor),
-                fiveYenCountTextField.centerYAnchor.constraint(equalTo: fiveYenTitleLabel.centerYAnchor),
-                fiveYenCountTextField.leftAnchor.constraint(equalTo: fiveYenTitleLabel.rightAnchor, constant: 8),
-                fiveYenCountTextField.widthAnchor.constraint(equalToConstant: 100),
-                fiveYenMaiLabel.centerYAnchor.constraint(equalTo: fiveYenTitleLabel.centerYAnchor),
-                fiveYenMaiLabel.leftAnchor.constraint(equalTo: fiveYenCountTextField.rightAnchor, constant: 8),
-                fiveYenLabel.centerYAnchor.constraint(equalTo: fiveYenTitleLabel.centerYAnchor),
-                fiveYenLabel.leftAnchor.constraint(equalTo: fiveYenMaiLabel.rightAnchor, constant: 16),
-                fiveYenLabel.widthAnchor.constraint(equalToConstant: 180),
-                
-                oneYenTitleLabel.centerYAnchor.constraint(equalTo: fiveHundredYenTitleLabel.centerYAnchor),
-                oneYenTitleLabel.rightAnchor.constraint(equalTo: fiftyYenTitleLabel.rightAnchor),
-                oneYenCountTextField.centerYAnchor.constraint(equalTo: oneYenTitleLabel.centerYAnchor),
-                oneYenCountTextField.leftAnchor.constraint(equalTo: oneYenTitleLabel.rightAnchor, constant: 8),
-                oneYenCountTextField.widthAnchor.constraint(equalToConstant: 100),
-                oneYenMaiLabel.centerYAnchor.constraint(equalTo: oneYenTitleLabel.centerYAnchor),
-                oneYenMaiLabel.leftAnchor.constraint(equalTo: oneYenCountTextField.rightAnchor, constant: 8),
-                oneYenLabel.centerYAnchor.constraint(equalTo: oneYenTitleLabel.centerYAnchor),
-                oneYenLabel.leftAnchor.constraint(equalTo: oneYenMaiLabel.rightAnchor, constant: 16),
-                oneYenLabel.widthAnchor.constraint(equalToConstant: 180),
-                
-                ticketTitleLabel.topAnchor.constraint(equalTo: fiveHundredYenTitleLabel.bottomAnchor, constant: 32),
-                ticketTitleLabel.rightAnchor.constraint(equalTo: dateTitleLabel.rightAnchor),
-                ticketYenTextField.centerYAnchor.constraint(equalTo: ticketTitleLabel.centerYAnchor),
-                ticketYenTextField.leftAnchor.constraint(equalTo: ticketTitleLabel.rightAnchor, constant: 8),
-                ticketYenTextField.widthAnchor.constraint(equalToConstant: 200),
-                ticketYenLabel.centerYAnchor.constraint(equalTo: ticketTitleLabel.centerYAnchor),
-                ticketYenLabel.leftAnchor.constraint(equalTo: ticketYenTextField.rightAnchor, constant: 8),
-
-                exportAmountTitleLabel.centerYAnchor.constraint(equalTo: ticketTitleLabel.centerYAnchor),
-                exportAmountTitleLabel.rightAnchor.constraint(equalTo: oneHundredYenTitleLabel.rightAnchor),
-                exportAmountTextField.centerYAnchor.constraint(equalTo: exportAmountTitleLabel.centerYAnchor),
-                exportAmountTextField.leftAnchor.constraint(equalTo: exportAmountTitleLabel.rightAnchor, constant: 8),
-                exportAmountTextField.widthAnchor.constraint(equalToConstant: 200),
-                exportAmountYenLabel.centerYAnchor.constraint(equalTo: exportAmountTextField.centerYAnchor),
-                exportAmountYenLabel.leftAnchor.constraint(equalTo: exportAmountTextField.rightAnchor, constant: 8),
-                
-                totalYenAmountLabel.topAnchor.constraint(equalTo: exportAmountTitleLabel.bottomAnchor, constant: 32),
-                totalYenAmountLabel.rightAnchor.constraint(equalTo: dateTitleLabel.rightAnchor),
-                totalAmountLabel.centerYAnchor.constraint(equalTo: totalYenAmountLabel.centerYAnchor),
-                totalAmountLabel.leftAnchor.constraint(equalTo: totalYenAmountLabel.rightAnchor, constant: 16),
-                totalAmountLabel.widthAnchor.constraint(equalToConstant: 200),
-                
-                calcButton.centerYAnchor.constraint(equalTo: totalYenAmountLabel.centerYAnchor),
-                calcButton.leftAnchor.constraint(equalTo: totalAmountLabel.rightAnchor, constant: 24),
-                calcButton.heightAnchor.constraint(equalToConstant: 48),
-                calcButton.widthAnchor.constraint(equalToConstant: 240),
-                
-                memoTitleLabel.topAnchor.constraint(equalTo: totalYenAmountLabel.bottomAnchor, constant: 32),
-                memoTitleLabel.rightAnchor.constraint(equalTo: dateTitleLabel.rightAnchor),
-                memoTextField.topAnchor.constraint(equalTo: memoTitleLabel.topAnchor),
-                memoTextField.bottomAnchor.constraint(equalTo: memoTitleLabel.bottomAnchor),
-                memoTextField.leftAnchor.constraint(equalTo: memoTitleLabel.rightAnchor, constant: 16),
-                memoTextField.widthAnchor.constraint(equalToConstant: 400),
-                submitButton.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: -32),
-                submitButton.rightAnchor.constraint(equalTo: scrollView.rightAnchor, constant: -32),
-                submitButton.heightAnchor.constraint(equalToConstant: 48),
-                submitButton.widthAnchor.constraint(equalToConstant: 160),
-                cancelButton.bottomAnchor.constraint(equalTo: submitButton.bottomAnchor),
-                cancelButton.rightAnchor.constraint(equalTo: submitButton.leftAnchor, constant: -32),
-                cancelButton.heightAnchor.constraint(equalToConstant: 48),
-                cancelButton.widthAnchor.constraint(equalToConstant: 160)
-            ])
-        }
     }
     
     // キーボードを閉じるメソッド
@@ -929,6 +603,7 @@ private extension DenominationView {
         oneYenCountTextField.text = "0"
         totalAmountLabel.text = "0"
         memoTextField.text = ""
+        resetScrollPosition()
         delegate?.tapDenominationCancelButton()
     }
     
@@ -1090,5 +765,668 @@ extension DenominationView: UITextFieldDelegate {
     
     public func textFieldDidEndEditing(_ textField: UITextField) {
         activeTextField = nil
+    }
+}
+
+// MARK: - Orientation Handling
+private extension DenominationView {
+    
+    func setupOrientationObserver() {
+        // デバイスの向き変更通知を監視
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(orientationDidChange),
+            name: UIDevice.orientationDidChangeNotification,
+            object: nil
+        )
+        
+        // アプリがアクティブになった時の通知も監視（必要に応じて）
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(applicationDidBecomeActive),
+            name: UIApplication.didBecomeActiveNotification,
+            object: nil
+        )
+    }
+    
+    func removeOrientationObserver() {
+        NotificationCenter.default.removeObserver(
+            self,
+            name: UIDevice.orientationDidChangeNotification,
+            object: nil
+        )
+        NotificationCenter.default.removeObserver(
+            self,
+            name: UIApplication.didBecomeActiveNotification,
+            object: nil
+        )
+    }
+    
+    @objc func orientationDidChange() {
+        // メインスレッドで実行
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            
+            print("画面の向きが変更されました: \(self.isPortrait ? "縦向き" : "横向き")")
+            
+            // 画面幅を更新
+            self.screenWidth = UIScreen.main.bounds.width
+            
+            // レイアウトを更新
+            self.updateLayoutForCurrentOrientation()
+        }
+    }
+    
+    @objc func applicationDidBecomeActive() {
+        // アプリがアクティブになった時にもレイアウトをチェック
+        DispatchQueue.main.async { [weak self] in
+            self?.updateLayoutForCurrentOrientation()
+        }
+    }
+}
+
+// MARK: - Layout Update Methods
+private extension DenominationView {
+    
+    func updateLayoutForCurrentOrientation() {
+        // 既存の制約を削除
+        NSLayoutConstraint.deactivate(currentConstraints)
+        currentConstraints.removeAll()
+        
+        // 新しい制約を作成
+        if screenWidth < 668 {
+            setupSmallScreenConstraints()
+        } else if isPortrait {
+            setupPortraitConstraints()
+        } else {
+            setupLandscapeConstraints()
+        }
+        
+        // フォントサイズとUI要素のサイズを更新
+        updateUIElementsForOrientation()
+        
+        // ScrollViewのcontentSizeを再計算
+        updateScrollViewContentSize()
+        
+        // アニメーション付きでレイアウトを更新
+        UIView.animate(withDuration: 0.3) {
+            self.layoutIfNeeded()
+        }
+    }
+    
+    func setupSmallScreenConstraints() {
+        // 小さい画面用の制約
+        if let contentView = scrollView.subviews.first {
+            let constraints = [
+                // エラーメッセージ
+                errorMessageLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
+                errorMessageLabel.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 32),
+                // 日付
+                dateTitleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
+                dateTitleLabel.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 90),
+                dateLabel.centerYAnchor.constraint(equalTo: dateTitleLabel.centerYAnchor),
+                dateLabel.leftAnchor.constraint(equalTo: dateTitleLabel.rightAnchor, constant: 8),
+                // 当日売上
+                dailySalesTitleLabel.centerYAnchor.constraint(equalTo: dateLabel.centerYAnchor),
+                dailySalesTitleLabel.rightAnchor.constraint(equalTo: contentView.centerXAnchor, constant: 100),
+                dailySalesLabel.centerYAnchor.constraint(equalTo: dailySalesTitleLabel.centerYAnchor),
+                dailySalesLabel.leftAnchor.constraint(equalTo: dailySalesTitleLabel.rightAnchor, constant: 8),
+                // 1万円札
+                tenThousandYenTitleLabel.topAnchor.constraint(equalTo: dateTitleLabel.bottomAnchor, constant: 24),
+                tenThousandYenTitleLabel.rightAnchor.constraint(equalTo: dateTitleLabel.rightAnchor),
+                tenThousandYenCountTextField.centerYAnchor.constraint(equalTo: tenThousandYenTitleLabel.centerYAnchor),
+                tenThousandYenCountTextField.leftAnchor.constraint(equalTo: tenThousandYenTitleLabel.rightAnchor, constant: 8),
+                tenThousandYenCountTextField.widthAnchor.constraint(equalToConstant: 50),
+                tenThousandYenCountTextField.heightAnchor.constraint(equalToConstant: 25),
+                // 5千円札
+                fiveThousandYenTitleLabel.topAnchor.constraint(equalTo: tenThousandYenTitleLabel.bottomAnchor, constant: 32),
+                fiveThousandYenTitleLabel.rightAnchor.constraint(equalTo: tenThousandYenTitleLabel.rightAnchor),
+                fiveThousandYenCountTextField.centerYAnchor.constraint(equalTo: fiveThousandYenTitleLabel.centerYAnchor),
+                fiveThousandYenCountTextField.leftAnchor.constraint(equalTo: fiveThousandYenTitleLabel.rightAnchor, constant: 8),
+                fiveThousandYenCountTextField.widthAnchor.constraint(equalToConstant: 100),
+                fiveThousandYenMaiLabel.centerYAnchor.constraint(equalTo: fiveThousandYenTitleLabel.centerYAnchor),
+                fiveThousandYenMaiLabel.leftAnchor.constraint(equalTo: fiveThousandYenCountTextField.rightAnchor, constant: 8),
+                fiveThousandYenLabel.centerYAnchor.constraint(equalTo: fiveThousandYenTitleLabel.centerYAnchor),
+                fiveThousandYenLabel.leftAnchor.constraint(equalTo: fiveThousandYenMaiLabel.rightAnchor, constant: 16),
+                fiveThousandYenLabel.widthAnchor.constraint(equalToConstant: 180),
+                // 2千円札
+                twoThousandYenTitleLabel.topAnchor.constraint(equalTo: fiveThousandYenTitleLabel.bottomAnchor, constant: 32),
+                twoThousandYenTitleLabel.rightAnchor.constraint(equalTo: tenThousandYenTitleLabel.rightAnchor),
+                twoThousandYenCountTextField.centerYAnchor.constraint(equalTo: twoThousandYenTitleLabel.centerYAnchor),
+                twoThousandYenCountTextField.leftAnchor.constraint(equalTo: twoThousandYenTitleLabel.rightAnchor, constant: 8),
+                twoThousandYenCountTextField.widthAnchor.constraint(equalToConstant: 100),
+                twoThousandYenMaiLabel.centerYAnchor.constraint(equalTo: twoThousandYenTitleLabel.centerYAnchor),
+                twoThousandYenMaiLabel.leftAnchor.constraint(equalTo: twoThousandYenCountTextField.rightAnchor, constant: 8),
+                twoThousandYenLabel.centerYAnchor.constraint(equalTo: twoThousandYenTitleLabel.centerYAnchor),
+                twoThousandYenLabel.leftAnchor.constraint(equalTo: twoThousandYenMaiLabel.rightAnchor, constant: 16),
+                twoThousandYenLabel.widthAnchor.constraint(equalToConstant: 180),
+                // 千円札
+                oneThousandYenTitleLabel.topAnchor.constraint(equalTo: twoThousandYenTitleLabel.bottomAnchor, constant: 32),
+                oneThousandYenTitleLabel.rightAnchor.constraint(equalTo: tenThousandYenTitleLabel.rightAnchor),
+                oneThousandYenCountTextField.centerYAnchor.constraint(equalTo: oneThousandYenTitleLabel.centerYAnchor),
+                oneThousandYenCountTextField.leftAnchor.constraint(equalTo: oneThousandYenTitleLabel.rightAnchor, constant: 8),
+                oneThousandYenCountTextField.widthAnchor.constraint(equalToConstant: 100),
+                oneThousandYenMaiLabel.centerYAnchor.constraint(equalTo: oneThousandYenTitleLabel.centerYAnchor),
+                oneThousandYenMaiLabel.leftAnchor.constraint(equalTo: oneThousandYenCountTextField.rightAnchor, constant: 8),
+                oneThousandYenLabel.centerYAnchor.constraint(equalTo: oneThousandYenTitleLabel.centerYAnchor),
+                oneThousandYenLabel.leftAnchor.constraint(equalTo: oneThousandYenMaiLabel.rightAnchor, constant: 16),
+                oneThousandYenLabel.widthAnchor.constraint(equalToConstant: 180),
+                // 500円玉
+                fiveHundredYenTitleLabel.topAnchor.constraint(equalTo: oneThousandYenTitleLabel.bottomAnchor, constant: 32),
+                fiveHundredYenTitleLabel.rightAnchor.constraint(equalTo: tenThousandYenTitleLabel.rightAnchor),
+                fiveHundredYenCountTextField.centerYAnchor.constraint(equalTo: fiveHundredYenTitleLabel.centerYAnchor),
+                fiveHundredYenCountTextField.leftAnchor.constraint(equalTo: fiveHundredYenTitleLabel.rightAnchor, constant: 8),
+                fiveHundredYenCountTextField.widthAnchor.constraint(equalToConstant: 100),
+                fiveHundredYenMaiLabel.centerYAnchor.constraint(equalTo: fiveHundredYenTitleLabel.centerYAnchor),
+                fiveHundredYenMaiLabel.leftAnchor.constraint(equalTo: fiveHundredYenCountTextField.rightAnchor, constant: 8),
+                fiveHundredYenLabel.centerYAnchor.constraint(equalTo: fiveHundredYenTitleLabel.centerYAnchor),
+                fiveHundredYenLabel.leftAnchor.constraint(equalTo: fiveHundredYenMaiLabel.rightAnchor, constant: 16),
+                fiveHundredYenLabel.widthAnchor.constraint(equalToConstant: 180),
+                // 100円玉
+                oneHundredYenCountTextField.centerYAnchor.constraint(equalTo: oneHundredYenTitleLabel.centerYAnchor),
+                oneHundredYenCountTextField.leftAnchor.constraint(equalTo: oneHundredYenTitleLabel.rightAnchor, constant: 8),
+                oneHundredYenCountTextField.widthAnchor.constraint(equalToConstant: 100),
+                oneHundredYenMaiLabel.centerYAnchor.constraint(equalTo: oneHundredYenTitleLabel.centerYAnchor),
+                oneHundredYenMaiLabel.leftAnchor.constraint(equalTo: oneHundredYenCountTextField.rightAnchor, constant: 8),
+                oneHundredYenLabel.centerYAnchor.constraint(equalTo: oneHundredYenTitleLabel.centerYAnchor),
+                oneHundredYenLabel.leftAnchor.constraint(equalTo: oneHundredYenMaiLabel.rightAnchor, constant: 16),
+                oneHundredYenLabel.widthAnchor.constraint(equalToConstant: 180),
+                // 50円玉
+                fiftyYenCountTextField.centerYAnchor.constraint(equalTo: fiftyYenTitleLabel.centerYAnchor),
+                fiftyYenCountTextField.leftAnchor.constraint(equalTo: fiftyYenTitleLabel.rightAnchor, constant: 8),
+                fiftyYenCountTextField.widthAnchor.constraint(equalToConstant: 100),
+                fiftyYenMaiLabel.centerYAnchor.constraint(equalTo: fiftyYenTitleLabel.centerYAnchor),
+                fiftyYenMaiLabel.leftAnchor.constraint(equalTo: fiftyYenCountTextField.rightAnchor, constant: 8),
+                fiftyYenLabel.centerYAnchor.constraint(equalTo: fiftyYenTitleLabel.centerYAnchor),
+                fiftyYenLabel.leftAnchor.constraint(equalTo: fiftyYenMaiLabel.rightAnchor, constant: 16),
+                fiftyYenLabel.widthAnchor.constraint(equalToConstant: 180),
+                // 10円玉
+                tenYenCountTextField.centerYAnchor.constraint(equalTo: tenYenTitleLabel.centerYAnchor),
+                tenYenCountTextField.leftAnchor.constraint(equalTo: tenYenTitleLabel.rightAnchor, constant: 8),
+                tenYenCountTextField.widthAnchor.constraint(equalToConstant: 100),
+                tenYenMaiLabel.centerYAnchor.constraint(equalTo: tenYenTitleLabel.centerYAnchor),
+                tenYenMaiLabel.leftAnchor.constraint(equalTo: tenYenCountTextField.rightAnchor, constant: 8),
+                tenYenLabel.centerYAnchor.constraint(equalTo: tenYenTitleLabel.centerYAnchor),
+                tenYenLabel.leftAnchor.constraint(equalTo: tenYenMaiLabel.rightAnchor, constant: 16),
+                tenYenLabel.widthAnchor.constraint(equalToConstant: 180),
+                // 5円玉
+                fiveYenCountTextField.centerYAnchor.constraint(equalTo: fiveYenTitleLabel.centerYAnchor),
+                fiveYenCountTextField.leftAnchor.constraint(equalTo: fiveYenTitleLabel.rightAnchor, constant: 8),
+                fiveYenCountTextField.widthAnchor.constraint(equalToConstant: 100),
+                fiveYenMaiLabel.centerYAnchor.constraint(equalTo: fiveYenTitleLabel.centerYAnchor),
+                fiveYenMaiLabel.leftAnchor.constraint(equalTo: fiveYenCountTextField.rightAnchor, constant: 8),
+                fiveYenLabel.centerYAnchor.constraint(equalTo: fiveYenTitleLabel.centerYAnchor),
+                fiveYenLabel.leftAnchor.constraint(equalTo: fiveYenMaiLabel.rightAnchor, constant: 16),
+                fiveYenLabel.widthAnchor.constraint(equalToConstant: 180),
+                // 1円玉
+                oneYenCountTextField.centerYAnchor.constraint(equalTo: oneYenTitleLabel.centerYAnchor),
+                oneYenCountTextField.leftAnchor.constraint(equalTo: oneYenTitleLabel.rightAnchor, constant: 8),
+                oneYenCountTextField.widthAnchor.constraint(equalToConstant: 100),
+                oneYenMaiLabel.centerYAnchor.constraint(equalTo: oneYenTitleLabel.centerYAnchor),
+                oneYenMaiLabel.leftAnchor.constraint(equalTo: oneYenCountTextField.rightAnchor, constant: 8),
+                oneYenLabel.centerYAnchor.constraint(equalTo: oneYenTitleLabel.centerYAnchor),
+                oneYenLabel.leftAnchor.constraint(equalTo: oneYenMaiLabel.rightAnchor, constant: 16),
+                oneYenLabel.widthAnchor.constraint(equalToConstant: 180),
+                // 応援券など
+                ticketYenTextField.centerYAnchor.constraint(equalTo: ticketTitleLabel.centerYAnchor),
+                ticketYenTextField.leftAnchor.constraint(equalTo: ticketTitleLabel.rightAnchor, constant: 8),
+                ticketYenTextField.widthAnchor.constraint(equalToConstant: 200),
+                ticketYenLabel.centerYAnchor.constraint(equalTo: ticketTitleLabel.centerYAnchor),
+                ticketYenLabel.leftAnchor.constraint(equalTo: ticketYenTextField.rightAnchor, constant: 8),
+                // 持ち帰り
+                exportAmountTextField.centerYAnchor.constraint(equalTo: exportAmountTitleLabel.centerYAnchor),
+                exportAmountTextField.leftAnchor.constraint(equalTo: exportAmountTitleLabel.rightAnchor, constant: 8),
+                exportAmountTextField.widthAnchor.constraint(equalToConstant: 200),
+                exportAmountYenLabel.centerYAnchor.constraint(equalTo: exportAmountTextField.centerYAnchor),
+                exportAmountYenLabel.leftAnchor.constraint(equalTo: exportAmountTextField.rightAnchor, constant: 8),
+                // 合計金額
+                totalYenAmountLabel.topAnchor.constraint(equalTo: exportAmountTitleLabel.bottomAnchor, constant: 32),
+                totalYenAmountLabel.rightAnchor.constraint(equalTo: tenThousandYenTitleLabel.rightAnchor),
+                totalAmountLabel.centerYAnchor.constraint(equalTo: totalYenAmountLabel.centerYAnchor),
+                totalAmountLabel.leftAnchor.constraint(equalTo: totalYenAmountLabel.rightAnchor, constant: 16),
+                totalAmountLabel.widthAnchor.constraint(equalToConstant: 200),
+                // 料金計算・チェックボタン
+                calcButton.centerYAnchor.constraint(equalTo: totalYenAmountLabel.centerYAnchor),
+                calcButton.leftAnchor.constraint(equalTo: totalAmountLabel.rightAnchor, constant: 24),
+                calcButton.heightAnchor.constraint(equalToConstant: 48),
+                calcButton.widthAnchor.constraint(equalToConstant: 240),
+                // メモ
+                memoTitleLabel.topAnchor.constraint(equalTo: totalYenAmountLabel.bottomAnchor, constant: 32),
+                memoTitleLabel.rightAnchor.constraint(equalTo: tenThousandYenTitleLabel.rightAnchor),
+                memoTextField.topAnchor.constraint(equalTo: memoTitleLabel.topAnchor),
+                memoTextField.bottomAnchor.constraint(equalTo: memoTitleLabel.bottomAnchor),
+                memoTextField.leftAnchor.constraint(equalTo: memoTitleLabel.rightAnchor, constant: 16),
+                memoTextField.widthAnchor.constraint(equalToConstant: 400),
+                // 登録ボタン
+                submitButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -32),
+                submitButton.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -32),
+                submitButton.heightAnchor.constraint(equalToConstant: 48),
+                submitButton.widthAnchor.constraint(equalToConstant: 160),
+                // キャンセルボタン
+                cancelButton.bottomAnchor.constraint(equalTo: submitButton.bottomAnchor),
+                cancelButton.rightAnchor.constraint(equalTo: submitButton.leftAnchor, constant: -32),
+                cancelButton.heightAnchor.constraint(equalToConstant: 48),
+                cancelButton.widthAnchor.constraint(equalToConstant: 160),
+                
+                // ContentViewの高さを決定
+                contentView.heightAnchor.constraint(equalToConstant: 800)
+            ]
+            
+            currentConstraints.append(contentsOf: constraints)
+            NSLayoutConstraint.activate(constraints)
+        }
+    }
+    
+    func setupPortraitConstraints() {
+        // 縦向き用の制約
+        if let contentView = scrollView.subviews.first {
+            let constraints = [
+                // エラーメッセージ
+                errorMessageLabel.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 64),
+                // 日付
+                dateTitleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 24),
+                dateTitleLabel.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 120),
+                dateLabel.centerYAnchor.constraint(equalTo: dateTitleLabel.centerYAnchor),
+                dateLabel.leftAnchor.constraint(equalTo: dateTitleLabel.rightAnchor, constant: 8),
+                // 当日売上
+                dailySalesTitleLabel.rightAnchor.constraint(equalTo: contentView.centerXAnchor, constant: 200),
+                dailySalesTitleLabel.centerYAnchor.constraint(equalTo: dateLabel.centerYAnchor),
+                dailySalesLabel.centerYAnchor.constraint(equalTo: dailySalesTitleLabel.centerYAnchor),
+                dailySalesLabel.leftAnchor.constraint(equalTo: dailySalesTitleLabel.rightAnchor, constant: 8),
+                // 1万円札
+                tenThousandYenTitleLabel.topAnchor.constraint(equalTo: dateTitleLabel.bottomAnchor, constant: 32),
+                tenThousandYenTitleLabel.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 150),
+                tenThousandYenCountTextField.centerYAnchor.constraint(equalTo: tenThousandYenTitleLabel.centerYAnchor),
+                tenThousandYenCountTextField.leftAnchor.constraint(equalTo: tenThousandYenTitleLabel.rightAnchor, constant: 8),
+                tenThousandYenCountTextField.widthAnchor.constraint(equalToConstant: 100),
+                tenThousandYenMaiLabel.centerYAnchor.constraint(equalTo: tenThousandYenTitleLabel.centerYAnchor),
+                tenThousandYenMaiLabel.leftAnchor.constraint(equalTo: tenThousandYenCountTextField.rightAnchor, constant: 8),
+                tenThousandYenLabel.centerYAnchor.constraint(equalTo: tenThousandYenTitleLabel.centerYAnchor),
+                tenThousandYenLabel.leftAnchor.constraint(equalTo: tenThousandYenMaiLabel.rightAnchor, constant: 16),
+                tenThousandYenLabel.widthAnchor.constraint(equalToConstant: 180),
+                // 5千円札
+                fiveThousandYenTitleLabel.topAnchor.constraint(equalTo: tenThousandYenTitleLabel.bottomAnchor, constant: 32),
+                fiveThousandYenTitleLabel.rightAnchor.constraint(equalTo: tenThousandYenTitleLabel.rightAnchor),
+                fiveThousandYenCountTextField.centerYAnchor.constraint(equalTo: fiveThousandYenTitleLabel.centerYAnchor),
+                fiveThousandYenCountTextField.leftAnchor.constraint(equalTo: fiveThousandYenTitleLabel.rightAnchor, constant: 8),
+                fiveThousandYenCountTextField.widthAnchor.constraint(equalToConstant: 100),
+                fiveThousandYenMaiLabel.centerYAnchor.constraint(equalTo: fiveThousandYenTitleLabel.centerYAnchor),
+                fiveThousandYenMaiLabel.leftAnchor.constraint(equalTo: fiveThousandYenCountTextField.rightAnchor, constant: 8),
+                fiveThousandYenLabel.centerYAnchor.constraint(equalTo: fiveThousandYenTitleLabel.centerYAnchor),
+                fiveThousandYenLabel.leftAnchor.constraint(equalTo: fiveThousandYenMaiLabel.rightAnchor, constant: 16),
+                fiveThousandYenLabel.widthAnchor.constraint(equalToConstant: 180),
+                // 2千円札
+                twoThousandYenTitleLabel.topAnchor.constraint(equalTo: fiveThousandYenTitleLabel.bottomAnchor, constant: 32),
+                twoThousandYenTitleLabel.rightAnchor.constraint(equalTo: tenThousandYenTitleLabel.rightAnchor),
+                twoThousandYenCountTextField.centerYAnchor.constraint(equalTo: twoThousandYenTitleLabel.centerYAnchor),
+                twoThousandYenCountTextField.leftAnchor.constraint(equalTo: twoThousandYenTitleLabel.rightAnchor, constant: 8),
+                twoThousandYenCountTextField.widthAnchor.constraint(equalToConstant: 100),
+                twoThousandYenMaiLabel.centerYAnchor.constraint(equalTo: twoThousandYenTitleLabel.centerYAnchor),
+                twoThousandYenMaiLabel.leftAnchor.constraint(equalTo: twoThousandYenCountTextField.rightAnchor, constant: 8),
+                twoThousandYenLabel.centerYAnchor.constraint(equalTo: twoThousandYenTitleLabel.centerYAnchor),
+                twoThousandYenLabel.leftAnchor.constraint(equalTo: twoThousandYenMaiLabel.rightAnchor, constant: 16),
+                twoThousandYenLabel.widthAnchor.constraint(equalToConstant: 180),
+                // 千円札
+                oneThousandYenTitleLabel.topAnchor.constraint(equalTo: twoThousandYenTitleLabel.bottomAnchor, constant: 32),
+                oneThousandYenTitleLabel.rightAnchor.constraint(equalTo: tenThousandYenTitleLabel.rightAnchor),
+                oneThousandYenCountTextField.centerYAnchor.constraint(equalTo: oneThousandYenTitleLabel.centerYAnchor),
+                oneThousandYenCountTextField.leftAnchor.constraint(equalTo: oneThousandYenTitleLabel.rightAnchor, constant: 8),
+                oneThousandYenCountTextField.widthAnchor.constraint(equalToConstant: 100),
+                oneThousandYenMaiLabel.centerYAnchor.constraint(equalTo: oneThousandYenTitleLabel.centerYAnchor),
+                oneThousandYenMaiLabel.leftAnchor.constraint(equalTo: oneThousandYenCountTextField.rightAnchor, constant: 8),
+                oneThousandYenLabel.centerYAnchor.constraint(equalTo: oneThousandYenTitleLabel.centerYAnchor),
+                oneThousandYenLabel.leftAnchor.constraint(equalTo: oneThousandYenMaiLabel.rightAnchor, constant: 16),
+                oneThousandYenLabel.widthAnchor.constraint(equalToConstant: 180),
+                // 500円玉
+                fiveHundredYenTitleLabel.topAnchor.constraint(equalTo: oneThousandYenTitleLabel.bottomAnchor, constant: 32),
+                fiveHundredYenTitleLabel.rightAnchor.constraint(equalTo: tenThousandYenTitleLabel.rightAnchor),
+                fiveHundredYenCountTextField.centerYAnchor.constraint(equalTo: fiveHundredYenTitleLabel.centerYAnchor),
+                fiveHundredYenCountTextField.leftAnchor.constraint(equalTo: fiveHundredYenTitleLabel.rightAnchor, constant: 8),
+                fiveHundredYenCountTextField.widthAnchor.constraint(equalToConstant: 100),
+                fiveHundredYenMaiLabel.centerYAnchor.constraint(equalTo: fiveHundredYenTitleLabel.centerYAnchor),
+                fiveHundredYenMaiLabel.leftAnchor.constraint(equalTo: fiveHundredYenCountTextField.rightAnchor, constant: 8),
+                fiveHundredYenLabel.centerYAnchor.constraint(equalTo: fiveHundredYenTitleLabel.centerYAnchor),
+                fiveHundredYenLabel.leftAnchor.constraint(equalTo: fiveHundredYenMaiLabel.rightAnchor, constant: 16),
+                fiveHundredYenLabel.widthAnchor.constraint(equalToConstant: 180),
+                // 100円玉
+                oneHundredYenTitleLabel.topAnchor.constraint(equalTo: fiveHundredYenTitleLabel.bottomAnchor, constant: 32),
+                oneHundredYenTitleLabel.rightAnchor.constraint(equalTo: tenThousandYenTitleLabel.rightAnchor),
+                oneHundredYenCountTextField.centerYAnchor.constraint(equalTo: oneHundredYenTitleLabel.centerYAnchor),
+                oneHundredYenCountTextField.leftAnchor.constraint(equalTo: oneHundredYenTitleLabel.rightAnchor, constant: 8),
+                oneHundredYenCountTextField.widthAnchor.constraint(equalToConstant: 100),
+                oneHundredYenMaiLabel.centerYAnchor.constraint(equalTo: oneHundredYenTitleLabel.centerYAnchor),
+                oneHundredYenMaiLabel.leftAnchor.constraint(equalTo: oneHundredYenCountTextField.rightAnchor, constant: 8),
+                oneHundredYenLabel.centerYAnchor.constraint(equalTo: oneHundredYenTitleLabel.centerYAnchor),
+                oneHundredYenLabel.leftAnchor.constraint(equalTo: oneHundredYenMaiLabel.rightAnchor, constant: 16),
+                oneHundredYenLabel.widthAnchor.constraint(equalToConstant: 180),
+                // 50円玉
+                fiftyYenTitleLabel.topAnchor.constraint(equalTo: oneHundredYenTitleLabel.bottomAnchor, constant: 32),
+                fiftyYenTitleLabel.rightAnchor.constraint(equalTo: tenThousandYenTitleLabel.rightAnchor),
+                fiftyYenCountTextField.centerYAnchor.constraint(equalTo: fiftyYenTitleLabel.centerYAnchor),
+                fiftyYenCountTextField.leftAnchor.constraint(equalTo: fiftyYenTitleLabel.rightAnchor, constant: 8),
+                fiftyYenCountTextField.widthAnchor.constraint(equalToConstant: 100),
+                fiftyYenMaiLabel.centerYAnchor.constraint(equalTo: fiftyYenTitleLabel.centerYAnchor),
+                fiftyYenMaiLabel.leftAnchor.constraint(equalTo: fiftyYenCountTextField.rightAnchor, constant: 8),
+                fiftyYenLabel.centerYAnchor.constraint(equalTo: fiftyYenTitleLabel.centerYAnchor),
+                fiftyYenLabel.leftAnchor.constraint(equalTo: fiftyYenMaiLabel.rightAnchor, constant: 16),
+                fiftyYenLabel.widthAnchor.constraint(equalToConstant: 180),
+                // 10円玉
+                tenYenTitleLabel.topAnchor.constraint(equalTo: fiftyYenTitleLabel.bottomAnchor, constant: 32),
+                tenYenTitleLabel.rightAnchor.constraint(equalTo: tenThousandYenTitleLabel.rightAnchor),
+                tenYenCountTextField.centerYAnchor.constraint(equalTo: tenYenTitleLabel.centerYAnchor),
+                tenYenCountTextField.leftAnchor.constraint(equalTo: tenYenTitleLabel.rightAnchor, constant: 8),
+                tenYenCountTextField.widthAnchor.constraint(equalToConstant: 100),
+                tenYenMaiLabel.centerYAnchor.constraint(equalTo: tenYenTitleLabel.centerYAnchor),
+                tenYenMaiLabel.leftAnchor.constraint(equalTo: tenYenCountTextField.rightAnchor, constant: 8),
+                tenYenLabel.centerYAnchor.constraint(equalTo: tenYenTitleLabel.centerYAnchor),
+                tenYenLabel.leftAnchor.constraint(equalTo: tenYenMaiLabel.rightAnchor, constant: 16),
+                tenYenLabel.widthAnchor.constraint(equalToConstant: 180),
+                // 5円玉
+                fiveYenTitleLabel.topAnchor.constraint(equalTo: tenYenTitleLabel.bottomAnchor, constant: 32),
+                fiveYenTitleLabel.rightAnchor.constraint(equalTo: tenThousandYenTitleLabel.rightAnchor),
+                fiveYenCountTextField.centerYAnchor.constraint(equalTo: fiveYenTitleLabel.centerYAnchor),
+                fiveYenCountTextField.leftAnchor.constraint(equalTo: fiveYenTitleLabel.rightAnchor, constant: 8),
+                fiveYenCountTextField.widthAnchor.constraint(equalToConstant: 100),
+                fiveYenMaiLabel.centerYAnchor.constraint(equalTo: fiveYenTitleLabel.centerYAnchor),
+                fiveYenMaiLabel.leftAnchor.constraint(equalTo: fiveYenCountTextField.rightAnchor, constant: 8),
+                fiveYenLabel.centerYAnchor.constraint(equalTo: fiveYenTitleLabel.centerYAnchor),
+                fiveYenLabel.leftAnchor.constraint(equalTo: fiveYenMaiLabel.rightAnchor, constant: 16),
+                fiveYenLabel.widthAnchor.constraint(equalToConstant: 180),
+                // 1円玉
+                oneYenTitleLabel.topAnchor.constraint(equalTo: fiveYenTitleLabel.bottomAnchor, constant: 32),
+                oneYenTitleLabel.rightAnchor.constraint(equalTo: tenThousandYenTitleLabel.rightAnchor),
+                oneYenCountTextField.centerYAnchor.constraint(equalTo: oneYenTitleLabel.centerYAnchor),
+                oneYenCountTextField.leftAnchor.constraint(equalTo: oneYenTitleLabel.rightAnchor, constant: 8),
+                oneYenCountTextField.widthAnchor.constraint(equalToConstant: 100),
+                oneYenMaiLabel.centerYAnchor.constraint(equalTo: oneYenTitleLabel.centerYAnchor),
+                oneYenMaiLabel.leftAnchor.constraint(equalTo: oneYenCountTextField.rightAnchor, constant: 8),
+                oneYenLabel.centerYAnchor.constraint(equalTo: oneYenTitleLabel.centerYAnchor),
+                oneYenLabel.leftAnchor.constraint(equalTo: oneYenMaiLabel.rightAnchor, constant: 16),
+                oneYenLabel.widthAnchor.constraint(equalToConstant: 180),
+                // 応援券など
+                ticketTitleLabel.topAnchor.constraint(equalTo: oneYenTitleLabel.bottomAnchor, constant: 32),
+                ticketTitleLabel.rightAnchor.constraint(equalTo: tenThousandYenTitleLabel.rightAnchor),
+                ticketYenTextField.centerYAnchor.constraint(equalTo: ticketTitleLabel.centerYAnchor),
+                ticketYenTextField.leftAnchor.constraint(equalTo: ticketTitleLabel.rightAnchor, constant: 8),
+                ticketYenTextField.widthAnchor.constraint(equalToConstant: 200),
+                ticketYenLabel.centerYAnchor.constraint(equalTo: ticketTitleLabel.centerYAnchor),
+                ticketYenLabel.leftAnchor.constraint(equalTo: ticketYenTextField.rightAnchor, constant: 8),
+                // 持ち帰り
+                exportAmountTitleLabel.topAnchor.constraint(equalTo: ticketTitleLabel.bottomAnchor, constant: 32),
+                exportAmountTitleLabel.rightAnchor.constraint(equalTo: tenThousandYenTitleLabel.rightAnchor),
+                exportAmountTextField.centerYAnchor.constraint(equalTo: exportAmountTitleLabel.centerYAnchor),
+                exportAmountTextField.leftAnchor.constraint(equalTo: exportAmountTitleLabel.rightAnchor, constant: 8),
+                exportAmountTextField.widthAnchor.constraint(equalToConstant: 200),
+                exportAmountYenLabel.centerYAnchor.constraint(equalTo: exportAmountTextField.centerYAnchor),
+                exportAmountYenLabel.leftAnchor.constraint(equalTo: exportAmountTextField.rightAnchor, constant: 8),
+                // 合計金額
+                totalYenAmountLabel.topAnchor.constraint(equalTo: exportAmountTitleLabel.bottomAnchor, constant: 32),
+                totalYenAmountLabel.rightAnchor.constraint(equalTo: tenThousandYenTitleLabel.rightAnchor),
+                totalAmountLabel.centerYAnchor.constraint(equalTo: totalYenAmountLabel.centerYAnchor),
+                totalAmountLabel.leftAnchor.constraint(equalTo: totalYenAmountLabel.rightAnchor, constant: 16),
+                totalAmountLabel.widthAnchor.constraint(equalToConstant: 200),
+                // 料金計算・チェックボタン
+                calcButton.centerYAnchor.constraint(equalTo: totalYenAmountLabel.centerYAnchor),
+                calcButton.leftAnchor.constraint(equalTo: totalAmountLabel.rightAnchor, constant: 24),
+                calcButton.heightAnchor.constraint(equalToConstant: 48),
+                calcButton.widthAnchor.constraint(equalToConstant: 240),
+                // メモ
+                memoTitleLabel.topAnchor.constraint(equalTo: totalYenAmountLabel.bottomAnchor, constant: 32),
+                memoTitleLabel.rightAnchor.constraint(equalTo: tenThousandYenTitleLabel.rightAnchor),
+                memoTextField.topAnchor.constraint(equalTo: memoTitleLabel.topAnchor),
+                memoTextField.bottomAnchor.constraint(equalTo: memoTitleLabel.bottomAnchor),
+                memoTextField.leftAnchor.constraint(equalTo: memoTitleLabel.rightAnchor, constant: 16),
+                memoTextField.widthAnchor.constraint(equalToConstant: 400),
+                // 登録ボタン
+                submitButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -32),
+                submitButton.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -32),
+                submitButton.heightAnchor.constraint(equalToConstant: 48),
+                submitButton.widthAnchor.constraint(equalToConstant: 160),
+                // キャンセルボタン
+                cancelButton.bottomAnchor.constraint(equalTo: submitButton.bottomAnchor),
+                cancelButton.rightAnchor.constraint(equalTo: submitButton.leftAnchor, constant: -32),
+                cancelButton.heightAnchor.constraint(equalToConstant: 48),
+                cancelButton.widthAnchor.constraint(equalToConstant: 160),
+                
+                // ContentViewの高さを決定（縦向きは高めに設定）
+                contentView.heightAnchor.constraint(equalToConstant: 1170)
+            ]
+            
+            currentConstraints.append(contentsOf: constraints)
+            NSLayoutConstraint.activate(constraints)
+        }
+    }
+    
+    func setupLandscapeConstraints() {
+        // 横向き用の制約
+        if let contentView = scrollView.subviews.first {
+            let constraints = [
+                // エラーメッセージ
+                errorMessageLabel.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 64),
+                // 日付
+                dateTitleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 24),
+                dateTitleLabel.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 120),
+                dateLabel.centerYAnchor.constraint(equalTo: dateTitleLabel.centerYAnchor),
+                dateLabel.leftAnchor.constraint(equalTo: dateTitleLabel.rightAnchor, constant: 8),
+                // 当日売上
+                dailySalesTitleLabel.rightAnchor.constraint(equalTo: contentView.centerXAnchor, constant: 200),
+                dailySalesTitleLabel.centerYAnchor.constraint(equalTo: dateLabel.centerYAnchor),
+                dailySalesLabel.centerYAnchor.constraint(equalTo: dailySalesTitleLabel.centerYAnchor),
+                dailySalesLabel.leftAnchor.constraint(equalTo: dailySalesTitleLabel.rightAnchor, constant: 8),
+                // 1万円札
+                tenThousandYenTitleLabel.topAnchor.constraint(equalTo: dateTitleLabel.bottomAnchor, constant: 32),
+                tenThousandYenTitleLabel.rightAnchor.constraint(equalTo: dateTitleLabel.rightAnchor),
+                tenThousandYenCountTextField.centerYAnchor.constraint(equalTo: tenThousandYenTitleLabel.centerYAnchor),
+                tenThousandYenCountTextField.leftAnchor.constraint(equalTo: tenThousandYenTitleLabel.rightAnchor, constant: 8),
+                tenThousandYenCountTextField.widthAnchor.constraint(equalToConstant: 100),
+                tenThousandYenMaiLabel.centerYAnchor.constraint(equalTo: tenThousandYenTitleLabel.centerYAnchor),
+                tenThousandYenMaiLabel.leftAnchor.constraint(equalTo: tenThousandYenCountTextField.rightAnchor, constant: 8),
+                tenThousandYenLabel.centerYAnchor.constraint(equalTo: tenThousandYenTitleLabel.centerYAnchor),
+                tenThousandYenLabel.leftAnchor.constraint(equalTo: tenThousandYenMaiLabel.rightAnchor, constant: 16),
+                tenThousandYenLabel.widthAnchor.constraint(equalToConstant: 180),
+                // 5千円札
+                fiveThousandYenTitleLabel.topAnchor.constraint(equalTo: tenThousandYenTitleLabel.bottomAnchor, constant: 32),
+                fiveThousandYenTitleLabel.rightAnchor.constraint(equalTo: tenThousandYenTitleLabel.rightAnchor),
+                fiveThousandYenCountTextField.centerYAnchor.constraint(equalTo: fiveThousandYenTitleLabel.centerYAnchor),
+                fiveThousandYenCountTextField.leftAnchor.constraint(equalTo: fiveThousandYenTitleLabel.rightAnchor, constant: 8),
+                fiveThousandYenCountTextField.widthAnchor.constraint(equalToConstant: 100),
+                fiveThousandYenMaiLabel.centerYAnchor.constraint(equalTo: fiveThousandYenTitleLabel.centerYAnchor),
+                fiveThousandYenMaiLabel.leftAnchor.constraint(equalTo: fiveThousandYenCountTextField.rightAnchor, constant: 8),
+                fiveThousandYenLabel.centerYAnchor.constraint(equalTo: fiveThousandYenTitleLabel.centerYAnchor),
+                fiveThousandYenLabel.leftAnchor.constraint(equalTo: fiveThousandYenMaiLabel.rightAnchor, constant: 16),
+                fiveThousandYenLabel.widthAnchor.constraint(equalToConstant: 180),
+                // 2千円札
+                twoThousandYenTitleLabel.topAnchor.constraint(equalTo: fiveThousandYenTitleLabel.bottomAnchor, constant: 32),
+                twoThousandYenTitleLabel.rightAnchor.constraint(equalTo: tenThousandYenTitleLabel.rightAnchor),
+                twoThousandYenCountTextField.centerYAnchor.constraint(equalTo: twoThousandYenTitleLabel.centerYAnchor),
+                twoThousandYenCountTextField.leftAnchor.constraint(equalTo: twoThousandYenTitleLabel.rightAnchor, constant: 8),
+                twoThousandYenCountTextField.widthAnchor.constraint(equalToConstant: 100),
+                twoThousandYenMaiLabel.centerYAnchor.constraint(equalTo: twoThousandYenTitleLabel.centerYAnchor),
+                twoThousandYenMaiLabel.leftAnchor.constraint(equalTo: twoThousandYenCountTextField.rightAnchor, constant: 8),
+                twoThousandYenLabel.centerYAnchor.constraint(equalTo: twoThousandYenTitleLabel.centerYAnchor),
+                twoThousandYenLabel.leftAnchor.constraint(equalTo: twoThousandYenMaiLabel.rightAnchor, constant: 16),
+                twoThousandYenLabel.widthAnchor.constraint(equalToConstant: 180),
+                // 千円札
+                oneThousandYenTitleLabel.topAnchor.constraint(equalTo: twoThousandYenTitleLabel.bottomAnchor, constant: 32),
+                oneThousandYenTitleLabel.rightAnchor.constraint(equalTo: tenThousandYenTitleLabel.rightAnchor),
+                oneThousandYenCountTextField.centerYAnchor.constraint(equalTo: oneThousandYenTitleLabel.centerYAnchor),
+                oneThousandYenCountTextField.leftAnchor.constraint(equalTo: oneThousandYenTitleLabel.rightAnchor, constant: 8),
+                oneThousandYenCountTextField.widthAnchor.constraint(equalToConstant: 100),
+                oneThousandYenMaiLabel.centerYAnchor.constraint(equalTo: oneThousandYenTitleLabel.centerYAnchor),
+                oneThousandYenMaiLabel.leftAnchor.constraint(equalTo: oneThousandYenCountTextField.rightAnchor, constant: 8),
+                oneThousandYenLabel.centerYAnchor.constraint(equalTo: oneThousandYenTitleLabel.centerYAnchor),
+                oneThousandYenLabel.leftAnchor.constraint(equalTo: oneThousandYenMaiLabel.rightAnchor, constant: 16),
+                oneThousandYenLabel.widthAnchor.constraint(equalToConstant: 180),
+                // 500円玉
+                fiveHundredYenTitleLabel.topAnchor.constraint(equalTo: oneThousandYenTitleLabel.bottomAnchor, constant: 32),
+                fiveHundredYenTitleLabel.rightAnchor.constraint(equalTo: tenThousandYenTitleLabel.rightAnchor),
+                fiveHundredYenCountTextField.centerYAnchor.constraint(equalTo: fiveHundredYenTitleLabel.centerYAnchor),
+                fiveHundredYenCountTextField.leftAnchor.constraint(equalTo: fiveHundredYenTitleLabel.rightAnchor, constant: 8),
+                fiveHundredYenCountTextField.widthAnchor.constraint(equalToConstant: 100),
+                fiveHundredYenMaiLabel.centerYAnchor.constraint(equalTo: fiveHundredYenTitleLabel.centerYAnchor),
+                fiveHundredYenMaiLabel.leftAnchor.constraint(equalTo: fiveHundredYenCountTextField.rightAnchor, constant: 8),
+                fiveHundredYenLabel.centerYAnchor.constraint(equalTo: fiveHundredYenTitleLabel.centerYAnchor),
+                fiveHundredYenLabel.leftAnchor.constraint(equalTo: fiveHundredYenMaiLabel.rightAnchor, constant: 16),
+                fiveHundredYenLabel.widthAnchor.constraint(equalToConstant: 180),
+                // 100円玉
+                oneHundredYenTitleLabel.centerYAnchor.constraint(equalTo: tenThousandYenTitleLabel.centerYAnchor),
+                oneHundredYenTitleLabel.rightAnchor.constraint(equalTo: dailySalesTitleLabel.rightAnchor),
+                oneHundredYenCountTextField.centerYAnchor.constraint(equalTo: oneHundredYenTitleLabel.centerYAnchor),
+                oneHundredYenCountTextField.leftAnchor.constraint(equalTo: oneHundredYenTitleLabel.rightAnchor, constant: 8),
+                oneHundredYenCountTextField.widthAnchor.constraint(equalToConstant: 100),
+                oneHundredYenMaiLabel.centerYAnchor.constraint(equalTo: oneHundredYenTitleLabel.centerYAnchor),
+                oneHundredYenMaiLabel.leftAnchor.constraint(equalTo: oneHundredYenCountTextField.rightAnchor, constant: 8),
+                oneHundredYenLabel.centerYAnchor.constraint(equalTo: oneHundredYenTitleLabel.centerYAnchor),
+                oneHundredYenLabel.leftAnchor.constraint(equalTo: oneHundredYenMaiLabel.rightAnchor, constant: 16),
+                oneHundredYenLabel.widthAnchor.constraint(equalToConstant: 180),
+                // 50円玉
+                fiftyYenTitleLabel.centerYAnchor.constraint(equalTo: fiveThousandYenTitleLabel.centerYAnchor),
+                fiftyYenTitleLabel.rightAnchor.constraint(equalTo: scrollView.centerXAnchor, constant: 200),
+                fiftyYenCountTextField.centerYAnchor.constraint(equalTo: fiftyYenTitleLabel.centerYAnchor),
+                fiftyYenCountTextField.leftAnchor.constraint(equalTo: fiftyYenTitleLabel.rightAnchor, constant: 8),
+                fiftyYenCountTextField.widthAnchor.constraint(equalToConstant: 100),
+                fiftyYenMaiLabel.centerYAnchor.constraint(equalTo: fiftyYenTitleLabel.centerYAnchor),
+                fiftyYenMaiLabel.leftAnchor.constraint(equalTo: fiftyYenCountTextField.rightAnchor, constant: 8),
+                fiftyYenLabel.centerYAnchor.constraint(equalTo: fiftyYenTitleLabel.centerYAnchor),
+                fiftyYenLabel.leftAnchor.constraint(equalTo: fiftyYenMaiLabel.rightAnchor, constant: 16),
+                fiftyYenLabel.widthAnchor.constraint(equalToConstant: 180),
+                // 10円玉
+                tenYenTitleLabel.centerYAnchor.constraint(equalTo: twoThousandYenTitleLabel.centerYAnchor),
+                tenYenTitleLabel.rightAnchor.constraint(equalTo: fiftyYenTitleLabel.rightAnchor),
+                tenYenCountTextField.centerYAnchor.constraint(equalTo: tenYenTitleLabel.centerYAnchor),
+                tenYenCountTextField.leftAnchor.constraint(equalTo: tenYenTitleLabel.rightAnchor, constant: 8),
+                tenYenCountTextField.widthAnchor.constraint(equalToConstant: 100),
+                tenYenMaiLabel.centerYAnchor.constraint(equalTo: tenYenTitleLabel.centerYAnchor),
+                tenYenMaiLabel.leftAnchor.constraint(equalTo: tenYenCountTextField.rightAnchor, constant: 8),
+                tenYenLabel.centerYAnchor.constraint(equalTo: tenYenTitleLabel.centerYAnchor),
+                tenYenLabel.leftAnchor.constraint(equalTo: tenYenMaiLabel.rightAnchor, constant: 16),
+                tenYenLabel.widthAnchor.constraint(equalToConstant: 180),
+                // 5円玉
+                fiveYenTitleLabel.centerYAnchor.constraint(equalTo: oneThousandYenTitleLabel.centerYAnchor),
+                fiveYenTitleLabel.rightAnchor.constraint(equalTo: fiftyYenTitleLabel.rightAnchor),
+                fiveYenCountTextField.centerYAnchor.constraint(equalTo: fiveYenTitleLabel.centerYAnchor),
+                fiveYenCountTextField.leftAnchor.constraint(equalTo: fiveYenTitleLabel.rightAnchor, constant: 8),
+                fiveYenCountTextField.widthAnchor.constraint(equalToConstant: 100),
+                fiveYenMaiLabel.centerYAnchor.constraint(equalTo: fiveYenTitleLabel.centerYAnchor),
+                fiveYenMaiLabel.leftAnchor.constraint(equalTo: fiveYenCountTextField.rightAnchor, constant: 8),
+                fiveYenLabel.centerYAnchor.constraint(equalTo: fiveYenTitleLabel.centerYAnchor),
+                fiveYenLabel.leftAnchor.constraint(equalTo: fiveYenMaiLabel.rightAnchor, constant: 16),
+                fiveYenLabel.widthAnchor.constraint(equalToConstant: 180),
+                // 1円玉
+                oneYenTitleLabel.centerYAnchor.constraint(equalTo: fiveHundredYenTitleLabel.centerYAnchor),
+                oneYenTitleLabel.rightAnchor.constraint(equalTo: fiftyYenTitleLabel.rightAnchor),
+                oneYenCountTextField.centerYAnchor.constraint(equalTo: oneYenTitleLabel.centerYAnchor),
+                oneYenCountTextField.leftAnchor.constraint(equalTo: oneYenTitleLabel.rightAnchor, constant: 8),
+                oneYenCountTextField.widthAnchor.constraint(equalToConstant: 100),
+                oneYenMaiLabel.centerYAnchor.constraint(equalTo: oneYenTitleLabel.centerYAnchor),
+                oneYenMaiLabel.leftAnchor.constraint(equalTo: oneYenCountTextField.rightAnchor, constant: 8),
+                oneYenLabel.centerYAnchor.constraint(equalTo: oneYenTitleLabel.centerYAnchor),
+                oneYenLabel.leftAnchor.constraint(equalTo: oneYenMaiLabel.rightAnchor, constant: 16),
+                oneYenLabel.widthAnchor.constraint(equalToConstant: 180),
+                // 応援券など
+                ticketTitleLabel.topAnchor.constraint(equalTo: fiveHundredYenTitleLabel.bottomAnchor, constant: 32),
+                ticketTitleLabel.rightAnchor.constraint(equalTo: dateTitleLabel.rightAnchor),
+                ticketYenTextField.centerYAnchor.constraint(equalTo: ticketTitleLabel.centerYAnchor),
+                ticketYenTextField.leftAnchor.constraint(equalTo: ticketTitleLabel.rightAnchor, constant: 8),
+                ticketYenTextField.widthAnchor.constraint(equalToConstant: 200),
+                ticketYenLabel.centerYAnchor.constraint(equalTo: ticketTitleLabel.centerYAnchor),
+                ticketYenLabel.leftAnchor.constraint(equalTo: ticketYenTextField.rightAnchor, constant: 8),
+                // 持ち帰り
+                exportAmountTitleLabel.centerYAnchor.constraint(equalTo: ticketTitleLabel.centerYAnchor),
+                exportAmountTitleLabel.rightAnchor.constraint(equalTo: oneHundredYenTitleLabel.rightAnchor),
+                exportAmountTextField.centerYAnchor.constraint(equalTo: exportAmountTitleLabel.centerYAnchor),
+                exportAmountTextField.leftAnchor.constraint(equalTo: exportAmountTitleLabel.rightAnchor, constant: 8),
+                exportAmountTextField.widthAnchor.constraint(equalToConstant: 200),
+                exportAmountYenLabel.centerYAnchor.constraint(equalTo: exportAmountTextField.centerYAnchor),
+                exportAmountYenLabel.leftAnchor.constraint(equalTo: exportAmountTextField.rightAnchor, constant: 8),
+                // 合計金額
+                totalYenAmountLabel.topAnchor.constraint(equalTo: exportAmountTitleLabel.bottomAnchor, constant: 32),
+                totalYenAmountLabel.rightAnchor.constraint(equalTo: tenThousandYenTitleLabel.rightAnchor),
+                totalAmountLabel.centerYAnchor.constraint(equalTo: totalYenAmountLabel.centerYAnchor),
+                totalAmountLabel.leftAnchor.constraint(equalTo: totalYenAmountLabel.rightAnchor, constant: 16),
+                totalAmountLabel.widthAnchor.constraint(equalToConstant: 200),
+                // 料金計算・チェックボタン
+                calcButton.centerYAnchor.constraint(equalTo: totalYenAmountLabel.centerYAnchor),
+                calcButton.leftAnchor.constraint(equalTo: totalAmountLabel.rightAnchor, constant: 24),
+                calcButton.heightAnchor.constraint(equalToConstant: 48),
+                calcButton.widthAnchor.constraint(equalToConstant: 240),
+                // メモ
+                memoTitleLabel.topAnchor.constraint(equalTo: totalYenAmountLabel.bottomAnchor, constant: 32),
+                memoTitleLabel.rightAnchor.constraint(equalTo: tenThousandYenTitleLabel.rightAnchor),
+                memoTextField.topAnchor.constraint(equalTo: memoTitleLabel.topAnchor),
+                memoTextField.bottomAnchor.constraint(equalTo: memoTitleLabel.bottomAnchor),
+                memoTextField.leftAnchor.constraint(equalTo: memoTitleLabel.rightAnchor, constant: 16),
+                memoTextField.widthAnchor.constraint(equalToConstant: 400),
+                // 登録ボタン
+                submitButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -32),
+                submitButton.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -32),
+                submitButton.heightAnchor.constraint(equalToConstant: 48),
+                submitButton.widthAnchor.constraint(equalToConstant: 160),
+                // キャンセルボタン
+                cancelButton.bottomAnchor.constraint(equalTo: submitButton.bottomAnchor),
+                cancelButton.rightAnchor.constraint(equalTo: submitButton.leftAnchor, constant: -32),
+                cancelButton.heightAnchor.constraint(equalToConstant: 48),
+                cancelButton.widthAnchor.constraint(equalToConstant: 160),
+                
+                // ContentViewの高さを決定（横向きは低めに設定）
+                contentView.heightAnchor.constraint(equalToConstant: 680)
+            ]
+            
+            currentConstraints.append(contentsOf: constraints)
+            NSLayoutConstraint.activate(constraints)
+        }
+    }
+    
+    func updateUIElementsForOrientation() {
+        // フォントサイズの更新
+        let fontSize: CGFloat = screenWidth < 668 ? 12 : 32
+        let buttonFontSize: CGFloat = screenWidth < 668 ? 12 : 24
+        
+        // 全てのラベルのフォントサイズを更新
+        [dateTitleLabel, dateLabel, dailySalesTitleLabel, dailySalesLabel,
+         tenThousandYenTitleLabel, tenThousandYenMaiLabel, tenThousandYenLabel,
+         fiveThousandYenTitleLabel, fiveThousandYenMaiLabel, fiveThousandYenLabel,
+         twoThousandYenTitleLabel, twoThousandYenMaiLabel, twoThousandYenLabel,
+         oneThousandYenTitleLabel, oneThousandYenMaiLabel, oneThousandYenLabel,
+         fiveHundredYenTitleLabel, fiveHundredYenMaiLabel, fiveHundredYenLabel,
+         oneHundredYenTitleLabel, oneHundredYenMaiLabel, oneHundredYenLabel,
+         fiftyYenTitleLabel,fiftyYenMaiLabel, fiftyYenLabel,
+         tenYenTitleLabel, tenYenMaiLabel, tenYenLabel,
+         fiveYenTitleLabel, fiveYenMaiLabel, fiveYenLabel,
+         oneYenTitleLabel, oneYenMaiLabel, oneYenLabel,
+         ticketTitleLabel, ticketYenLabel, exportAmountTitleLabel, exportAmountYenLabel,
+         totalYenAmountLabel, totalAmountLabel, memoTitleLabel
+        ].forEach { label in
+            label.font = UIFont.systemFont(ofSize: fontSize)
+        }
+        
+        // 全てのテキストフィールドのフォントサイズを更新
+        [tenThousandYenCountTextField, fiveThousandYenCountTextField,
+         twoThousandYenCountTextField, oneThousandYenCountTextField,
+         fiveHundredYenCountTextField, oneHundredYenCountTextField,
+         fiftyYenCountTextField, tenYenCountTextField,
+         fiveYenCountTextField, oneYenCountTextField,
+         ticketYenTextField, exportAmountTextField, memoTextField
+        ].forEach { textField in
+            textField.font = UIFont.systemFont(ofSize: fontSize)
+        }
+        
+        // ボタンのフォントサイズを更新
+        [calcButton, submitButton, cancelButton].forEach { button in
+            button.titleLabel?.font = UIFont.systemFont(ofSize: buttonFontSize)
+        }
+    }
+    
+    func updateScrollViewContentSize() {
+        // ScrollViewのcontentSizeを再計算
+        DispatchQueue.main.async {
+            self.scrollView.layoutIfNeeded()
+            
+            if let contentView = self.scrollView.subviews.first {
+                let contentHeight = contentView.frame.height
+                self.scrollView.contentSize = CGSize(width: self.scrollView.frame.width, height: contentHeight)
+                print("Updated contentSize for orientation: \(self.scrollView.contentSize)")
+            }
+        }
     }
 }
