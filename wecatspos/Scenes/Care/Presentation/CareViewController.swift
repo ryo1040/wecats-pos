@@ -187,6 +187,8 @@ private extension CareViewController {
     }
 
     func startLoading() {
+        overlayView.frame = view.bounds
+        activityIndicator.center = overlayView.center
         overlayView.isHidden = false // 半透明ビューを表示
         activityIndicator.startAnimating() // クルクル開始
     }
