@@ -83,7 +83,8 @@ public class DayTotalView: UIView, UITableViewDelegate, UITableViewDataSource {
         nameLabel.textColor = UIColor.black
         
         let countLabel = UILabel()
-        countLabel.text = "大人：" + String(guest.adultCount) + "名、子供：" + String(guest.childCount) + "名"
+        countLabel.numberOfLines = 0
+        countLabel.text = "大人：" + String(guest.adultCount) + "名\n子供：" + String(guest.childCount) + "名"
         countLabel.textAlignment = .center
         countLabel.textColor = UIColor.black
         
