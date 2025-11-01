@@ -806,12 +806,8 @@ private extension DenominationView {
         // メインスレッドで実行
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
-            
-            print("画面の向きが変更されました: \(self.isPortrait ? "縦向き" : "横向き")")
-            
             // 画面幅を更新
             self.screenWidth = UIScreen.main.bounds.width
-            
             // レイアウトを更新
             self.updateLayoutForCurrentOrientation()
         }

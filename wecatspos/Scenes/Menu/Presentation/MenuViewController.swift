@@ -114,9 +114,9 @@ private extension MenuViewController {
         
         // レスポンシブルデザイン対応
         if screenWidth < 668 { // 小さい画面の場合
-            row1Stack.spacing = 48
-            row2Stack.spacing = 48
-            mainStack.spacing = 48
+            row1Stack.spacing = 32
+            row2Stack.spacing = 32
+            mainStack.spacing = 32
             
             NSLayoutConstraint.activate([
                 titleView.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor),

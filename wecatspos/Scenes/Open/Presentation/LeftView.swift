@@ -76,7 +76,8 @@ public class LeftView: UIView, UITableViewDelegate, UITableViewDataSource {
         nameLabel.textColor = UIColor.black
         
         let countLabel = UILabel()
-        countLabel.text = "大人：" + String(staying.adultCount) + "名、子供：" + String(staying.childCount) + "名"
+        countLabel.numberOfLines = 0
+        countLabel.text = "大人：" + String(staying.adultCount) + "名\n子供：" + String(staying.childCount) + "名"
         countLabel.textAlignment = .center
         countLabel.textColor = UIColor.black
         
@@ -114,32 +115,49 @@ public class LeftView: UIView, UITableViewDelegate, UITableViewDataSource {
             enterTimeLabel.font = UIFont.systemFont(ofSize: 12)
             leftTimeLabel.font = UIFont.systemFont(ofSize: 12)
             priceLabel.font = UIFont.systemFont(ofSize: 12)
+            NSLayoutConstraint.activate([
+                nameLabel.leftAnchor.constraint(equalTo: cell.contentView.leftAnchor, constant: 8),
+                nameLabel.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor),
+                nameLabel.widthAnchor.constraint(equalTo: cell.contentView.widthAnchor, multiplier: 0.2),
+                countLabel.leftAnchor.constraint(equalTo: nameLabel.rightAnchor),
+                countLabel.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor),
+                countLabel.widthAnchor.constraint(equalTo: cell.contentView.widthAnchor, multiplier: 0.2),
+                enterTimeLabel.leftAnchor.constraint(equalTo: countLabel.rightAnchor),
+                enterTimeLabel.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor),
+                enterTimeLabel.widthAnchor.constraint(equalTo: cell.contentView.widthAnchor, multiplier: 0.19),
+                leftTimeLabel.leftAnchor.constraint(equalTo: enterTimeLabel.rightAnchor),
+                leftTimeLabel.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor),
+                leftTimeLabel.widthAnchor.constraint(equalTo: cell.contentView.widthAnchor, multiplier: 0.19),
+                priceLabel.leftAnchor.constraint(equalTo: leftTimeLabel.rightAnchor),
+                priceLabel.rightAnchor.constraint(equalTo: cell.contentView.rightAnchor),
+                priceLabel.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor),
+                priceLabel.widthAnchor.constraint(equalTo: cell.contentView.widthAnchor, multiplier: 0.2)
+            ])
         } else { // 通常の画面の場合
             nameLabel.font = UIFont.systemFont(ofSize: 24)
             countLabel.font = UIFont.systemFont(ofSize: 24)
             enterTimeLabel.font = UIFont.systemFont(ofSize: 24)
             leftTimeLabel.font = UIFont.systemFont(ofSize: 24)
             priceLabel.font = UIFont.systemFont(ofSize: 24)
+            NSLayoutConstraint.activate([
+                nameLabel.leftAnchor.constraint(equalTo: cell.contentView.leftAnchor, constant: 10),
+                nameLabel.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor),
+                nameLabel.widthAnchor.constraint(equalTo: cell.contentView.widthAnchor, multiplier: 0.24),
+                countLabel.leftAnchor.constraint(equalTo: nameLabel.rightAnchor),
+                countLabel.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor),
+                countLabel.widthAnchor.constraint(equalTo: cell.contentView.widthAnchor, multiplier: 0.24),
+                enterTimeLabel.leftAnchor.constraint(equalTo: countLabel.rightAnchor),
+                enterTimeLabel.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor),
+                enterTimeLabel.widthAnchor.constraint(equalTo: cell.contentView.widthAnchor, multiplier: 0.15),
+                leftTimeLabel.leftAnchor.constraint(equalTo: enterTimeLabel.rightAnchor),
+                leftTimeLabel.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor),
+                leftTimeLabel.widthAnchor.constraint(equalTo: cell.contentView.widthAnchor, multiplier: 0.15),
+                priceLabel.leftAnchor.constraint(equalTo: leftTimeLabel.rightAnchor),
+                priceLabel.rightAnchor.constraint(equalTo: cell.contentView.rightAnchor, constant: -10),
+                priceLabel.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor),
+                priceLabel.widthAnchor.constraint(equalTo: cell.contentView.widthAnchor, multiplier: 0.2)
+            ])
         }
-        
-        NSLayoutConstraint.activate([
-            nameLabel.leftAnchor.constraint(equalTo: cell.contentView.leftAnchor, constant: 10),
-            nameLabel.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor),
-            nameLabel.widthAnchor.constraint(equalTo: cell.contentView.widthAnchor, multiplier: 0.24),
-            countLabel.leftAnchor.constraint(equalTo: nameLabel.rightAnchor),
-            countLabel.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor),
-            countLabel.widthAnchor.constraint(equalTo: cell.contentView.widthAnchor, multiplier: 0.24),
-            enterTimeLabel.leftAnchor.constraint(equalTo: countLabel.rightAnchor),
-            enterTimeLabel.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor),
-            enterTimeLabel.widthAnchor.constraint(equalTo: cell.contentView.widthAnchor, multiplier: 0.15),
-            leftTimeLabel.leftAnchor.constraint(equalTo: enterTimeLabel.rightAnchor),
-            leftTimeLabel.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor),
-            leftTimeLabel.widthAnchor.constraint(equalTo: cell.contentView.widthAnchor, multiplier: 0.15),
-            priceLabel.leftAnchor.constraint(equalTo: leftTimeLabel.rightAnchor),
-            priceLabel.rightAnchor.constraint(equalTo: cell.contentView.rightAnchor, constant: -10),
-            priceLabel.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor),
-            priceLabel.widthAnchor.constraint(equalTo: cell.contentView.widthAnchor, multiplier: 0.2)
-        ])
         
         return cell
     }
@@ -173,7 +191,7 @@ public class LeftView: UIView, UITableViewDelegate, UITableViewDataSource {
         priceLabel.text = "料金"
         priceLabel.textColor = UIColor.black
         priceLabel.textAlignment = .center
-
+        
         headerView.addSubview(nameLabel)
         headerView.addSubview(countLabel)
         headerView.addSubview(enterTimeLabel)
@@ -193,32 +211,49 @@ public class LeftView: UIView, UITableViewDelegate, UITableViewDataSource {
             enterTimeLabel.font = UIFont.boldSystemFont(ofSize: 12)
             leftTimeLabel.font = UIFont.boldSystemFont(ofSize: 12)
             priceLabel.font = UIFont.boldSystemFont(ofSize: 12)
+            NSLayoutConstraint.activate([
+                nameLabel.leftAnchor.constraint(equalTo: headerView.leftAnchor, constant: 8),
+                nameLabel.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
+                nameLabel.widthAnchor.constraint(equalTo: headerView.widthAnchor, multiplier: 0.2),
+                countLabel.leftAnchor.constraint(equalTo: nameLabel.rightAnchor),
+                countLabel.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
+                countLabel.widthAnchor.constraint(equalTo: headerView.widthAnchor, multiplier: 0.2),
+                enterTimeLabel.leftAnchor.constraint(equalTo: countLabel.rightAnchor),
+                enterTimeLabel.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
+                enterTimeLabel.widthAnchor.constraint(equalTo: headerView.widthAnchor, multiplier: 0.19),
+                leftTimeLabel.leftAnchor.constraint(equalTo: enterTimeLabel.rightAnchor),
+                leftTimeLabel.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
+                leftTimeLabel.widthAnchor.constraint(equalTo: headerView.widthAnchor, multiplier: 0.19),
+                priceLabel.leftAnchor.constraint(equalTo: leftTimeLabel.rightAnchor),
+                priceLabel.rightAnchor.constraint(equalTo: headerView.rightAnchor),
+                priceLabel.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
+                priceLabel.widthAnchor.constraint(equalTo: headerView.widthAnchor, multiplier: 0.2)
+            ])
         } else { // 通常の画面の場合
             nameLabel.font = UIFont.boldSystemFont(ofSize: 24)
             countLabel.font = UIFont.boldSystemFont(ofSize: 24)
             enterTimeLabel.font = UIFont.boldSystemFont(ofSize: 24)
             leftTimeLabel.font = UIFont.boldSystemFont(ofSize: 24)
             priceLabel.font = UIFont.boldSystemFont(ofSize: 24)
+            NSLayoutConstraint.activate([
+                nameLabel.leftAnchor.constraint(equalTo: headerView.leftAnchor, constant: 10),
+                nameLabel.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
+                nameLabel.widthAnchor.constraint(equalTo: headerView.widthAnchor, multiplier: 0.24),
+                countLabel.leftAnchor.constraint(equalTo: nameLabel.rightAnchor),
+                countLabel.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
+                countLabel.widthAnchor.constraint(equalTo: headerView.widthAnchor, multiplier: 0.24),
+                enterTimeLabel.leftAnchor.constraint(equalTo: countLabel.rightAnchor),
+                enterTimeLabel.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
+                enterTimeLabel.widthAnchor.constraint(equalTo: headerView.widthAnchor, multiplier: 0.15),
+                leftTimeLabel.leftAnchor.constraint(equalTo: enterTimeLabel.rightAnchor),
+                leftTimeLabel.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
+                leftTimeLabel.widthAnchor.constraint(equalTo: headerView.widthAnchor, multiplier: 0.15),
+                priceLabel.leftAnchor.constraint(equalTo: leftTimeLabel.rightAnchor),
+                priceLabel.rightAnchor.constraint(equalTo: headerView.rightAnchor, constant: -10),
+                priceLabel.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
+                priceLabel.widthAnchor.constraint(equalTo: headerView.widthAnchor, multiplier: 0.2)
+            ])
         }
-        
-        NSLayoutConstraint.activate([
-            nameLabel.leftAnchor.constraint(equalTo: headerView.leftAnchor, constant: 10),
-            nameLabel.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
-            nameLabel.widthAnchor.constraint(equalTo: headerView.widthAnchor, multiplier: 0.24),
-            countLabel.leftAnchor.constraint(equalTo: nameLabel.rightAnchor),
-            countLabel.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
-            countLabel.widthAnchor.constraint(equalTo: headerView.widthAnchor, multiplier: 0.24),
-            enterTimeLabel.leftAnchor.constraint(equalTo: countLabel.rightAnchor),
-            enterTimeLabel.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
-            enterTimeLabel.widthAnchor.constraint(equalTo: headerView.widthAnchor, multiplier: 0.15),
-            leftTimeLabel.leftAnchor.constraint(equalTo: enterTimeLabel.rightAnchor),
-            leftTimeLabel.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
-            leftTimeLabel.widthAnchor.constraint(equalTo: headerView.widthAnchor, multiplier: 0.15),
-            priceLabel.leftAnchor.constraint(equalTo: leftTimeLabel.rightAnchor),
-            priceLabel.rightAnchor.constraint(equalTo: headerView.rightAnchor, constant: -10),
-            priceLabel.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
-            priceLabel.widthAnchor.constraint(equalTo: headerView.widthAnchor, multiplier: 0.2)
-        ])
         
         return headerView
     }

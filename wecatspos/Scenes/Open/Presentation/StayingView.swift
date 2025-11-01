@@ -85,7 +85,8 @@ public class StayingView: UIView, UITableViewDelegate, UITableViewDataSource {
         patternLabel.textColor = UIColor.black
         
         let countLabel = UILabel()
-        countLabel.text = "大人：" + String(staying.adultCount) + "名、子供：" + String(staying.childCount) + "名"
+        countLabel.numberOfLines = 0
+        countLabel.text = "大人：" + String(staying.adultCount) + "名\n子供：" + String(staying.childCount) + "名"
         countLabel.textAlignment = .center
         countLabel.textColor = UIColor.black
         
@@ -110,28 +111,42 @@ public class StayingView: UIView, UITableViewDelegate, UITableViewDataSource {
             patternLabel.font = UIFont.systemFont(ofSize: 12)
             countLabel.font = UIFont.systemFont(ofSize: 12)
             enterTimeLabel.font = UIFont.systemFont(ofSize: 12)
+            NSLayoutConstraint.activate([
+                nameLabel.leftAnchor.constraint(equalTo: cell.contentView.leftAnchor, constant: 8),
+                nameLabel.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor),
+                nameLabel.widthAnchor.constraint(equalTo: cell.contentView.widthAnchor, multiplier: 0.25),
+                patternLabel.leftAnchor.constraint(equalTo: nameLabel.rightAnchor),
+                patternLabel.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor),
+                patternLabel.widthAnchor.constraint(equalTo: cell.contentView.widthAnchor, multiplier: 0.25),
+                countLabel.leftAnchor.constraint(equalTo: patternLabel.rightAnchor),
+                countLabel.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor),
+                countLabel.widthAnchor.constraint(equalTo: cell.contentView.widthAnchor, multiplier: 0.25),
+                enterTimeLabel.leftAnchor.constraint(equalTo: countLabel.rightAnchor, constant: 16),
+                enterTimeLabel.rightAnchor.constraint(equalTo: cell.contentView.rightAnchor, constant: -8),
+                enterTimeLabel.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor),
+                enterTimeLabel.widthAnchor.constraint(equalTo: cell.contentView.widthAnchor, multiplier: 0.25)
+            ])
         } else { // 通常の画面の場合
             nameLabel.font = UIFont.systemFont(ofSize: 24)
             patternLabel.font = UIFont.systemFont(ofSize: 24)
             countLabel.font = UIFont.systemFont(ofSize: 24)
             enterTimeLabel.font = UIFont.systemFont(ofSize: 24)
+            NSLayoutConstraint.activate([
+                nameLabel.leftAnchor.constraint(equalTo: cell.contentView.leftAnchor, constant: 32),
+                nameLabel.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor),
+                nameLabel.widthAnchor.constraint(equalTo: cell.contentView.widthAnchor, multiplier: 0.25),
+                patternLabel.leftAnchor.constraint(equalTo: nameLabel.rightAnchor),
+                patternLabel.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor),
+                patternLabel.widthAnchor.constraint(equalTo: cell.contentView.widthAnchor, multiplier: 0.25),
+                countLabel.leftAnchor.constraint(equalTo: patternLabel.rightAnchor),
+                countLabel.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor),
+                countLabel.widthAnchor.constraint(equalTo: cell.contentView.widthAnchor, multiplier: 0.25),
+                enterTimeLabel.leftAnchor.constraint(equalTo: countLabel.rightAnchor),
+                enterTimeLabel.rightAnchor.constraint(equalTo: cell.contentView.rightAnchor, constant: -32),
+                enterTimeLabel.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor),
+                enterTimeLabel.widthAnchor.constraint(equalTo: cell.contentView.widthAnchor, multiplier: 0.2)
+            ])
         }
-
-        NSLayoutConstraint.activate([
-            nameLabel.leftAnchor.constraint(equalTo: cell.contentView.leftAnchor, constant: 32),
-            nameLabel.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor),
-            nameLabel.widthAnchor.constraint(equalTo: cell.contentView.widthAnchor, multiplier: 0.25),
-            patternLabel.leftAnchor.constraint(equalTo: nameLabel.rightAnchor),
-            patternLabel.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor),
-            patternLabel.widthAnchor.constraint(equalTo: cell.contentView.widthAnchor, multiplier: 0.25),
-            countLabel.leftAnchor.constraint(equalTo: patternLabel.rightAnchor),
-            countLabel.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor),
-            countLabel.widthAnchor.constraint(equalTo: cell.contentView.widthAnchor, multiplier: 0.25),
-            enterTimeLabel.leftAnchor.constraint(equalTo: countLabel.rightAnchor),
-            enterTimeLabel.rightAnchor.constraint(equalTo: cell.contentView.rightAnchor, constant: -32),
-            enterTimeLabel.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor),
-            enterTimeLabel.widthAnchor.constraint(equalTo: cell.contentView.widthAnchor, multiplier: 0.2)
-        ])
         
         return cell
     }
@@ -177,28 +192,42 @@ public class StayingView: UIView, UITableViewDelegate, UITableViewDataSource {
             patternLabel.font = UIFont.boldSystemFont(ofSize: 12)
             countLabel.font = UIFont.boldSystemFont(ofSize: 12)
             enterTimeLabel.font = UIFont.boldSystemFont(ofSize: 12)
+            NSLayoutConstraint.activate([
+                nameLabel.leftAnchor.constraint(equalTo: headerView.leftAnchor, constant: 8),
+                nameLabel.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
+                nameLabel.widthAnchor.constraint(equalTo: headerView.widthAnchor, multiplier: 0.25),
+                patternLabel.leftAnchor.constraint(equalTo: nameLabel.rightAnchor),
+                patternLabel.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
+                patternLabel.widthAnchor.constraint(equalTo: headerView.widthAnchor, multiplier: 0.25),
+                countLabel.leftAnchor.constraint(equalTo: patternLabel.rightAnchor),
+                countLabel.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
+                countLabel.widthAnchor.constraint(equalTo: headerView.widthAnchor, multiplier: 0.25),
+                enterTimeLabel.leftAnchor.constraint(equalTo: countLabel.rightAnchor, constant: 16),
+                enterTimeLabel.rightAnchor.constraint(equalTo: headerView.rightAnchor, constant: -8),
+                enterTimeLabel.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
+                enterTimeLabel.widthAnchor.constraint(equalTo: headerView.widthAnchor, multiplier: 0.25)
+            ])
         } else { // 通常の画面の場合
             nameLabel.font = UIFont.boldSystemFont(ofSize: 24)
             patternLabel.font = UIFont.boldSystemFont(ofSize: 24)
             countLabel.font = UIFont.boldSystemFont(ofSize: 24)
             enterTimeLabel.font = UIFont.boldSystemFont(ofSize: 24)
+            NSLayoutConstraint.activate([
+                nameLabel.leftAnchor.constraint(equalTo: headerView.leftAnchor, constant: 32),
+                nameLabel.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
+                nameLabel.widthAnchor.constraint(equalTo: headerView.widthAnchor, multiplier: 0.25),
+                patternLabel.leftAnchor.constraint(equalTo: nameLabel.rightAnchor),
+                patternLabel.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
+                patternLabel.widthAnchor.constraint(equalTo: headerView.widthAnchor, multiplier: 0.25),
+                countLabel.leftAnchor.constraint(equalTo: patternLabel.rightAnchor),
+                countLabel.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
+                countLabel.widthAnchor.constraint(equalTo: headerView.widthAnchor, multiplier: 0.25),
+                enterTimeLabel.leftAnchor.constraint(equalTo: countLabel.rightAnchor, constant: 32),
+                enterTimeLabel.rightAnchor.constraint(equalTo: headerView.rightAnchor, constant: -32),
+                enterTimeLabel.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
+                enterTimeLabel.widthAnchor.constraint(equalTo: headerView.widthAnchor, multiplier: 0.2)
+            ])
         }
-
-        NSLayoutConstraint.activate([
-            nameLabel.leftAnchor.constraint(equalTo: headerView.leftAnchor, constant: 32),
-            nameLabel.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
-            nameLabel.widthAnchor.constraint(equalTo: headerView.widthAnchor, multiplier: 0.25),
-            patternLabel.leftAnchor.constraint(equalTo: nameLabel.rightAnchor),
-            patternLabel.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
-            patternLabel.widthAnchor.constraint(equalTo: headerView.widthAnchor, multiplier: 0.25),
-            countLabel.leftAnchor.constraint(equalTo: patternLabel.rightAnchor),
-            countLabel.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
-            countLabel.widthAnchor.constraint(equalTo: headerView.widthAnchor, multiplier: 0.25),
-            enterTimeLabel.leftAnchor.constraint(equalTo: countLabel.rightAnchor, constant: 32),
-            enterTimeLabel.rightAnchor.constraint(equalTo: headerView.rightAnchor, constant: -32),
-            enterTimeLabel.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
-            enterTimeLabel.widthAnchor.constraint(equalTo: headerView.widthAnchor, multiplier: 0.2)
-        ])
         
         return headerView
     }

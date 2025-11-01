@@ -88,6 +88,7 @@ public class CloseRegisterView: UIView, UITableViewDelegate, UITableViewDataSour
         let memoLabel = UILabel()
         memoLabel.text = denomination.memo ?? ""
         memoLabel.textAlignment = .center
+        memoLabel.numberOfLines = 0
         memoLabel.textColor = UIColor.black
         
         cell.contentView.addSubview(dateLabel)
@@ -114,19 +115,19 @@ public class CloseRegisterView: UIView, UITableViewDelegate, UITableViewDataSour
         }
 
         NSLayoutConstraint.activate([
-            dateLabel.leftAnchor.constraint(equalTo: cell.contentView.leftAnchor, constant: 16),
+            dateLabel.leftAnchor.constraint(equalTo: cell.contentView.leftAnchor),
             dateLabel.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor),
-            dateLabel.widthAnchor.constraint(equalTo: cell.contentView.widthAnchor, multiplier: 0.18),
+            dateLabel.widthAnchor.constraint(equalTo: cell.contentView.widthAnchor, multiplier: 0.25),
             totalLabel.leftAnchor.constraint(equalTo: dateLabel.rightAnchor),
             totalLabel.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor),
             totalLabel.widthAnchor.constraint(equalTo: cell.contentView.widthAnchor, multiplier: 0.25),
             dailySalesLabel.leftAnchor.constraint(equalTo: totalLabel.rightAnchor),
             dailySalesLabel.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor),
             dailySalesLabel.widthAnchor.constraint(equalTo: cell.contentView.widthAnchor, multiplier: 0.25),
-            memoLabel.leftAnchor.constraint(equalTo: totalLabel.rightAnchor),
-            memoLabel.rightAnchor.constraint(equalTo: cell.contentView.rightAnchor, constant: -16),
+            memoLabel.leftAnchor.constraint(equalTo: totalLabel.rightAnchor, constant: 8),
+            memoLabel.rightAnchor.constraint(equalTo: cell.contentView.rightAnchor, constant: -8),
             memoLabel.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor),
-            memoLabel.widthAnchor.constraint(equalTo: cell.contentView.widthAnchor, multiplier: 0.32)
+            memoLabel.widthAnchor.constraint(equalTo: cell.contentView.widthAnchor, multiplier: 0.25)
         ])
         
         return cell
@@ -174,28 +175,42 @@ public class CloseRegisterView: UIView, UITableViewDelegate, UITableViewDataSour
             totalLabel.font = UIFont.boldSystemFont(ofSize: 12)
             dailySalesLabel.font = UIFont.boldSystemFont(ofSize: 12)
             memoLabel.font = UIFont.boldSystemFont(ofSize: 12)
+            NSLayoutConstraint.activate([
+                dateLabel.leftAnchor.constraint(equalTo: headerView.leftAnchor),
+                dateLabel.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
+                dateLabel.widthAnchor.constraint(equalTo: headerView.widthAnchor, multiplier: 0.25),
+                totalLabel.leftAnchor.constraint(equalTo: dateLabel.rightAnchor),
+                totalLabel.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
+                totalLabel.widthAnchor.constraint(equalTo: headerView.widthAnchor, multiplier: 0.25),
+                dailySalesLabel.leftAnchor.constraint(equalTo: totalLabel.rightAnchor),
+                dailySalesLabel.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
+                dailySalesLabel.widthAnchor.constraint(equalTo: headerView.widthAnchor, multiplier: 0.25),
+                memoLabel.leftAnchor.constraint(equalTo: totalLabel.rightAnchor, constant: 32),
+                memoLabel.rightAnchor.constraint(equalTo: headerView.rightAnchor),
+                memoLabel.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
+                memoLabel.widthAnchor.constraint(equalTo: headerView.widthAnchor, multiplier: 0.25)
+            ])
         } else { // 通常の画面の場合
             dateLabel.font = UIFont.boldSystemFont(ofSize: 24)
             totalLabel.font = UIFont.boldSystemFont(ofSize: 24)
             dailySalesLabel.font = UIFont.boldSystemFont(ofSize: 24)
             memoLabel.font = UIFont.boldSystemFont(ofSize: 24)
+            NSLayoutConstraint.activate([
+                dateLabel.leftAnchor.constraint(equalTo: headerView.leftAnchor, constant: 16),
+                dateLabel.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
+                dateLabel.widthAnchor.constraint(equalTo: headerView.widthAnchor, multiplier: 0.18),
+                totalLabel.leftAnchor.constraint(equalTo: dateLabel.rightAnchor),
+                totalLabel.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
+                totalLabel.widthAnchor.constraint(equalTo: headerView.widthAnchor, multiplier: 0.25),
+                dailySalesLabel.leftAnchor.constraint(equalTo: totalLabel.rightAnchor),
+                dailySalesLabel.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
+                dailySalesLabel.widthAnchor.constraint(equalTo: headerView.widthAnchor, multiplier: 0.25),
+                memoLabel.leftAnchor.constraint(equalTo: totalLabel.rightAnchor, constant: 32),
+                memoLabel.rightAnchor.constraint(equalTo: headerView.rightAnchor, constant: -16),
+                memoLabel.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
+                memoLabel.widthAnchor.constraint(equalTo: headerView.widthAnchor, multiplier: 0.32)
+            ])
         }
-
-        NSLayoutConstraint.activate([
-            dateLabel.leftAnchor.constraint(equalTo: headerView.leftAnchor, constant: 16),
-            dateLabel.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
-            dateLabel.widthAnchor.constraint(equalTo: headerView.widthAnchor, multiplier: 0.18),
-            totalLabel.leftAnchor.constraint(equalTo: dateLabel.rightAnchor),
-            totalLabel.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
-            totalLabel.widthAnchor.constraint(equalTo: headerView.widthAnchor, multiplier: 0.25),
-            dailySalesLabel.leftAnchor.constraint(equalTo: totalLabel.rightAnchor),
-            dailySalesLabel.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
-            dailySalesLabel.widthAnchor.constraint(equalTo: headerView.widthAnchor, multiplier: 0.25),
-            memoLabel.leftAnchor.constraint(equalTo: totalLabel.rightAnchor, constant: 32),
-            memoLabel.rightAnchor.constraint(equalTo: headerView.rightAnchor, constant: -16),
-            memoLabel.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
-            memoLabel.widthAnchor.constraint(equalTo: headerView.widthAnchor, multiplier: 0.32)
-        ])
         
         return headerView
     }
@@ -331,6 +346,7 @@ private extension CloseRegisterView {
         tableView.backgroundColor = UIColor.white
         tableView.delegate = self
         tableView.dataSource = self
+//        tableView.separatorInset = UIEdgeInsets.zero
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         self.addSubview(tableView)
         
