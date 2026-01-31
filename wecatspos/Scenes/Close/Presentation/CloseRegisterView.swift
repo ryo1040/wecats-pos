@@ -13,7 +13,7 @@ protocol CloseRegisterDelegate: AnyObject  {
     func changeMonth(month: String)
     func tapTableViewRow(selectedDenomination: DenominationModel)
     func tapEditTableViewRow(selectedDenomination: DenominationModel)
-    func tapDeleteTableVieRow(selectedDenomination: DenominationModel)
+    func tapDeleteTableViewRow(selectedDenomination: DenominationModel)
 }
 
 public class CloseRegisterView: UIView, UITableViewDelegate, UITableViewDataSource {
@@ -71,7 +71,7 @@ public class CloseRegisterView: UIView, UITableViewDelegate, UITableViewDataSour
         
         let denomination = denominationList[indexPath.row]
         let dateLabel = UILabel()
-        dateLabel.text = denomination.date
+        dateLabel.text = convertToShortDateWithDayFormat(denomination.date)
         dateLabel.textAlignment = .center
         dateLabel.textColor = UIColor.black
         
@@ -88,6 +88,7 @@ public class CloseRegisterView: UIView, UITableViewDelegate, UITableViewDataSour
         let memoLabel = UILabel()
         memoLabel.text = denomination.memo ?? ""
         memoLabel.textAlignment = .center
+        memoLabel.numberOfLines = 0
         memoLabel.textColor = UIColor.black
         
         cell.contentView.addSubview(dateLabel)
@@ -114,19 +115,19 @@ public class CloseRegisterView: UIView, UITableViewDelegate, UITableViewDataSour
         }
 
         NSLayoutConstraint.activate([
-            dateLabel.leftAnchor.constraint(equalTo: cell.contentView.leftAnchor, constant: 32),
+            dateLabel.leftAnchor.constraint(equalTo: cell.contentView.leftAnchor),
             dateLabel.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor),
-            dateLabel.widthAnchor.constraint(equalTo: cell.contentView.widthAnchor, multiplier: 0.18),
+            dateLabel.widthAnchor.constraint(equalTo: cell.contentView.widthAnchor, multiplier: 0.25),
             totalLabel.leftAnchor.constraint(equalTo: dateLabel.rightAnchor),
             totalLabel.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor),
             totalLabel.widthAnchor.constraint(equalTo: cell.contentView.widthAnchor, multiplier: 0.25),
             dailySalesLabel.leftAnchor.constraint(equalTo: totalLabel.rightAnchor),
             dailySalesLabel.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor),
             dailySalesLabel.widthAnchor.constraint(equalTo: cell.contentView.widthAnchor, multiplier: 0.25),
-            memoLabel.leftAnchor.constraint(equalTo: totalLabel.rightAnchor),
-            memoLabel.rightAnchor.constraint(equalTo: cell.contentView.rightAnchor, constant: -32),
+            memoLabel.leftAnchor.constraint(equalTo: totalLabel.rightAnchor, constant: 8),
+            memoLabel.rightAnchor.constraint(equalTo: cell.contentView.rightAnchor, constant: -8),
             memoLabel.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor),
-            memoLabel.widthAnchor.constraint(equalTo: cell.contentView.widthAnchor, multiplier: 0.32)
+            memoLabel.widthAnchor.constraint(equalTo: cell.contentView.widthAnchor, multiplier: 0.25)
         ])
         
         return cell
@@ -174,28 +175,42 @@ public class CloseRegisterView: UIView, UITableViewDelegate, UITableViewDataSour
             totalLabel.font = UIFont.boldSystemFont(ofSize: 12)
             dailySalesLabel.font = UIFont.boldSystemFont(ofSize: 12)
             memoLabel.font = UIFont.boldSystemFont(ofSize: 12)
+            NSLayoutConstraint.activate([
+                dateLabel.leftAnchor.constraint(equalTo: headerView.leftAnchor),
+                dateLabel.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
+                dateLabel.widthAnchor.constraint(equalTo: headerView.widthAnchor, multiplier: 0.25),
+                totalLabel.leftAnchor.constraint(equalTo: dateLabel.rightAnchor),
+                totalLabel.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
+                totalLabel.widthAnchor.constraint(equalTo: headerView.widthAnchor, multiplier: 0.25),
+                dailySalesLabel.leftAnchor.constraint(equalTo: totalLabel.rightAnchor),
+                dailySalesLabel.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
+                dailySalesLabel.widthAnchor.constraint(equalTo: headerView.widthAnchor, multiplier: 0.25),
+                memoLabel.leftAnchor.constraint(equalTo: totalLabel.rightAnchor, constant: 32),
+                memoLabel.rightAnchor.constraint(equalTo: headerView.rightAnchor),
+                memoLabel.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
+                memoLabel.widthAnchor.constraint(equalTo: headerView.widthAnchor, multiplier: 0.25)
+            ])
         } else { // 通常の画面の場合
             dateLabel.font = UIFont.boldSystemFont(ofSize: 24)
             totalLabel.font = UIFont.boldSystemFont(ofSize: 24)
             dailySalesLabel.font = UIFont.boldSystemFont(ofSize: 24)
             memoLabel.font = UIFont.boldSystemFont(ofSize: 24)
+            NSLayoutConstraint.activate([
+                dateLabel.leftAnchor.constraint(equalTo: headerView.leftAnchor, constant: 16),
+                dateLabel.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
+                dateLabel.widthAnchor.constraint(equalTo: headerView.widthAnchor, multiplier: 0.18),
+                totalLabel.leftAnchor.constraint(equalTo: dateLabel.rightAnchor),
+                totalLabel.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
+                totalLabel.widthAnchor.constraint(equalTo: headerView.widthAnchor, multiplier: 0.25),
+                dailySalesLabel.leftAnchor.constraint(equalTo: totalLabel.rightAnchor),
+                dailySalesLabel.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
+                dailySalesLabel.widthAnchor.constraint(equalTo: headerView.widthAnchor, multiplier: 0.25),
+                memoLabel.leftAnchor.constraint(equalTo: totalLabel.rightAnchor, constant: 32),
+                memoLabel.rightAnchor.constraint(equalTo: headerView.rightAnchor, constant: -16),
+                memoLabel.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
+                memoLabel.widthAnchor.constraint(equalTo: headerView.widthAnchor, multiplier: 0.32)
+            ])
         }
-
-        NSLayoutConstraint.activate([
-            dateLabel.leftAnchor.constraint(equalTo: headerView.leftAnchor, constant: 32),
-            dateLabel.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
-            dateLabel.widthAnchor.constraint(equalTo: headerView.widthAnchor, multiplier: 0.18),
-            totalLabel.leftAnchor.constraint(equalTo: dateLabel.rightAnchor),
-            totalLabel.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
-            totalLabel.widthAnchor.constraint(equalTo: headerView.widthAnchor, multiplier: 0.25),
-            dailySalesLabel.leftAnchor.constraint(equalTo: totalLabel.rightAnchor),
-            dailySalesLabel.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
-            dailySalesLabel.widthAnchor.constraint(equalTo: headerView.widthAnchor, multiplier: 0.25),
-            memoLabel.leftAnchor.constraint(equalTo: totalLabel.rightAnchor, constant: 32),
-            memoLabel.rightAnchor.constraint(equalTo: headerView.rightAnchor, constant: -32),
-            memoLabel.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
-            memoLabel.widthAnchor.constraint(equalTo: headerView.widthAnchor, multiplier: 0.32)
-        ])
         
         return headerView
     }
@@ -259,7 +274,7 @@ public class CloseRegisterView: UIView, UITableViewDelegate, UITableViewDataSour
             }
             
             // デリゲートに削除を通知
-            self.delegate?.tapDeleteTableVieRow(selectedDenomination: deleteDenomination)
+            self.delegate?.tapDeleteTableViewRow(selectedDenomination: deleteDenomination)
             
             completionHandler(true)
         }
@@ -280,7 +295,7 @@ public class CloseRegisterView: UIView, UITableViewDelegate, UITableViewDataSour
             completionHandler(true)
         }
         editAction.backgroundColor = .systemBlue
-        
+
         // スワイプアクション設定を作成（右から左にスワイプ時）
         let configuration = UISwipeActionsConfiguration(actions: [deleteAction, editAction])
         configuration.performsFirstActionWithFullSwipe = false // フルスワイプで自動実行を無効化
@@ -331,6 +346,7 @@ private extension CloseRegisterView {
         tableView.backgroundColor = UIColor.white
         tableView.delegate = self
         tableView.dataSource = self
+//        tableView.separatorInset = UIEdgeInsets.zero
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         self.addSubview(tableView)
         
@@ -619,5 +635,28 @@ extension CloseRegisterView: UIPickerViewDelegate, UIPickerViewDataSource {
     // 列の中央寄せ
     public func pickerView(_ pickerView: UIPickerView, rowHeightForComponent component: Int) -> CGFloat {
         return 44.0 // 行の高さを指定（デフォルトは44）
+    }
+}
+
+// MARK: - Date Conversion
+extension CloseRegisterView {
+    
+    /// yyyy-MM-dd形式の文字列をMM/dd（aaa）形式に変換
+    /// - Parameter dateString: yyyy-MM-dd形式の日付文字列
+    /// - Returns: MM/dd（aaa）形式の日付文字列、変換に失敗した場合はnil
+    func convertToShortDateWithDayFormat(_ dateString: String) -> String? {
+        let inputFormatter = DateFormatter()
+        inputFormatter.dateFormat = "yyyy-MM-dd"
+        inputFormatter.locale = Locale(identifier: "ja_JP")
+        
+        let outputFormatter = DateFormatter()
+        outputFormatter.dateFormat = "MM/dd（EEE）"
+        outputFormatter.locale = Locale(identifier: "ja_JP")
+        
+        if let date = inputFormatter.date(from: dateString) {
+            return outputFormatter.string(from: date)
+        }
+        
+        return nil
     }
 }

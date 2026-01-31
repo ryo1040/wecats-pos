@@ -23,6 +23,9 @@ final class MenuViewController: UIViewController, MenuViewControllerProtocol {
     let openButton = UIButton()
     let totalButton = UIButton()
     let closeButton = UIButton()
+    let careButton = UIButton()
+    
+    let screenWidth = UIScreen.main.bounds.width
     
     let screenWidth = UIScreen.main.bounds.width
     
@@ -64,7 +67,13 @@ private extension MenuViewController {
             button.layer.borderColor = UIColor.black.cgColor
             button.layer.borderWidth = 2.0
             button.setTitle(text, for: .normal)
-            button.titleLabel?.font = UIFont.systemFont(ofSize: 48)
+            if screenWidth < 668 {
+                button.titleLabel?.font = UIFont.systemFont(ofSize: 24)
+                button.layer.cornerRadius = 15
+            } else {
+                button.titleLabel?.font = UIFont.systemFont(ofSize: 48)
+                button.layer.cornerRadius = 25
+            }
             button.setTitleColor(UIColor.black, for: .normal)
         }
 
@@ -83,28 +92,39 @@ private extension MenuViewController {
         setupButton(totalButton, text: "統計")
         totalButton.addTarget(self, action: #selector(self.tapTotalButton(_:)), for: UIControl.Event.touchUpInside)
         mainLabel.addSubview(totalButton)
+        
+        setupButton(careButton, text: "お手入れ")
+        careButton.addTarget(self, action: #selector(self.tapCareButton(_:)), for: UIControl.Event.touchUpInside)
+        mainLabel.addSubview(careButton)
+
+        // 2行×3列（空のUIViewで隙間を埋める）
+        let dummy1 = UIView()
+
+        let row1Stack = UIStackView(arrangedSubviews: [catInfoButton, openButton, closeButton])
+        row1Stack.axis = .horizontal
+        row1Stack.distribution = .fillEqually
+        row1Stack.spacing = 96
+
+        let row2Stack = UIStackView(arrangedSubviews: [totalButton, careButton, dummy1])
+        row2Stack.axis = .horizontal
+        row2Stack.distribution = .fillEqually
+        row2Stack.spacing = 96
+
+        let mainStack = UIStackView(arrangedSubviews: [row1Stack, row2Stack])
+        mainStack.axis = .vertical
+        mainStack.distribution = .fillEqually
+        mainStack.spacing = 96
+
+        mainLabel.addSubview(mainStack)
 
         titleView.translatesAutoresizingMaskIntoConstraints = false
         mainLabel.translatesAutoresizingMaskIntoConstraints = false
-        
-        if screenWidth < 668 {
-            let row1Stack = UIStackView(arrangedSubviews: [catInfoButton, openButton])
-            row1Stack.axis = .horizontal
-            row1Stack.distribution = .fillEqually
+      
+        // レスポンシブルデザイン対応
+        if screenWidth < 668 { // 小さい画面の場合
             row1Stack.spacing = 32
-
-            let row2Stack = UIStackView(arrangedSubviews: [closeButton,totalButton])
-            row2Stack.axis = .horizontal
-            row2Stack.distribution = .fillEqually
             row2Stack.spacing = 32
-
-            let mainStack = UIStackView(arrangedSubviews: [row1Stack, row2Stack])
-            mainStack.axis = .vertical
-            mainStack.distribution = .fillEqually
             mainStack.spacing = 32
-            
-            mainLabel.addSubview(mainStack)
-            mainStack.translatesAutoresizingMaskIntoConstraints = false
             
             NSLayoutConstraint.activate([
                 titleView.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor),
@@ -120,29 +140,7 @@ private extension MenuViewController {
                 mainStack.widthAnchor.constraint(equalTo: mainLabel.widthAnchor, multiplier: 0.9),
                 mainStack.heightAnchor.constraint(equalTo: mainLabel.heightAnchor, multiplier: 0.9),
             ])
-        } else {
-            // 2行×3列（空のUIViewで隙間を埋める）
-            let dummy1 = UIView()
-            let dummy2 = UIView()
-            
-            let row1Stack = UIStackView(arrangedSubviews: [catInfoButton, openButton, closeButton])
-            row1Stack.axis = .horizontal
-            row1Stack.distribution = .fillEqually
-            row1Stack.spacing = 96
-            
-            let row2Stack = UIStackView(arrangedSubviews: [totalButton, dummy1, dummy2])
-            row2Stack.axis = .horizontal
-            row2Stack.distribution = .fillEqually
-            row2Stack.spacing = 96
-            
-            let mainStack = UIStackView(arrangedSubviews: [row1Stack, row2Stack])
-            mainStack.axis = .vertical
-            mainStack.distribution = .fillEqually
-            mainStack.spacing = 96
-            
-            mainLabel.addSubview(mainStack)
-            mainStack.translatesAutoresizingMaskIntoConstraints = false
-            
+        } else { // 通常の画面の場合
             NSLayoutConstraint.activate([
                 titleView.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor),
                 titleView.leftAnchor.constraint(equalTo: self.view.leftAnchor),
@@ -174,6 +172,10 @@ private extension MenuViewController {
     
     @objc func tapCloseButton(_ sender: UIButton){
         presenter.didTapCloseButton()
+    }
+    
+    @objc func tapCareButton(_ sender: UIButton){
+        presenter.didTapCareButton()
     }
 }
 

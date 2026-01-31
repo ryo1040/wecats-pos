@@ -54,6 +54,13 @@ final class CloseViewController: UIViewController, CloseViewControllerProtocol {
         formatter.dateFormat = "yyyy/MM"
         presenter.load(month: formatter.string(from: Date()))
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        // DenominationViewが表示される際にスクロール位置を初期化
+        denominationView.resetScrollPosition()
+    }
 }
 
 // MARK: - 外観の調整
@@ -208,6 +215,8 @@ private extension CloseViewController {
     }
 
     func startLoading() {
+        overlayView.frame = view.bounds
+        activityIndicator.center = overlayView.center
         overlayView.isHidden = false // 半透明ビューを表示
         activityIndicator.startAnimating() // クルクル開始
     }
@@ -251,7 +260,7 @@ extension CloseViewController: CloseRegisterDelegate {
         denominationView.isHidden = false
     }
     
-    func tapDeleteTableVieRow(selectedDenomination: DenominationModel) {
+    func tapDeleteTableViewRow(selectedDenomination: DenominationModel) {
         presenter.didTapDenominationDeleteButton(date: selectedDenomination.date)
     }
 }
