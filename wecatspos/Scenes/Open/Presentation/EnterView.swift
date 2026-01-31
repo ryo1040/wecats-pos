@@ -73,6 +73,7 @@ public class EnterView: UIView {
     var kidsdayFlag = false
     
     var editId = -1
+    let screenWidth = UIScreen.main.bounds.width
     
     weak var delegate: EnterDelegate?
     
@@ -505,7 +506,7 @@ private extension EnterView {
         pickerBackgroundView.isHidden = true
         pickerBackgroundView.translatesAutoresizingMaskIntoConstraints = false
         self.addSubview(pickerBackgroundView)
-        
+      
         // 全てのUI要素を設定
         errorMessageLabel.text = " "
         errorMessageLabel.textColor = UIColor.red
@@ -563,6 +564,7 @@ private extension EnterView {
         
         setupTextField(enterTimeTextField)
         enterTimeTextField.tag = 3
+
         scrollView.addSubview(enterTimeTextField)
         
         setupEnterTimeTextField()
@@ -571,10 +573,12 @@ private extension EnterView {
         scrollView.addSubview(memoTitleLabel)
         
         setupTextField(memoTextField)
+
         let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 8, height: 0))
         paddingView.backgroundColor = UIColor.clear
         memoTextField.leftView = paddingView
         memoTextField.leftViewMode = .always
+
         memoTextField.tag = 4
         scrollView.addSubview(memoTextField)
         

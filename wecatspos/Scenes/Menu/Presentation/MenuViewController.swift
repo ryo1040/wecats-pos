@@ -27,6 +27,8 @@ final class MenuViewController: UIViewController, MenuViewControllerProtocol {
     
     let screenWidth = UIScreen.main.bounds.width
     
+    let screenWidth = UIScreen.main.bounds.width
+    
     public func inject(presenter: MenuPresenterProtocol) {
         self.presenter = presenter
     }
@@ -55,6 +57,13 @@ private extension MenuViewController {
         
         func setupButton(_ button: UIButton, text: String = "") {
             button.backgroundColor = UIColor.white
+            if screenWidth < 668 {
+                button.titleLabel?.font = UIFont.systemFont(ofSize: 12)
+                button.layer.cornerRadius = 15
+            } else {
+                button.titleLabel?.font = UIFont.systemFont(ofSize: 48)
+                button.layer.cornerRadius = 25
+            }
             button.layer.borderColor = UIColor.black.cgColor
             button.layer.borderWidth = 2.0
             button.setTitle(text, for: .normal)
@@ -107,11 +116,10 @@ private extension MenuViewController {
         mainStack.spacing = 96
 
         mainLabel.addSubview(mainStack)
-        
+
         titleView.translatesAutoresizingMaskIntoConstraints = false
         mainLabel.translatesAutoresizingMaskIntoConstraints = false
-        mainStack.translatesAutoresizingMaskIntoConstraints = false
-        
+      
         // レスポンシブルデザイン対応
         if screenWidth < 668 { // 小さい画面の場合
             row1Stack.spacing = 32
@@ -130,7 +138,7 @@ private extension MenuViewController {
                 mainStack.centerYAnchor.constraint(equalTo: mainLabel.centerYAnchor),
                 mainStack.centerXAnchor.constraint(equalTo: mainLabel.centerXAnchor),
                 mainStack.widthAnchor.constraint(equalTo: mainLabel.widthAnchor, multiplier: 0.9),
-                mainStack.heightAnchor.constraint(equalTo: mainLabel.heightAnchor, multiplier: 0.7),
+                mainStack.heightAnchor.constraint(equalTo: mainLabel.heightAnchor, multiplier: 0.9),
             ])
         } else { // 通常の画面の場合
             NSLayoutConstraint.activate([
