@@ -13,7 +13,7 @@ protocol OpenDataStoreProtocol {
     func setGuestInfo(param: PostGuestInfoRequestParam) -> Single<GetGuestInfoEntity>
     func updateGuestInfo(param: PostGuestInfoRequestParam) -> Single<GetGuestInfoEntity>
     func deleteGuestInfo(param: PostDeleteGuestInfoRequestParam) -> Single<GetGuestInfoEntity>
-    func calcTotalAmount(param: PostCalcTotalAmountRequestParam) -> Single<CalcTotalAmountEntity>
+    func calcTotalAmount(param: GetCalcTotalAmountRequestParam) -> Single<CalcTotalAmountEntity>
 }
 
 final class OpenDataStore: OpenDataStoreProtocol {
@@ -34,8 +34,8 @@ final class OpenDataStore: OpenDataStoreProtocol {
         return APIClient.shared.request(DeleteGuestInfoTargetType(param))
     }
     
-    func calcTotalAmount(param: PostCalcTotalAmountRequestParam) -> Single<CalcTotalAmountEntity> {
-        return APIClient.shared.request(PostCalcTotalAmountTargetType(param))
+    func calcTotalAmount(param: GetCalcTotalAmountRequestParam) -> Single<CalcTotalAmountEntity> {
+        return APIClient.shared.request(GetCalcTotalAmountTargetType(param))
     }
 }
 

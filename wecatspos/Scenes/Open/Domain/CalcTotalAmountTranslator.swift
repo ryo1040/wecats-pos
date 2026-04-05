@@ -7,6 +7,6 @@
 
 final class CalcTotalAmountTranslator {
     static func generate(calcTotalAmount: CalcTotalAmountEntity) -> CalcTotalAmountModel {
-        return CalcTotalAmountModel(stayTime: calcTotalAmount.stayTime, totalAmount: calcTotalAmount.totalAmount)
+        return CalcTotalAmountModel(stayTime: calcTotalAmount.stayTime, kidsDayFlg: calcTotalAmount.kidsDayFlg, adultUnitPrice: calcTotalAmount.adultUnitPrice, adultCount: calcTotalAmount.adultCount, childUnitPrice: calcTotalAmount.childUnitPrice, childCount: calcTotalAmount.childCount, totalAmount: calcTotalAmount.totalAmount)
     }
 }

@@ -218,7 +218,7 @@ final class OpenPresenter: OpenPresenterProtocol {
     }
     
     func calcTotalAmount(enterTime: String, leftTime: String, adultCount: Int, childCount: Int, discountAmount: String, saleAmount: String) {
-        let param = PostCalcTotalAmountRequestParam(enterTime: enterTime, leftTime: leftTime, adultCount: adultCount, childCount: childCount, discountAmount: discountAmount, salesAmount: saleAmount)
+        let param = GetCalcTotalAmountRequestParam(enterTime: enterTime, leftTime: leftTime, adultCount: adultCount, childCount: childCount, discountAmount: discountAmount, salesAmount: saleAmount)
         
         Observable.just(Void())
             .flatMap { [unowned self] in

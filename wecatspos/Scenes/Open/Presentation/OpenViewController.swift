@@ -33,6 +33,7 @@ final class OpenViewController: UIViewController, OpenViewControllerProtocol {
     let leaveView = LeaveView()
     let visitorInfoView = VisitorInfoView()
     let editVisitorInfoView = EditVisitorInfoView()
+    let checkoutView = CheckoutView()
     
     var activityIndicator: UIActivityIndicatorView!
     var overlayView: UIView!
@@ -113,6 +114,10 @@ private extension OpenViewController {
         editVisitorInfoView.delegate = self
         mainLabel.addSubview(editVisitorInfoView)
         
+        checkoutView.isHidden = true
+        checkoutView.delegate = self
+        mainLabel.addSubview(checkoutView)
+        
         titleView.translatesAutoresizingMaskIntoConstraints = false
         mainLabel.translatesAutoresizingMaskIntoConstraints = false
         stayingButton.translatesAutoresizingMaskIntoConstraints = false
@@ -124,6 +129,7 @@ private extension OpenViewController {
         leaveView.translatesAutoresizingMaskIntoConstraints = false
         visitorInfoView.translatesAutoresizingMaskIntoConstraints = false
         editVisitorInfoView.translatesAutoresizingMaskIntoConstraints = false
+        checkoutView.translatesAutoresizingMaskIntoConstraints = false
         
         // レスポンシブルデザイン対応
         let screenWidth = UIScreen.main.bounds.width
@@ -167,8 +173,11 @@ private extension OpenViewController {
                 editVisitorInfoView.topAnchor.constraint(equalTo: mainLabel.topAnchor),
                 editVisitorInfoView.bottomAnchor.constraint(equalTo: mainLabel.bottomAnchor),
                 editVisitorInfoView.leftAnchor.constraint(equalTo: mainLabel.leftAnchor),
-                editVisitorInfoView.rightAnchor.constraint(equalTo: mainLabel.rightAnchor)
-                
+                editVisitorInfoView.rightAnchor.constraint(equalTo: mainLabel.rightAnchor),
+                checkoutView.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor),
+                checkoutView.bottomAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.bottomAnchor),
+                checkoutView.leftAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.leftAnchor),
+                checkoutView.rightAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.rightAnchor),
             ])
         } else { // 通常の画面の場合
             stayingButton.titleLabel?.font = UIFont.systemFont(ofSize: 32)
@@ -210,7 +219,11 @@ private extension OpenViewController {
                 editVisitorInfoView.topAnchor.constraint(equalTo: mainLabel.topAnchor),
                 editVisitorInfoView.bottomAnchor.constraint(equalTo: mainLabel.bottomAnchor),
                 editVisitorInfoView.leftAnchor.constraint(equalTo: mainLabel.leftAnchor),
-                editVisitorInfoView.rightAnchor.constraint(equalTo: mainLabel.rightAnchor)
+                editVisitorInfoView.rightAnchor.constraint(equalTo: mainLabel.rightAnchor),
+                checkoutView.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor),
+                checkoutView.bottomAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.bottomAnchor),
+                checkoutView.leftAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.leftAnchor),
+                checkoutView.rightAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.rightAnchor),
             ])
         }
     }
@@ -229,6 +242,7 @@ private extension OpenViewController {
                 leaveView.isHidden = true
                 visitorInfoView.isHidden = true
                 editVisitorInfoView.isHidden = true
+                checkoutView.isHidden = true
                 stopLoading()
             }).disposed(by: disposeBag)
         
@@ -244,6 +258,7 @@ private extension OpenViewController {
                 leaveView.isHidden = true
                 visitorInfoView.isHidden = true
                 editVisitorInfoView.isHidden = true
+                checkoutView.isHidden = true
                 stopLoading()
             }).disposed(by: disposeBag)
         
@@ -259,8 +274,10 @@ private extension OpenViewController {
                 leaveView.isHidden = true
                 visitorInfoView.isHidden = true
                 editVisitorInfoView.isHidden = true
+                checkoutView.isHidden = true
                 stopLoading()
             }).disposed(by: disposeBag)
+
         presenter.calcedTotalAmount
             .subscribe(onNext: { [unowned self] model in
                 print("Received cat info data: \(model)")
@@ -268,6 +285,8 @@ private extension OpenViewController {
                 leaveView.stayTimeLabel.text = "\(model.stayTime)" + "分"
                 leaveView.feeLabel.text = "¥" + formatNumber(String(model.totalAmount))
                 stopLoading()
+                checkoutView.setCheckout(selectedGuest: model)
+                checkoutView.isHidden = false
             }).disposed(by: disposeBag)
     }
     
@@ -435,5 +454,11 @@ extension OpenViewController: EditVisitorInfoDelegate {
     
     func tapEditVisitorInfoBackButton() {
         editVisitorInfoView.isHidden = true
+    }
+}
+
+extension OpenViewController: CheckoutDelegate {
+    func tapCheckoutCloseButton() {
+        checkoutView.isHidden = true
     }
 }

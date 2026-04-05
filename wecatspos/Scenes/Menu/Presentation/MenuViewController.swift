@@ -27,8 +27,6 @@ final class MenuViewController: UIViewController, MenuViewControllerProtocol {
     
     let screenWidth = UIScreen.main.bounds.width
     
-    let screenWidth = UIScreen.main.bounds.width
-    
     public func inject(presenter: MenuPresenterProtocol) {
         self.presenter = presenter
     }
@@ -119,6 +117,7 @@ private extension MenuViewController {
 
         titleView.translatesAutoresizingMaskIntoConstraints = false
         mainLabel.translatesAutoresizingMaskIntoConstraints = false
+        mainStack.translatesAutoresizingMaskIntoConstraints = false
       
         // レスポンシブルデザイン対応
         if screenWidth < 668 { // 小さい画面の場合
