@@ -24,11 +24,13 @@ final class OpenViewController: UIViewController, OpenViewControllerProtocol {
     let mainLabel = UILabel()
     let stayingButton = UIButton()
     let leftBotton = UIButton()
+    let salesButton = UIButton()
     var stackView = UIStackView()
     
     // Views
     let stayingView = StayingView()
     let leftView = LeftView()
+    let salesView = SalesView()
     let enterView = EnterView()
     let leaveView = LeaveView()
     let visitorInfoView = VisitorInfoView()
@@ -81,10 +83,16 @@ private extension OpenViewController {
         leftBotton.setTitle("退店済", for: .normal)
         leftBotton.setTitleColor(.black, for: .normal)
 //        leftBotton.layer.borderWidth = 0.5
-        leftBotton.addTarget(self, action: #selector(self.tapLeftBotton(_:)), for: UIControl.Event.touchUpInside)
+        leftBotton.addTarget(self, action: #selector(self.tapLeftButton(_:)), for: UIControl.Event.touchUpInside)
+        
+        salesButton.backgroundColor = UIColor(red: 239/255, green: 236/255, blue: 231/255, alpha: 1.0)
+        salesButton.setTitle("物販", for: .normal)
+        salesButton.setTitleColor(.black, for: .normal)
+//        salesButton.layer.borderWidth = 0.5
+        salesButton.addTarget(self, action: #selector(self.tapSalesButton(_:)), for: UIControl.Event.touchUpInside)
         
         stackView.backgroundColor = UIColor.red
-        stackView = UIStackView(arrangedSubviews: [self.stayingButton, self.leftBotton])
+        stackView = UIStackView(arrangedSubviews: [self.stayingButton, self.leftBotton, self.salesButton])
         stackView.axis = .horizontal
         stackView.distribution = .fillEqually
         stackView.spacing = 0
@@ -97,6 +105,10 @@ private extension OpenViewController {
         leftView.isHidden = true
         leftView.delegate = self
         mainLabel.addSubview(leftView)
+        
+        salesView.isHidden = true
+//        salesView.delegate = self
+        mainLabel.addSubview(salesView)
         
         enterView.isHidden = true
         enterView.delegate = self
@@ -122,9 +134,11 @@ private extension OpenViewController {
         mainLabel.translatesAutoresizingMaskIntoConstraints = false
         stayingButton.translatesAutoresizingMaskIntoConstraints = false
         leftBotton.translatesAutoresizingMaskIntoConstraints = false
+        salesButton.translatesAutoresizingMaskIntoConstraints = false
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stayingView.translatesAutoresizingMaskIntoConstraints = false
         leftView.translatesAutoresizingMaskIntoConstraints = false
+        salesView.translatesAutoresizingMaskIntoConstraints = false
         enterView.translatesAutoresizingMaskIntoConstraints = false
         leaveView.translatesAutoresizingMaskIntoConstraints = false
         visitorInfoView.translatesAutoresizingMaskIntoConstraints = false
@@ -136,6 +150,7 @@ private extension OpenViewController {
         if screenWidth < 668 { // 小さい画面の場合
             stayingButton.titleLabel?.font = UIFont.systemFont(ofSize: 16)
             leftBotton.titleLabel?.font = UIFont.systemFont(ofSize: 16)
+            salesButton.titleLabel?.font = UIFont.systemFont(ofSize: 16)
             
             NSLayoutConstraint.activate([
                 titleView.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor),
@@ -158,6 +173,10 @@ private extension OpenViewController {
                 leftView.bottomAnchor.constraint(equalTo: mainLabel.bottomAnchor),
                 leftView.leftAnchor.constraint(equalTo: mainLabel.leftAnchor),
                 leftView.rightAnchor.constraint(equalTo: mainLabel.rightAnchor),
+                salesView.topAnchor.constraint(equalTo: stackView.bottomAnchor),
+                salesView.bottomAnchor.constraint(equalTo: mainLabel.bottomAnchor),
+                salesView.leftAnchor.constraint(equalTo: mainLabel.leftAnchor),
+                salesView.rightAnchor.constraint(equalTo: mainLabel.rightAnchor),
                 enterView.topAnchor.constraint(equalTo: mainLabel.topAnchor),
                 enterView.bottomAnchor.constraint(equalTo: mainLabel.bottomAnchor),
                 enterView.leftAnchor.constraint(equalTo: mainLabel.leftAnchor),
@@ -182,6 +201,7 @@ private extension OpenViewController {
         } else { // 通常の画面の場合
             stayingButton.titleLabel?.font = UIFont.systemFont(ofSize: 32)
             leftBotton.titleLabel?.font = UIFont.systemFont(ofSize: 32)
+            salesButton.titleLabel?.font = UIFont.systemFont(ofSize: 32)
             
             NSLayoutConstraint.activate([
                 titleView.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor),
@@ -204,6 +224,10 @@ private extension OpenViewController {
                 leftView.bottomAnchor.constraint(equalTo: mainLabel.bottomAnchor),
                 leftView.leftAnchor.constraint(equalTo: mainLabel.leftAnchor),
                 leftView.rightAnchor.constraint(equalTo: mainLabel.rightAnchor),
+                salesView.topAnchor.constraint(equalTo: stackView.bottomAnchor),
+                salesView.bottomAnchor.constraint(equalTo: mainLabel.bottomAnchor),
+                salesView.leftAnchor.constraint(equalTo: mainLabel.leftAnchor),
+                salesView.rightAnchor.constraint(equalTo: mainLabel.rightAnchor),
                 enterView.topAnchor.constraint(equalTo: mainLabel.topAnchor),
                 enterView.bottomAnchor.constraint(equalTo: mainLabel.bottomAnchor),
                 enterView.leftAnchor.constraint(equalTo: mainLabel.leftAnchor),
@@ -288,6 +312,13 @@ private extension OpenViewController {
                 checkoutView.setCheckout(selectedGuest: model)
                 checkoutView.isHidden = false
             }).disposed(by: disposeBag)
+        
+        presenter.viewSales
+            .subscribe(onNext: { [unowned self] model in
+                print("Received cat info data: \(model)")
+                salesView.setItems(salesMasterModel: model.salesMasterModel, salesModel: model.salesModel)
+                stopLoading()
+            }).disposed(by: disposeBag)
     }
     
     func setupActivityIndicator() {
@@ -321,21 +352,41 @@ private extension OpenViewController {
         presenter.load()
         stayingView.isHidden = false
         leftView.isHidden = true
+        salesView.isHidden = true
         stayingButton.backgroundColor = UIColor.lightGray
         leftBotton.backgroundColor = UIColor(red: 239/255, green: 236/255, blue: 231/255, alpha: 1.0)
+        salesButton.backgroundColor = UIColor(red: 239/255, green: 236/255, blue: 231/255, alpha: 1.0)
         stayingButton.setTitleColor(UIColor.white, for: .normal)
         leftBotton.setTitleColor(UIColor.black, for: .normal)
+        salesButton.setTitleColor(UIColor.black, for: .normal)
     }
     
-    @objc func tapLeftBotton(_ sender: UIButton) {
+    @objc func tapLeftButton(_ sender: UIButton) {
         startLoading()
         presenter.load()
         stayingView.isHidden = true
         leftView.isHidden = false
+        salesView.isHidden = true
         stayingButton.backgroundColor = UIColor(red: 239/255, green: 236/255, blue: 231/255, alpha: 1.0)
         leftBotton.backgroundColor = UIColor.lightGray
+        salesButton.backgroundColor = UIColor(red: 239/255, green: 236/255, blue: 231/255, alpha: 1.0)
         stayingButton.setTitleColor(UIColor.black, for: .normal)
         leftBotton.setTitleColor(UIColor.white, for: .normal)
+        salesButton.setTitleColor(UIColor.black, for: .normal)
+    }
+    
+    @objc func tapSalesButton(_ sender: UIButton) {
+        startLoading()
+        presenter.getSalesMaster()
+        stayingView.isHidden = true
+        leftView.isHidden = true
+        salesView.isHidden = false
+        stayingButton.backgroundColor = UIColor(red: 239/255, green: 236/255, blue: 231/255, alpha: 1.0)
+        leftBotton.backgroundColor = UIColor(red: 239/255, green: 236/255, blue: 231/255, alpha: 1.0)
+        salesButton.backgroundColor = UIColor.lightGray
+        stayingButton.setTitleColor(UIColor.black, for: .normal)
+        leftBotton.setTitleColor(UIColor.black, for: .normal)
+        salesButton.setTitleColor(UIColor.white, for: .normal)
     }
     
     private func formatNumber(_ number: String) -> String {

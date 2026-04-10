@@ -14,6 +14,7 @@ protocol OpenPresenterProtocol: AnyObject {
     var viewEntry: PublishSubject<[GuestInfoModel]> { get }
     var viewLeave: PublishSubject<[GuestInfoModel]> { get }
     var calcedTotalAmount: PublishSubject<CalcTotalAmountModel> { get }
+    var viewSales: PublishSubject<GetSalesModel> { get }
     func load()
     func checkDay(date: Date) -> Int
     func didTapMenuButton()
@@ -23,6 +24,7 @@ protocol OpenPresenterProtocol: AnyObject {
     func didTapDeleteButton(id: Int, date: String)
     func didTapEditVisitorInfoUpdateButton(id: Int, repeatFlag: Bool, patternId: Int, name: String?, date: String, holidayFlag: Bool, kidsDayFlag: Bool, adultCount: Int, childCount: Int, enterTime: String, leftTime: String, stayTime: Int, calcAmount: Int, discountAmount: Int, saleAmount: Int, gachaAmount: Int, totalAmount: Int, memo: String)
     func calcTotalAmount(enterTime: String, leftTime: String, adultCount: Int, childCount: Int, discountAmount: String, saleAmount: String)
+    func getSalesMaster()
 }
 
 final class OpenPresenter: OpenPresenterProtocol {
@@ -36,6 +38,7 @@ final class OpenPresenter: OpenPresenterProtocol {
     private(set) var viewEntry = PublishSubject<[GuestInfoModel]>()
     private(set) var viewLeave = PublishSubject<[GuestInfoModel]>()
     private(set) var calcedTotalAmount = PublishSubject<CalcTotalAmountModel>()
+    private(set) var viewSales = PublishSubject<GetSalesModel>()
     
     private let disposeBag = DisposeBag()
     
@@ -239,6 +242,31 @@ final class OpenPresenter: OpenPresenterProtocol {
                 if option == Sentence.DIALOG_BTN_RETRY {
                     // ボタンタップ時に再試行
                     self.calcTotalAmount(enterTime: enterTime, leftTime: leftTime, adultCount: adultCount, childCount: childCount, discountAmount: discountAmount, saleAmount: saleAmount)
+                }
+            })
+            .disposed(by: self.disposeBag)
+    }
+    
+    func getSalesMaster() {
+        Observable.just(Void())
+            .flatMap { [unowned self] in
+                self.useCase.getSalesMaster()
+            }
+            .subscribe(onNext: {
+                [unowned self] model in
+                self.viewSales.onNext(model)
+            }, onError: { error in
+                self.handleGetSalesMasterError(error)
+            })
+            .disposed(by: self.disposeBag)
+    }
+    
+    func handleGetSalesMasterError(_ error: Error) {
+        self.wireframe.presentAlert(Sentence.MSG_NETWORK_ERROR, buttonTitle: Sentence.DIALOG_BTN_RETRY)
+            .subscribe(onNext: { option in
+                if option == Sentence.DIALOG_BTN_RETRY {
+                    // ボタンタップ時に再試行
+                    self.getSalesMaster()
                 }
             })
             .disposed(by: self.disposeBag)

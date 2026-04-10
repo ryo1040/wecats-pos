@@ -325,6 +325,7 @@ private extension StayingView {
         enterStoreButton.addTarget(self, action: #selector(self.tapEnterStoreButton), for: .touchUpInside)
         self.addSubview(enterStoreButton)
         
+        
         if #available(iOS 15.0, *) {
             tableView.sectionHeaderTopPadding = 0
         }
