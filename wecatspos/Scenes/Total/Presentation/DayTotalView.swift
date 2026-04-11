@@ -103,6 +103,12 @@ public class DayTotalView: UIView, UITableViewDelegate, UITableViewDataSource {
         priceLabel.textAlignment = .center
         priceLabel.textColor = UIColor.black
         
+        if guest.name == "物販" {
+            countLabel.text = "-"
+            enterTimeLabel.text = "-"
+            leftTimeLabel.text = "-"
+        }
+        
         cell.contentView.addSubview(nameLabel)
         cell.contentView.addSubview(countLabel)
         cell.contentView.addSubview(enterTimeLabel)

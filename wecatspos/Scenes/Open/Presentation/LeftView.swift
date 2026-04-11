@@ -96,6 +96,12 @@ public class LeftView: UIView, UITableViewDelegate, UITableViewDataSource {
         priceLabel.textAlignment = .center
         priceLabel.textColor = UIColor.black
         
+        if staying.name == "物販" {
+            countLabel.text = "-"
+            enterTimeLabel.text = "-"
+            leftTimeLabel.text = "-"
+        }
+        
         cell.contentView.addSubview(nameLabel)
         cell.contentView.addSubview(countLabel)
         cell.contentView.addSubview(enterTimeLabel)

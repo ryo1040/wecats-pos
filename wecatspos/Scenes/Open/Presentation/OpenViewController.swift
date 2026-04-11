@@ -530,8 +530,8 @@ extension OpenViewController: CheckoutDelegate {
 }
 
 extension OpenViewController: SalesDelegate {
-    func tapSalesRegisterButton(sales: [SalesModel]) {
-        presenter.didTapSalesRegisterButton(sales: sales)
+    func tapSalesRegisterButton(sales: [SalesModel], totalAmount: Int) {
+        presenter.didTapSalesRegisterButton(sales: sales, totalAmount: totalAmount)
     }
     
     func salesViewWillClose(hasUnsavedChanges: Bool, completion: @escaping (Bool) -> Void) {

@@ -7,6 +7,7 @@
 
 struct PostSalesRequestParam: Codable {
     var sales: [PostSalesRequestSales] = []
+    var totalAmount: Int
 }
 
 struct PostSalesRequestSales: Codable {
