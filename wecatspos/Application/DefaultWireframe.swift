@@ -29,10 +29,25 @@ final class DefaultWireframe: NSObject, DefaultWireframeProtocol {
     }
 
     func keyWindow() -> UIWindow {
-        guard let keyWindow = UIApplication.shared.windows.filter({$0.isKeyWindow}).first else {
-            fatalError("No KeyWindow")
+        if #available(iOS 13.0, *) {
+            let activeScenes = UIApplication.shared.connectedScenes
+                .compactMap { $0 as? UIWindowScene }
+                .filter { $0.activationState == .foregroundActive }
+
+            if let keyWindow = activeScenes
+                .flatMap({ $0.windows })
+                .first(where: { $0.isKeyWindow }) {
+                return keyWindow
+            }
+
+            if let window = activeScenes
+                .flatMap({ $0.windows })
+                .first {
+                return window
+            }
         }
-        return keyWindow
+
+        fatalError("No KeyWindow")
     }
     
     func presentAlert(
@@ -99,7 +114,22 @@ final class DefaultWireframe: NSObject, DefaultWireframeProtocol {
 }
 
 private extension DefaultWireframe {
+    @available(iOS 13.0, *)
+    func activeWindowScene() -> UIWindowScene? {
+        UIApplication.shared.connectedScenes
+            .compactMap { $0 as? UIWindowScene }
+            .first(where: { $0.activationState == .foregroundActive })
+    }
+
     func rootViewController() -> UIViewController {
+        if #available(iOS 13.0, *),
+           let sceneRoot = activeWindowScene()?
+            .windows
+            .first(where: { $0.isKeyWindow })?
+            .rootViewController {
+            return sceneRoot
+        }
+
         guard let root = keyWindow().rootViewController else {
             fatalError("No RootViewControler")
         }
@@ -107,14 +137,29 @@ private extension DefaultWireframe {
     }
     
     func topViewController() -> UIViewController {
-        var topViewController = rootViewController()
-        while let presentedViewController = topViewController.presentedViewController {
-            topViewController = presentedViewController
+        visibleViewController(from: rootViewController())
+    }
+
+    func visibleViewController(from viewController: UIViewController) -> UIViewController {
+        if let presented = viewController.presentedViewController {
+            return visibleViewController(from: presented)
         }
-        if let navigationController = topViewController as? UINavigationController,
-           let viewController = navigationController.children.last {
-            topViewController = viewController
+
+        if let navigationController = viewController as? UINavigationController,
+           let visible = navigationController.visibleViewController {
+            return visibleViewController(from: visible)
         }
-        return topViewController
+
+        if let tabBarController = viewController as? UITabBarController,
+           let selected = tabBarController.selectedViewController {
+            return visibleViewController(from: selected)
+        }
+
+        if let splitViewController = viewController as? UISplitViewController,
+           let last = splitViewController.viewControllers.last {
+            return visibleViewController(from: last)
+        }
+
+        return viewController
     }
 }
