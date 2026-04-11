@@ -47,7 +47,8 @@ final class DefaultWireframe: NSObject, DefaultWireframeProtocol {
             }
         }
 
-        fatalError("No KeyWindow")
+        assertionFailure("No KeyWindow")
+        return UIWindow(frame: UIScreen.main.bounds)
     }
     
     func presentAlert(
@@ -69,7 +70,15 @@ final class DefaultWireframe: NSObject, DefaultWireframeProtocol {
                     observer.on(.next(actionTitle))
                 })
             }
-            self.topViewController().present(alertView, animated: true, completion: nil)
+
+            guard let presenter = self.topViewControllerIfAvailable() else {
+                assertionFailure("No presenter available for alert")
+                observer.on(.next(""))
+                observer.onCompleted()
+                return Disposables.create {}
+            }
+
+            presenter.present(alertView, animated: true, completion: nil)
 
             return Disposables.create {
                 alertView.dismiss(animated: false, completion: nil)
@@ -130,10 +139,20 @@ private extension DefaultWireframe {
             return sceneRoot
         }
 
-        guard let root = keyWindow().rootViewController else {
-            fatalError("No RootViewControler")
+        if let root = keyWindow().rootViewController {
+            return root
         }
-        return root
+
+        assertionFailure("No RootViewControler")
+        return UIViewController()
+    }
+
+    func topViewControllerIfAvailable() -> UIViewController? {
+        let root = rootViewController()
+        guard root.viewIfLoaded?.window != nil || root.presentedViewController != nil else {
+            return nil
+        }
+        return visibleViewController(from: root)
     }
     
     func topViewController() -> UIViewController {
