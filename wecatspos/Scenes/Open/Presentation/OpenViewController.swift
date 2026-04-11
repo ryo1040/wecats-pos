@@ -24,15 +24,18 @@ final class OpenViewController: UIViewController, OpenViewControllerProtocol {
     let mainLabel = UILabel()
     let stayingButton = UIButton()
     let leftBotton = UIButton()
+    let salesButton = UIButton()
     var stackView = UIStackView()
     
     // Views
     let stayingView = StayingView()
     let leftView = LeftView()
+    let salesView = SalesView()
     let enterView = EnterView()
     let leaveView = LeaveView()
     let visitorInfoView = VisitorInfoView()
     let editVisitorInfoView = EditVisitorInfoView()
+    let checkoutView = CheckoutView()
     
     var activityIndicator: UIActivityIndicatorView!
     var overlayView: UIView!
@@ -80,10 +83,16 @@ private extension OpenViewController {
         leftBotton.setTitle("退店済", for: .normal)
         leftBotton.setTitleColor(.black, for: .normal)
 //        leftBotton.layer.borderWidth = 0.5
-        leftBotton.addTarget(self, action: #selector(self.tapLeftBotton(_:)), for: UIControl.Event.touchUpInside)
+        leftBotton.addTarget(self, action: #selector(self.tapLeftButton(_:)), for: UIControl.Event.touchUpInside)
+        
+        salesButton.backgroundColor = UIColor(red: 239/255, green: 236/255, blue: 231/255, alpha: 1.0)
+        salesButton.setTitle("物販", for: .normal)
+        salesButton.setTitleColor(.black, for: .normal)
+//        salesButton.layer.borderWidth = 0.5
+        salesButton.addTarget(self, action: #selector(self.tapSalesButton(_:)), for: UIControl.Event.touchUpInside)
         
         stackView.backgroundColor = UIColor.red
-        stackView = UIStackView(arrangedSubviews: [self.stayingButton, self.leftBotton])
+        stackView = UIStackView(arrangedSubviews: [self.stayingButton, self.leftBotton, self.salesButton])
         stackView.axis = .horizontal
         stackView.distribution = .fillEqually
         stackView.spacing = 0
@@ -96,6 +105,10 @@ private extension OpenViewController {
         leftView.isHidden = true
         leftView.delegate = self
         mainLabel.addSubview(leftView)
+        
+        salesView.isHidden = true
+        salesView.delegate = self
+        mainLabel.addSubview(salesView)
         
         enterView.isHidden = true
         enterView.delegate = self
@@ -113,23 +126,31 @@ private extension OpenViewController {
         editVisitorInfoView.delegate = self
         mainLabel.addSubview(editVisitorInfoView)
         
+        checkoutView.isHidden = true
+        checkoutView.delegate = self
+        mainLabel.addSubview(checkoutView)
+        
         titleView.translatesAutoresizingMaskIntoConstraints = false
         mainLabel.translatesAutoresizingMaskIntoConstraints = false
         stayingButton.translatesAutoresizingMaskIntoConstraints = false
         leftBotton.translatesAutoresizingMaskIntoConstraints = false
+        salesButton.translatesAutoresizingMaskIntoConstraints = false
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stayingView.translatesAutoresizingMaskIntoConstraints = false
         leftView.translatesAutoresizingMaskIntoConstraints = false
+        salesView.translatesAutoresizingMaskIntoConstraints = false
         enterView.translatesAutoresizingMaskIntoConstraints = false
         leaveView.translatesAutoresizingMaskIntoConstraints = false
         visitorInfoView.translatesAutoresizingMaskIntoConstraints = false
         editVisitorInfoView.translatesAutoresizingMaskIntoConstraints = false
+        checkoutView.translatesAutoresizingMaskIntoConstraints = false
         
         // レスポンシブルデザイン対応
         let screenWidth = UIScreen.main.bounds.width
         if screenWidth < 668 { // 小さい画面の場合
             stayingButton.titleLabel?.font = UIFont.systemFont(ofSize: 16)
             leftBotton.titleLabel?.font = UIFont.systemFont(ofSize: 16)
+            salesButton.titleLabel?.font = UIFont.systemFont(ofSize: 16)
             
             NSLayoutConstraint.activate([
                 titleView.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor),
@@ -152,6 +173,10 @@ private extension OpenViewController {
                 leftView.bottomAnchor.constraint(equalTo: mainLabel.bottomAnchor),
                 leftView.leftAnchor.constraint(equalTo: mainLabel.leftAnchor),
                 leftView.rightAnchor.constraint(equalTo: mainLabel.rightAnchor),
+                salesView.topAnchor.constraint(equalTo: stackView.bottomAnchor),
+                salesView.bottomAnchor.constraint(equalTo: mainLabel.bottomAnchor),
+                salesView.leftAnchor.constraint(equalTo: mainLabel.leftAnchor),
+                salesView.rightAnchor.constraint(equalTo: mainLabel.rightAnchor),
                 enterView.topAnchor.constraint(equalTo: mainLabel.topAnchor),
                 enterView.bottomAnchor.constraint(equalTo: mainLabel.bottomAnchor),
                 enterView.leftAnchor.constraint(equalTo: mainLabel.leftAnchor),
@@ -167,12 +192,16 @@ private extension OpenViewController {
                 editVisitorInfoView.topAnchor.constraint(equalTo: mainLabel.topAnchor),
                 editVisitorInfoView.bottomAnchor.constraint(equalTo: mainLabel.bottomAnchor),
                 editVisitorInfoView.leftAnchor.constraint(equalTo: mainLabel.leftAnchor),
-                editVisitorInfoView.rightAnchor.constraint(equalTo: mainLabel.rightAnchor)
-                
+                editVisitorInfoView.rightAnchor.constraint(equalTo: mainLabel.rightAnchor),
+                checkoutView.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor),
+                checkoutView.bottomAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.bottomAnchor),
+                checkoutView.leftAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.leftAnchor),
+                checkoutView.rightAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.rightAnchor),
             ])
         } else { // 通常の画面の場合
             stayingButton.titleLabel?.font = UIFont.systemFont(ofSize: 32)
             leftBotton.titleLabel?.font = UIFont.systemFont(ofSize: 32)
+            salesButton.titleLabel?.font = UIFont.systemFont(ofSize: 32)
             
             NSLayoutConstraint.activate([
                 titleView.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor),
@@ -195,6 +224,10 @@ private extension OpenViewController {
                 leftView.bottomAnchor.constraint(equalTo: mainLabel.bottomAnchor),
                 leftView.leftAnchor.constraint(equalTo: mainLabel.leftAnchor),
                 leftView.rightAnchor.constraint(equalTo: mainLabel.rightAnchor),
+                salesView.topAnchor.constraint(equalTo: stackView.bottomAnchor),
+                salesView.bottomAnchor.constraint(equalTo: mainLabel.bottomAnchor),
+                salesView.leftAnchor.constraint(equalTo: mainLabel.leftAnchor),
+                salesView.rightAnchor.constraint(equalTo: mainLabel.rightAnchor),
                 enterView.topAnchor.constraint(equalTo: mainLabel.topAnchor),
                 enterView.bottomAnchor.constraint(equalTo: mainLabel.bottomAnchor),
                 enterView.leftAnchor.constraint(equalTo: mainLabel.leftAnchor),
@@ -210,7 +243,11 @@ private extension OpenViewController {
                 editVisitorInfoView.topAnchor.constraint(equalTo: mainLabel.topAnchor),
                 editVisitorInfoView.bottomAnchor.constraint(equalTo: mainLabel.bottomAnchor),
                 editVisitorInfoView.leftAnchor.constraint(equalTo: mainLabel.leftAnchor),
-                editVisitorInfoView.rightAnchor.constraint(equalTo: mainLabel.rightAnchor)
+                editVisitorInfoView.rightAnchor.constraint(equalTo: mainLabel.rightAnchor),
+                checkoutView.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor),
+                checkoutView.bottomAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.bottomAnchor),
+                checkoutView.leftAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.leftAnchor),
+                checkoutView.rightAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.rightAnchor),
             ])
         }
     }
@@ -229,6 +266,7 @@ private extension OpenViewController {
                 leaveView.isHidden = true
                 visitorInfoView.isHidden = true
                 editVisitorInfoView.isHidden = true
+                checkoutView.isHidden = true
                 stopLoading()
             }).disposed(by: disposeBag)
         
@@ -244,6 +282,7 @@ private extension OpenViewController {
                 leaveView.isHidden = true
                 visitorInfoView.isHidden = true
                 editVisitorInfoView.isHidden = true
+                checkoutView.isHidden = true
                 stopLoading()
             }).disposed(by: disposeBag)
         
@@ -259,14 +298,25 @@ private extension OpenViewController {
                 leaveView.isHidden = true
                 visitorInfoView.isHidden = true
                 editVisitorInfoView.isHidden = true
+                checkoutView.isHidden = true
                 stopLoading()
             }).disposed(by: disposeBag)
+
         presenter.calcedTotalAmount
             .subscribe(onNext: { [unowned self] model in
                 print("Received cat info data: \(model)")
                 leaveView.stayTime = model.stayTime
                 leaveView.stayTimeLabel.text = "\(model.stayTime)" + "分"
                 leaveView.feeLabel.text = "¥" + formatNumber(String(model.totalAmount))
+                stopLoading()
+                checkoutView.setCheckout(selectedGuest: model)
+                checkoutView.isHidden = false
+            }).disposed(by: disposeBag)
+        
+        presenter.viewSales
+            .subscribe(onNext: { [unowned self] model in
+                print("Received cat info data: \(model)")
+                salesView.setItems(salesMasterModel: model.salesMasterModel, salesModel: model.salesModel)
                 stopLoading()
             }).disposed(by: disposeBag)
     }
@@ -298,25 +348,55 @@ private extension OpenViewController {
     }
     
     @objc func tapStayingButton(_ sender: UIButton) {
-        startLoading()
-        presenter.load()
-        stayingView.isHidden = false
-        leftView.isHidden = true
-        stayingButton.backgroundColor = UIColor.lightGray
-        leftBotton.backgroundColor = UIColor(red: 239/255, green: 236/255, blue: 231/255, alpha: 1.0)
-        stayingButton.setTitleColor(UIColor.white, for: .normal)
-        leftBotton.setTitleColor(UIColor.black, for: .normal)
+        salesView.willClose { [weak self] shouldClose in
+            guard let self else { return }
+            if shouldClose {
+                startLoading()
+                presenter.load()
+                stayingView.isHidden = false
+                leftView.isHidden = true
+                salesView.isHidden = true
+                stayingButton.backgroundColor = UIColor.lightGray
+                leftBotton.backgroundColor = UIColor(red: 239/255, green: 236/255, blue: 231/255, alpha: 1.0)
+                salesButton.backgroundColor = UIColor(red: 239/255, green: 236/255, blue: 231/255, alpha: 1.0)
+                stayingButton.setTitleColor(UIColor.white, for: .normal)
+                leftBotton.setTitleColor(UIColor.black, for: .normal)
+                salesButton.setTitleColor(UIColor.black, for: .normal)
+            }
+        }
     }
     
-    @objc func tapLeftBotton(_ sender: UIButton) {
+    @objc func tapLeftButton(_ sender: UIButton) {
+        salesView.willClose { [weak self] shouldClose in
+            guard let self else { return }
+            if shouldClose {
+                startLoading()
+                presenter.load()
+                stayingView.isHidden = true
+                leftView.isHidden = false
+                salesView.isHidden = true
+                stayingButton.backgroundColor = UIColor(red: 239/255, green: 236/255, blue: 231/255, alpha: 1.0)
+                leftBotton.backgroundColor = UIColor.lightGray
+                salesButton.backgroundColor = UIColor(red: 239/255, green: 236/255, blue: 231/255, alpha: 1.0)
+                stayingButton.setTitleColor(UIColor.black, for: .normal)
+                leftBotton.setTitleColor(UIColor.white, for: .normal)
+                salesButton.setTitleColor(UIColor.black, for: .normal)
+            }
+        }
+    }
+    
+    @objc func tapSalesButton(_ sender: UIButton) {
         startLoading()
-        presenter.load()
+        presenter.getSalesMaster()
         stayingView.isHidden = true
-        leftView.isHidden = false
+        leftView.isHidden = true
+        salesView.isHidden = false
         stayingButton.backgroundColor = UIColor(red: 239/255, green: 236/255, blue: 231/255, alpha: 1.0)
-        leftBotton.backgroundColor = UIColor.lightGray
+        leftBotton.backgroundColor = UIColor(red: 239/255, green: 236/255, blue: 231/255, alpha: 1.0)
+        salesButton.backgroundColor = UIColor.lightGray
         stayingButton.setTitleColor(UIColor.black, for: .normal)
-        leftBotton.setTitleColor(UIColor.white, for: .normal)
+        leftBotton.setTitleColor(UIColor.black, for: .normal)
+        salesButton.setTitleColor(UIColor.white, for: .normal)
     }
     
     private func formatNumber(_ number: String) -> String {
@@ -368,7 +448,12 @@ extension OpenViewController: LeftDelegate {
 
 extension OpenViewController: TitleDelegate {
     func tapMenuButton() {
-        presenter.didTapMenuButton()
+        salesView.willClose { [weak self] shouldClose in
+            guard let self else { return }
+            if shouldClose {
+                presenter.didTapMenuButton()
+            }
+        }
     }
 }
 
@@ -435,5 +520,49 @@ extension OpenViewController: EditVisitorInfoDelegate {
     
     func tapEditVisitorInfoBackButton() {
         editVisitorInfoView.isHidden = true
+    }
+}
+
+extension OpenViewController: CheckoutDelegate {
+    func tapCheckoutCloseButton() {
+        checkoutView.isHidden = true
+    }
+}
+
+extension OpenViewController: SalesDelegate {
+    func tapSalesRegisterButton(sales: [SalesModel]) {
+        presenter.didTapSalesRegisterButton(sales: sales)
+    }
+    
+    func salesViewWillClose(hasUnsavedChanges: Bool, completion: @escaping (Bool) -> Void) {
+        // salesView が非表示の場合、そのまま閉じる
+        guard !salesView.isHidden else {
+            completion(true)
+            return
+        }
+        
+        // 未保存変更がない場合、そのまま閉じる
+        guard hasUnsavedChanges else {
+            completion(true)
+            return
+        }
+        
+        // 未保存変更がある場合、確認アラート表示
+        let alert = UIAlertController(
+            title: "未保存の変更があります",
+            message: "変更内容が保存されていません。保存せずに移動しますか？",
+            preferredStyle: .alert
+        )
+        
+        alert.addAction(UIAlertAction(title: "キャンセル", style: .cancel, handler: { _ in
+            completion(false)
+        }))
+        
+        alert.addAction(UIAlertAction(title: "移動する", style: .destructive, handler: { [weak self] _ in
+            self?.salesView.discardUnsavedChanges()
+            completion(true)
+        }))
+        
+        present(alert, animated: true)
     }
 }

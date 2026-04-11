@@ -12,7 +12,7 @@ struct SetMedicalHistoryTargetType: ApiTargetType {
     typealias Reponse = GetMedicalHistoryEntity
 
     var baseURL: URL {
-        URL(filePath: "https://kwwh877qvk.execute-api.ap-northeast-1.amazonaws.com/cat/")!
+        URL(string: "https://kwwh877qvk.execute-api.ap-northeast-1.amazonaws.com/cat/")!
     }
 
     var path: String {

@@ -9,7 +9,6 @@ import Foundation
 import UIKit
 
 protocol VisitorInfoDelegate: AnyObject  {
-//    func tapLeaveSubmitButton(id: Int, repeatFlag: Bool, patternId: Int, name: String?, date: String, holidayFlag: Bool, kidsDayFlag: Bool, adultCount: Int, childCount: Int, enterTime: String, leftTime: String, stayTime: Int, calcAmount: Int, discountAmount: Int, saleAmount: Int, gachaAmount: Int, totalAmount: Int, memo: String)
     func tapBackButton()
 }
 
@@ -32,10 +31,6 @@ public class VisitorInfoView: UIView {
     let basicPriceLabel = UILabel()
     let discountAmountTitleLabel = UILabel()
     let discountAmountLabel = UILabel()
-    let gachaAmountTitleLabel = UILabel()
-    let gachaAmountLabel = UILabel()
-    let saleAmountTitleLabel = UILabel()
-    let saleAmountLabel = UILabel()
     let feeTitleLabel = UILabel()
     let feeLabel = UILabel()
     let memoTitleLabel = UILabel()
@@ -74,8 +69,6 @@ public class VisitorInfoView: UIView {
         stayTimeLabel.text = selectGuestInfo.enterTime + "～" + selectGuestInfo.leftTime + "　" + String(selectGuestInfo.stayTime) + "分"
     basicPriceLabel.text = commaSeparateThreeDigits(selectGuestInfo.calcAmount) + "円"
     discountAmountLabel.text = commaSeparateThreeDigits(selectGuestInfo.discountAmount) + "円"
-    gachaAmountLabel.text = commaSeparateThreeDigits(selectGuestInfo.gachaAmount) + "円"
-    saleAmountLabel.text = commaSeparateThreeDigits(selectGuestInfo.saleAmount) + "円"
     feeLabel.text = commaSeparateThreeDigits(selectGuestInfo.totalAmount) + "円"
         memoLabel.text = selectGuestInfo.memo ?? ""
     }
@@ -145,20 +138,6 @@ private extension VisitorInfoView {
         discountAmountLabel.textAlignment = .center
         self.addSubview(discountAmountLabel)
         
-        setupLabel(gachaAmountTitleLabel, text: "ガチャ額：")
-        self.addSubview(gachaAmountTitleLabel)
-        
-        setupLabel(gachaAmountLabel)
-        gachaAmountLabel.textAlignment = .center
-        self.addSubview(gachaAmountLabel)
-
-        setupLabel(saleAmountTitleLabel, text: "販売額：")
-        self.addSubview(saleAmountTitleLabel)
-        
-        setupLabel(saleAmountLabel)
-        saleAmountLabel.textAlignment = .center
-        self.addSubview(saleAmountLabel)
-        
         setupLabel(feeTitleLabel, text: "料金：")
         self.addSubview(feeTitleLabel)
         
@@ -196,10 +175,6 @@ private extension VisitorInfoView {
         basicPriceLabel.translatesAutoresizingMaskIntoConstraints = false
         discountAmountTitleLabel.translatesAutoresizingMaskIntoConstraints = false
         discountAmountLabel.translatesAutoresizingMaskIntoConstraints = false
-        gachaAmountTitleLabel.translatesAutoresizingMaskIntoConstraints = false
-        gachaAmountLabel.translatesAutoresizingMaskIntoConstraints = false
-        saleAmountTitleLabel.translatesAutoresizingMaskIntoConstraints = false
-        saleAmountLabel.translatesAutoresizingMaskIntoConstraints = false
         feeTitleLabel.translatesAutoresizingMaskIntoConstraints = false
         feeLabel.translatesAutoresizingMaskIntoConstraints = false
         memoTitleLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -243,17 +218,8 @@ private extension VisitorInfoView {
                 discountAmountLabel.centerYAnchor.constraint(equalTo: discountAmountTitleLabel.centerYAnchor),
                 discountAmountLabel.leftAnchor.constraint(equalTo: discountAmountTitleLabel.rightAnchor, constant: 16),
                 
-                gachaAmountTitleLabel.topAnchor.constraint(equalTo: basicPriceTitleLabel.bottomAnchor, constant: 16),
-                gachaAmountTitleLabel.rightAnchor.constraint(equalTo: basicPriceTitleLabel.rightAnchor),
-                gachaAmountLabel.centerYAnchor.constraint(equalTo: gachaAmountTitleLabel.centerYAnchor),
-                gachaAmountLabel.leftAnchor.constraint(equalTo: gachaAmountTitleLabel.rightAnchor, constant: 16),
-                saleAmountTitleLabel.centerYAnchor.constraint(equalTo: gachaAmountTitleLabel.centerYAnchor),
-                saleAmountTitleLabel.leftAnchor.constraint(equalTo: self.safeAreaLayoutGuide.centerXAnchor),
-                saleAmountLabel.centerYAnchor.constraint(equalTo: saleAmountTitleLabel.centerYAnchor),
-                saleAmountLabel.leftAnchor.constraint(equalTo: saleAmountTitleLabel.rightAnchor, constant: 16),
-                
-                feeTitleLabel.topAnchor.constraint(equalTo: gachaAmountTitleLabel.bottomAnchor, constant: 16),
-                feeTitleLabel.rightAnchor.constraint(equalTo: gachaAmountTitleLabel.rightAnchor),
+                feeTitleLabel.topAnchor.constraint(equalTo: discountAmountTitleLabel.bottomAnchor, constant: 16),
+                feeTitleLabel.rightAnchor.constraint(equalTo: basicPriceTitleLabel.rightAnchor),
                 feeLabel.centerYAnchor.constraint(equalTo: feeTitleLabel.centerYAnchor),
                 feeLabel.leftAnchor.constraint(equalTo: feeTitleLabel.rightAnchor, constant: 16),
                 
@@ -278,22 +244,22 @@ private extension VisitorInfoView {
                 patternLabel.centerYAnchor.constraint(equalTo: patternTitleLabel.centerYAnchor),
                 patternLabel.leftAnchor.constraint(equalTo: patternTitleLabel.rightAnchor, constant: 24),
                 
-                nameTitleLabel.topAnchor.constraint(equalTo: repeatTitleLabel.bottomAnchor, constant: 24),
+                nameTitleLabel.topAnchor.constraint(equalTo: repeatTitleLabel.bottomAnchor, constant: 40),
                 nameTitleLabel.rightAnchor.constraint(equalTo: repeatTitleLabel.rightAnchor),
                 nameLabel.centerYAnchor.constraint(equalTo: nameTitleLabel.centerYAnchor),
                 nameLabel.leftAnchor.constraint(equalTo: nameTitleLabel.rightAnchor, constant: 24),
                 
-                countTitleLabel.topAnchor.constraint(equalTo: nameTitleLabel.bottomAnchor, constant: 24),
+                countTitleLabel.topAnchor.constraint(equalTo: nameTitleLabel.bottomAnchor, constant: 40),
                 countTitleLabel.rightAnchor.constraint(equalTo: nameTitleLabel.rightAnchor),
                 countLabel.centerYAnchor.constraint(equalTo: countTitleLabel.centerYAnchor),
                 countLabel.leftAnchor.constraint(equalTo: countTitleLabel.rightAnchor, constant: 24),
                 
-                stayTimeTitleLabel.topAnchor.constraint(equalTo: countTitleLabel.bottomAnchor, constant: 24),
+                stayTimeTitleLabel.topAnchor.constraint(equalTo: countTitleLabel.bottomAnchor, constant: 40),
                 stayTimeTitleLabel.rightAnchor.constraint(equalTo: countTitleLabel.rightAnchor),
                 stayTimeLabel.centerYAnchor.constraint(equalTo: stayTimeTitleLabel.centerYAnchor),
                 stayTimeLabel.leftAnchor.constraint(equalTo: stayTimeTitleLabel.rightAnchor, constant: 24),
                 
-                basicPriceTitleLabel.topAnchor.constraint(equalTo: stayTimeLabel.bottomAnchor, constant: 24),
+                basicPriceTitleLabel.topAnchor.constraint(equalTo: stayTimeLabel.bottomAnchor, constant: 40),
                 basicPriceTitleLabel.rightAnchor.constraint(equalTo: stayTimeTitleLabel.rightAnchor),
                 basicPriceLabel.centerYAnchor.constraint(equalTo: basicPriceTitleLabel.centerYAnchor),
                 basicPriceLabel.leftAnchor.constraint(equalTo: basicPriceTitleLabel.rightAnchor, constant: 24),
@@ -302,21 +268,12 @@ private extension VisitorInfoView {
                 discountAmountLabel.centerYAnchor.constraint(equalTo: discountAmountTitleLabel.centerYAnchor),
                 discountAmountLabel.leftAnchor.constraint(equalTo: discountAmountTitleLabel.rightAnchor, constant: 24),
                 
-                gachaAmountTitleLabel.topAnchor.constraint(equalTo: basicPriceTitleLabel.bottomAnchor, constant: 24),
-                gachaAmountTitleLabel.rightAnchor.constraint(equalTo: basicPriceTitleLabel.rightAnchor),
-                gachaAmountLabel.centerYAnchor.constraint(equalTo: gachaAmountTitleLabel.centerYAnchor),
-                gachaAmountLabel.leftAnchor.constraint(equalTo: gachaAmountTitleLabel.rightAnchor, constant: 24),
-                saleAmountTitleLabel.centerYAnchor.constraint(equalTo: gachaAmountTitleLabel.centerYAnchor),
-                saleAmountTitleLabel.leftAnchor.constraint(equalTo: self.safeAreaLayoutGuide.centerXAnchor),
-                saleAmountLabel.centerYAnchor.constraint(equalTo: saleAmountTitleLabel.centerYAnchor),
-                saleAmountLabel.leftAnchor.constraint(equalTo: saleAmountTitleLabel.rightAnchor, constant: 24),
-                
-                feeTitleLabel.topAnchor.constraint(equalTo: gachaAmountTitleLabel.bottomAnchor, constant: 24),
-                feeTitleLabel.rightAnchor.constraint(equalTo: gachaAmountTitleLabel.rightAnchor),
+                feeTitleLabel.topAnchor.constraint(equalTo: discountAmountTitleLabel.bottomAnchor, constant: 40),
+                feeTitleLabel.rightAnchor.constraint(equalTo: basicPriceTitleLabel.rightAnchor),
                 feeLabel.centerYAnchor.constraint(equalTo: feeTitleLabel.centerYAnchor),
                 feeLabel.leftAnchor.constraint(equalTo: feeTitleLabel.rightAnchor, constant: 24),
                 
-                memoTitleLabel.topAnchor.constraint(equalTo: feeTitleLabel.bottomAnchor, constant: 24),
+                memoTitleLabel.topAnchor.constraint(equalTo: feeTitleLabel.bottomAnchor, constant: 40),
                 memoTitleLabel.rightAnchor.constraint(equalTo: feeTitleLabel.rightAnchor),
                 memoLabel.centerYAnchor.constraint(equalTo: memoTitleLabel.centerYAnchor),
                 memoLabel.leftAnchor.constraint(equalTo: memoTitleLabel.rightAnchor, constant: 24),

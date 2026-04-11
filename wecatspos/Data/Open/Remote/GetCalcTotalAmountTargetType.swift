@@ -1,23 +1,22 @@
 //
-//  PostCalcTotalAmountTargetType.swift
+//  GetCalcTotalAmountTargetType.swift
 //  wecatspos
 //
-//  Created by matsumoto on 2025/10/11.
+//  Created by matsumoto on 2026/04/04.
 //
-
 
 import Foundation
 import Moya
 
-struct PostCalcTotalAmountTargetType: ApiTargetType {
+struct GetCalcTotalAmountTargetType: ApiTargetType {
     typealias Reponse = CalcTotalAmountEntity
 
     var baseURL: URL {
-        URL(string: "https://jy0fcsfxtj.execute-api.ap-northeast-1.amazonaws.com/guest/")!
+        URL(string: "https://vl1sxpjk81.execute-api.ap-northeast-1.amazonaws.com/guest/")!
     }
 
     var path: String {
-        "calc-total-amount"
+        "get-total-amount"
     }
 
     var method: Moya.Method {
@@ -35,9 +34,9 @@ struct PostCalcTotalAmountTargetType: ApiTargetType {
     }
 
     // MARK: - Arguments
-    let calcTotalAmount: PostCalcTotalAmountRequestParam
+    let calcTotalAmount: GetCalcTotalAmountRequestParam
 
-    init(_ calcTotalAmount: PostCalcTotalAmountRequestParam) {
+    init(_ calcTotalAmount: GetCalcTotalAmountRequestParam) {
         self.calcTotalAmount = calcTotalAmount
     }
 }

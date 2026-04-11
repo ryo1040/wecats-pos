@@ -45,8 +45,6 @@ public class EnterView: UIView {
     let updateButton = UIButton()
     let cancelButton = UIButton()
     
-    let screenWidth = UIScreen.main.bounds.width
-    
     // 制約管理用のプロパティを追加
     private var currentConstraints: [NSLayoutConstraint] = []
     

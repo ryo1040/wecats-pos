@@ -12,7 +12,7 @@ struct GetGuestInfoTargetType: ApiTargetType {
     typealias Reponse = GetGuestInfoEntity
 
     var baseURL: URL {
-        URL(filePath: "https://fhrd475n84.execute-api.ap-northeast-1.amazonaws.com/guest/")!
+        URL(string: "https://fhrd475n84.execute-api.ap-northeast-1.amazonaws.com/guest/")!
     }
     
     var path: String {

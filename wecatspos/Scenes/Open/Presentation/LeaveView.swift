@@ -31,10 +31,6 @@ public class LeaveView: UIView {
     let stayTimeLabel = UILabel()
     let discountAmountTitleLabel = UILabel()
     let discountAmountTextField = UITextField()
-    let gachaAmountTitleLabel = UILabel()
-    let gachaAmountTextField = UITextField()
-    let saleAmountTitleLabel = UILabel()
-    let saleAmountTextField = UITextField()
     let feeTitleLabel = UILabel()
     let feeLabel = UILabel()
     let feeCalcButton = UIButton()
@@ -107,8 +103,6 @@ public class LeaveView: UIView {
         leftTimeTextField.text = formatter.string(from: Date())
         stayTimeLabel.text = ""
         discountAmountTextField.text = "0"
-        saleAmountTextField.text = "0"
-        gachaAmountTextField.text = "0"
         feeLabel.text = ""
         memoTextField.text = memo
     }
@@ -260,28 +254,7 @@ private extension LeaveView {
         scrollView.addSubview(discountAmountTextField)
         setupDiscountAmountTextField()
         
-        setupLabel(gachaAmountTitleLabel, text: "ガチャ額：")
-        scrollView.addSubview(gachaAmountTitleLabel)
-        
-        setupTextField(gachaAmountTextField, text: "0")
-        gachaAmountTextField.keyboardType = .numberPad
-        gachaAmountTextField.returnKeyType = .done
-        gachaAmountTextField.frame = self.frame
-        gachaAmountTextField.tag = 2
-        scrollView.addSubview(gachaAmountTextField)
-        setupGachaAmountTextField()
-
-        setupLabel(saleAmountTitleLabel, text: "販売額：")
-        scrollView.addSubview(saleAmountTitleLabel)
-        
-        setupTextField(saleAmountTextField, text: "0")
-        saleAmountTextField.keyboardType = .numberPad
-        saleAmountTextField.frame = self.frame
-        saleAmountTextField.tag = 3
-        scrollView.addSubview(saleAmountTextField)
-        setupSaleAmountTextField()
-        
-        setupLabel(feeTitleLabel, text: "レジ精算料金：")
+        setupLabel(feeTitleLabel, text: "精算料金：")
         scrollView.addSubview(feeTitleLabel)
 
         setupLabel(feeLabel, text: " ")
@@ -315,8 +288,6 @@ private extension LeaveView {
         enterTimeTextField.delegate = self
         leftTimeTextField.delegate = self
         discountAmountTextField.delegate = self
-        gachaAmountTextField.delegate = self
-        saleAmountTextField.delegate = self
         
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         errorMessageLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -328,10 +299,6 @@ private extension LeaveView {
         stayTimeLabel.translatesAutoresizingMaskIntoConstraints = false
         discountAmountTitleLabel.translatesAutoresizingMaskIntoConstraints = false
         discountAmountTextField.translatesAutoresizingMaskIntoConstraints = false
-        gachaAmountTitleLabel.translatesAutoresizingMaskIntoConstraints = false
-        gachaAmountTextField.translatesAutoresizingMaskIntoConstraints = false
-        saleAmountTitleLabel.translatesAutoresizingMaskIntoConstraints = false
-        saleAmountTextField.translatesAutoresizingMaskIntoConstraints = false
         feeTitleLabel.translatesAutoresizingMaskIntoConstraints = false
         feeLabel.translatesAutoresizingMaskIntoConstraints = false
         feeCalcButton.translatesAutoresizingMaskIntoConstraints = false
@@ -368,19 +335,13 @@ private extension LeaveView {
                 stayTimeLabel.leftAnchor.constraint(equalTo: stayTimeTitleLabel.rightAnchor, constant: 8),
                 stayTimeLabel.widthAnchor.constraint(equalToConstant: 80),
                 stayTimeLabel.heightAnchor.constraint(equalToConstant: 25),
-                discountAmountTitleLabel.topAnchor.constraint(equalTo: leftTimeTitleLabel.bottomAnchor, constant: 24),
+                discountAmountTitleLabel.topAnchor.constraint(equalTo: leftTimeTitleLabel.bottomAnchor, constant: 48),
                 discountAmountTitleLabel.rightAnchor.constraint(equalTo: enterTimeTitleLabel.rightAnchor),
                 discountAmountTextField.centerYAnchor.constraint(equalTo: discountAmountTitleLabel.centerYAnchor),
                 discountAmountTextField.leftAnchor.constraint(equalTo: discountAmountTitleLabel.rightAnchor, constant: 8),
                 discountAmountTextField.widthAnchor.constraint(equalToConstant: 120),
                 discountAmountTextField.heightAnchor.constraint(equalToConstant: 25),
-                saleAmountTitleLabel.topAnchor.constraint(equalTo: discountAmountTitleLabel.bottomAnchor, constant: 24),
-                saleAmountTitleLabel.rightAnchor.constraint(equalTo: enterTimeTitleLabel.rightAnchor),
-                saleAmountTextField.centerYAnchor.constraint(equalTo: saleAmountTitleLabel.centerYAnchor),
-                saleAmountTextField.leftAnchor.constraint(equalTo: saleAmountTitleLabel.rightAnchor, constant: 8),
-                saleAmountTextField.widthAnchor.constraint(equalToConstant: 120),
-                saleAmountTextField.heightAnchor.constraint(equalToConstant: 25),
-                feeTitleLabel.topAnchor.constraint(equalTo: saleAmountTitleLabel.bottomAnchor, constant: 24),
+                feeTitleLabel.topAnchor.constraint(equalTo: discountAmountTextField.bottomAnchor, constant: 48),
                 feeTitleLabel.rightAnchor.constraint(equalTo: enterTimeTitleLabel.rightAnchor),
                 feeLabel.centerYAnchor.constraint(equalTo: feeTitleLabel.centerYAnchor),
                 feeLabel.leftAnchor.constraint(equalTo: feeTitleLabel.rightAnchor, constant: 8),
@@ -390,13 +351,7 @@ private extension LeaveView {
                 feeCalcButton.leftAnchor.constraint(equalTo: feeLabel.rightAnchor, constant: 25),
                 feeCalcButton.heightAnchor.constraint(equalToConstant: 40),
                 feeCalcButton.widthAnchor.constraint(equalToConstant: 80),
-                gachaAmountTitleLabel.topAnchor.constraint(equalTo: feeTitleLabel.bottomAnchor, constant: 24),
-                gachaAmountTitleLabel.rightAnchor.constraint(equalTo: enterTimeTitleLabel.rightAnchor),
-                gachaAmountTextField.centerYAnchor.constraint(equalTo: gachaAmountTitleLabel.centerYAnchor),
-                gachaAmountTextField.leftAnchor.constraint(equalTo: gachaAmountTitleLabel.rightAnchor, constant: 8),
-                gachaAmountTextField.widthAnchor.constraint(equalToConstant: 120),
-                gachaAmountTextField.heightAnchor.constraint(equalToConstant: 25),
-                memoTitleLabel.topAnchor.constraint(equalTo: gachaAmountTitleLabel.bottomAnchor, constant: 24),
+                memoTitleLabel.topAnchor.constraint(equalTo: feeTitleLabel.bottomAnchor, constant: 48),
                 memoTitleLabel.rightAnchor.constraint(equalTo: enterTimeTitleLabel.rightAnchor),
                 memoTextField.centerYAnchor.constraint(equalTo: memoTitleLabel.centerYAnchor),
                 memoTextField.leftAnchor.constraint(equalTo: memoTitleLabel.rightAnchor, constant: 8),
@@ -437,36 +392,24 @@ private extension LeaveView {
                 stayTimeLabel.bottomAnchor.constraint(equalTo: stayTimeTitleLabel.bottomAnchor),
                 stayTimeLabel.leftAnchor.constraint(equalTo: stayTimeTitleLabel.rightAnchor, constant: 16),
                 stayTimeLabel.widthAnchor.constraint(equalToConstant: 160),
-                discountAmountTitleLabel.topAnchor.constraint(equalTo: leftTimeTitleLabel.bottomAnchor, constant: 32),
+                discountAmountTitleLabel.topAnchor.constraint(equalTo: leftTimeTitleLabel.bottomAnchor, constant: 64),
                 discountAmountTitleLabel.rightAnchor.constraint(equalTo: enterTimeTitleLabel.rightAnchor),
                 discountAmountTextField.topAnchor.constraint(equalTo: discountAmountTitleLabel.topAnchor),
                 discountAmountTextField.bottomAnchor.constraint(equalTo: discountAmountTitleLabel.bottomAnchor),
                 discountAmountTextField.leftAnchor.constraint(equalTo: discountAmountTitleLabel.rightAnchor, constant: 16),
                 discountAmountTextField.widthAnchor.constraint(equalToConstant: 240),
-
-                saleAmountTitleLabel.topAnchor.constraint(equalTo: discountAmountTitleLabel.bottomAnchor, constant: 32),
-                saleAmountTitleLabel.rightAnchor.constraint(equalTo: enterTimeTitleLabel.rightAnchor),
-                saleAmountTextField.topAnchor.constraint(equalTo: saleAmountTitleLabel.topAnchor),
-                saleAmountTextField.bottomAnchor.constraint(equalTo: saleAmountTitleLabel.bottomAnchor),
-                saleAmountTextField.leftAnchor.constraint(equalTo: saleAmountTitleLabel.rightAnchor, constant: 16),
-                saleAmountTextField.widthAnchor.constraint(equalToConstant: 240),
-                feeTitleLabel.topAnchor.constraint(equalTo: saleAmountTitleLabel.bottomAnchor, constant: 32),
+                feeTitleLabel.topAnchor.constraint(equalTo: discountAmountTextField.bottomAnchor, constant: 64),
                 feeTitleLabel.rightAnchor.constraint(equalTo: enterTimeTitleLabel.rightAnchor),
                 feeLabel.topAnchor.constraint(equalTo: feeTitleLabel.topAnchor),
                 feeLabel.bottomAnchor.constraint(equalTo: feeTitleLabel.bottomAnchor),
                 feeLabel.leftAnchor.constraint(equalTo: feeTitleLabel.rightAnchor, constant: 16),
                 feeLabel.widthAnchor.constraint(equalToConstant: 240),
+                feeLabel.heightAnchor.constraint(equalToConstant: 80),
                 feeCalcButton.centerYAnchor.constraint(equalTo: feeTitleLabel.centerYAnchor),
                 feeCalcButton.leftAnchor.constraint(equalTo: feeLabel.rightAnchor, constant: 50),
                 feeCalcButton.heightAnchor.constraint(equalToConstant: 80),
                 feeCalcButton.widthAnchor.constraint(equalToConstant: 160),
-                gachaAmountTitleLabel.topAnchor.constraint(equalTo: feeTitleLabel.bottomAnchor, constant: 32),
-                gachaAmountTitleLabel.rightAnchor.constraint(equalTo: enterTimeTitleLabel.rightAnchor),
-                gachaAmountTextField.topAnchor.constraint(equalTo: gachaAmountTitleLabel.topAnchor),
-                gachaAmountTextField.bottomAnchor.constraint(equalTo: gachaAmountTitleLabel.bottomAnchor),
-                gachaAmountTextField.leftAnchor.constraint(equalTo: gachaAmountTitleLabel.rightAnchor, constant: 16),
-                gachaAmountTextField.widthAnchor.constraint(equalToConstant: 240),
-                memoTitleLabel.topAnchor.constraint(equalTo: gachaAmountTitleLabel.bottomAnchor, constant: 32),
+                memoTitleLabel.topAnchor.constraint(equalTo: feeTitleLabel.bottomAnchor, constant: 64),
                 memoTitleLabel.rightAnchor.constraint(equalTo: enterTimeTitleLabel.rightAnchor),
                 memoTextField.topAnchor.constraint(equalTo: memoTitleLabel.topAnchor),
                 memoTextField.bottomAnchor.constraint(equalTo: memoTitleLabel.bottomAnchor),
@@ -570,42 +513,6 @@ private extension LeaveView {
         discountAmountTextField.resignFirstResponder() // キーボードを閉じる
     }
     
-    private func setupSaleAmountTextField() {
-        // ツールバーを作成
-        let toolbar = UIToolbar()
-        toolbar.sizeToFit()
-        
-        // 「完了」ボタンを作成
-        let doneButton = UIBarButtonItem(title: "完了", style: .done, target: self, action: #selector(doneSaleAmountKeyboard))
-        let flexibleSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
-        toolbar.setItems([flexibleSpace, doneButton], animated: true)
-        
-        // ツールバーをテキストフィールドに設定
-        saleAmountTextField.inputAccessoryView = toolbar
-    }
-    
-    @objc private func doneSaleAmountKeyboard() {
-        saleAmountTextField.resignFirstResponder() // キーボードを閉じる
-    }
-    
-    private func setupGachaAmountTextField() {
-        // ツールバーを作成
-        let toolbar = UIToolbar()
-        toolbar.sizeToFit()
-        
-        // 「完了」ボタンを作成
-        let doneButton = UIBarButtonItem(title: "完了", style: .done, target: self, action: #selector(doneGachaAmountKeyboard))
-        let flexibleSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
-        toolbar.setItems([flexibleSpace, doneButton], animated: true)
-        
-        // ツールバーをテキストフィールドに設定
-        gachaAmountTextField.inputAccessoryView = toolbar
-    }
-    
-    @objc private func doneGachaAmountKeyboard() {
-        gachaAmountTextField.resignFirstResponder() // キーボードを閉じる
-    }
-    
     private func formatNumber(_ number: String) -> String {
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
@@ -635,7 +542,7 @@ private extension LeaveView {
         }
         
         // 料金計算
-        delegate?.calcTotalAmount(enterTime: enterTimeTextField.text ?? "", leftTime: leftTimeTextField.text ?? "", adultCount: self.adultCount, childCount: self.childCount, discountAmount: discountAmountTextField.text?.replacingOccurrences(of: ",", with: "") ?? "", saleAmount: saleAmountTextField.text?.replacingOccurrences(of: ",", with: "") ?? "")
+        delegate?.calcTotalAmount(enterTime: enterTimeTextField.text ?? "", leftTime: leftTimeTextField.text ?? "", adultCount: self.adultCount, childCount: self.childCount, discountAmount: discountAmountTextField.text?.replacingOccurrences(of: ",", with: "") ?? "", saleAmount: "0")
     }
     
     // 退店登録ボタンタップ時のイベント
@@ -646,21 +553,14 @@ private extension LeaveView {
         if inputCheckResult != "" {
             errorMessageLabel.text = inputCheckResult
             return
-        } else if gachaAmountTextField.text == "" {
-            errorMessageLabel.text = "ガチャ額を入力してください"
-            return
         }
 
         // ガチャ額も含めたトータル金額を算出
         let discountAmountText = discountAmountTextField.text?.replacingOccurrences(of: ",", with: "") ?? "0"
         self.discountAmount = Int(discountAmountText) ?? 0
-        let saleAmountText = saleAmountTextField.text?.replacingOccurrences(of: ",", with: "") ?? "0"
-        self.saleAmount = Int(saleAmountText) ?? 0
-        let gachaAmountText = gachaAmountTextField.text?.replacingOccurrences(of: ",", with: "") ?? "0"
-        self.gachaAmount = Int(gachaAmountText) ?? 0
         let calcAmountText = feeLabel.text?.replacingOccurrences(of: ",", with: "").replacingOccurrences(of: "¥", with: "") ?? "0"
         self.calcAmount = Int(calcAmountText) ?? 0
-        self.totalAmount = self.calcAmount + self.gachaAmount
+        self.totalAmount = self.calcAmount
         
         // 退店データをサーバに登録
         delegate?.tapLeaveSubmitButton(id: id, repeatFlag: repeatFlag, patternId: patternId, name: name, date: date, holidayFlag: holidayFlag, kidsDayFlag: kidsDayFlag, adultCount: adultCount, childCount: childCount, enterTime: enterTimeTextField.text!, leftTime: leftTimeTextField.text!, stayTime: stayTime, calcAmount: calcAmount, discountAmount: discountAmount, saleAmount: saleAmount, gachaAmount: gachaAmount, totalAmount: totalAmount, memo: memoTextField.text!)
@@ -672,9 +572,7 @@ private extension LeaveView {
         leftTimeTextField.text = ""
         stayTimeLabel.text = ""
         discountAmountTextField.text = ""
-        saleAmountTextField.text = ""
         feeLabel.text = ""
-        gachaAmountTextField.text = ""
         delegate?.tapLeaveCancelButton()
     }
     
@@ -687,9 +585,6 @@ private extension LeaveView {
         }
         if discountAmountTextField.text == "" {
             return "割引額を入力してください"
-        }
-        if saleAmountTextField.text == "" {
-            return "販売額を入力してください"
         }
         return ""
     }
