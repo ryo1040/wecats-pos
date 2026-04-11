@@ -12,7 +12,7 @@ struct CheckTotalAmountTargetType: ApiTargetType {
     typealias Reponse = PostCheckTotalAmountEntity
 
     var baseURL: URL {
-        URL(filePath: "https://i4tz3xyms2.execute-api.ap-northeast-1.amazonaws.com/close/")!
+        URL(string: "https://i4tz3xyms2.execute-api.ap-northeast-1.amazonaws.com/close/")!
     }
 
     var path: String {

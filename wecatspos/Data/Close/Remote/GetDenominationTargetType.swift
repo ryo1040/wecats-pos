@@ -12,7 +12,7 @@ struct GetDenominationTargetType: ApiTargetType {
     typealias Reponse = GetDenominationEntity
 
     var baseURL: URL {
-        URL(filePath: "https://4a42jtm29b.execute-api.ap-northeast-1.amazonaws.com/denomination/")!
+        URL(string: "https://4a42jtm29b.execute-api.ap-northeast-1.amazonaws.com/denomination/")!
     }
     
     var path: String {

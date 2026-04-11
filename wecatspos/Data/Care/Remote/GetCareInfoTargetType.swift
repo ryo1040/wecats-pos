@@ -12,7 +12,7 @@ struct GetCareInfoTargetType: ApiTargetType {
     typealias Reponse = GetCareInfoEntity
 
     var baseURL: URL {
-        URL(filePath: "https://au0rfnsgi3.execute-api.ap-northeast-1.amazonaws.com/care-info/")!
+        URL(string: "https://au0rfnsgi3.execute-api.ap-northeast-1.amazonaws.com/care-info/")!
     }
     
     var path: String {

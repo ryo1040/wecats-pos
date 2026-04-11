@@ -13,7 +13,7 @@ struct GetCatInfoTargetType: ApiTargetType {
 
     var baseURL: URL {
 //        URL(string: API.baseURL)!
-        URL(filePath: "https://fflmwt4z6e.execute-api.ap-northeast-1.amazonaws.com/cat/")!
+        URL(string: "https://fflmwt4z6e.execute-api.ap-northeast-1.amazonaws.com/cat/")!
     }
 
     var path: String {
