@@ -29,10 +29,26 @@ final class DefaultWireframe: NSObject, DefaultWireframeProtocol {
     }
 
     func keyWindow() -> UIWindow {
-        guard let keyWindow = UIApplication.shared.windows.filter({$0.isKeyWindow}).first else {
-            fatalError("No KeyWindow")
+        if #available(iOS 13.0, *) {
+            let activeScenes = UIApplication.shared.connectedScenes
+                .compactMap { $0 as? UIWindowScene }
+                .filter { $0.activationState == .foregroundActive }
+
+            if let keyWindow = activeScenes
+                .flatMap({ $0.windows })
+                .first(where: { $0.isKeyWindow }) {
+                return keyWindow
+            }
+
+            if let window = activeScenes
+                .flatMap({ $0.windows })
+                .first {
+                return window
+            }
         }
-        return keyWindow
+
+        assertionFailure("No KeyWindow")
+        return UIWindow(frame: UIScreen.main.bounds)
     }
     
     func presentAlert(
@@ -54,7 +70,15 @@ final class DefaultWireframe: NSObject, DefaultWireframeProtocol {
                     observer.on(.next(actionTitle))
                 })
             }
-            self.topViewController().present(alertView, animated: true, completion: nil)
+
+            guard let presenter = self.topViewControllerIfAvailable() else {
+                assertionFailure("No presenter available for alert")
+                observer.on(.next(""))
+                observer.onCompleted()
+                return Disposables.create {}
+            }
+
+            presenter.present(alertView, animated: true, completion: nil)
 
             return Disposables.create {
                 alertView.dismiss(animated: false, completion: nil)
@@ -99,22 +123,62 @@ final class DefaultWireframe: NSObject, DefaultWireframeProtocol {
 }
 
 private extension DefaultWireframe {
+    @available(iOS 13.0, *)
+    func activeWindowScene() -> UIWindowScene? {
+        UIApplication.shared.connectedScenes
+            .compactMap { $0 as? UIWindowScene }
+            .first(where: { $0.activationState == .foregroundActive })
+    }
+
     func rootViewController() -> UIViewController {
-        guard let root = keyWindow().rootViewController else {
-            fatalError("No RootViewControler")
+        if #available(iOS 13.0, *),
+           let sceneRoot = activeWindowScene()?
+            .windows
+            .first(where: { $0.isKeyWindow })?
+            .rootViewController {
+            return sceneRoot
         }
-        return root
+
+        if let root = keyWindow().rootViewController {
+            return root
+        }
+
+        assertionFailure("No RootViewControler")
+        return UIViewController()
+    }
+
+    func topViewControllerIfAvailable() -> UIViewController? {
+        let root = rootViewController()
+        guard root.viewIfLoaded?.window != nil || root.presentedViewController != nil else {
+            return nil
+        }
+        return visibleViewController(from: root)
     }
     
     func topViewController() -> UIViewController {
-        var topViewController = rootViewController()
-        while let presentedViewController = topViewController.presentedViewController {
-            topViewController = presentedViewController
+        visibleViewController(from: rootViewController())
+    }
+
+    func visibleViewController(from viewController: UIViewController) -> UIViewController {
+        if let presented = viewController.presentedViewController {
+            return visibleViewController(from: presented)
         }
-        if let navigationController = topViewController as? UINavigationController,
-           let viewController = navigationController.children.last {
-            topViewController = viewController
+
+        if let navigationController = viewController as? UINavigationController,
+           let visible = navigationController.visibleViewController {
+            return visibleViewController(from: visible)
         }
-        return topViewController
+
+        if let tabBarController = viewController as? UITabBarController,
+           let selected = tabBarController.selectedViewController {
+            return visibleViewController(from: selected)
+        }
+
+        if let splitViewController = viewController as? UISplitViewController,
+           let last = splitViewController.viewControllers.last {
+            return visibleViewController(from: last)
+        }
+
+        return viewController
     }
 }

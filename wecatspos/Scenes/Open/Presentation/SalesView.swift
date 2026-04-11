@@ -19,10 +19,10 @@ public class SalesView: UIView {
 
     private var salesMasterModel: [SalesMasterModel] = []
     private var salesModel: [SalesModel] = []
+    private(set) var hasUnsavedChanges = false
     private var isShowingTwoColumnLayout = false
     private var itemPreferredWidthConstraint: NSLayoutConstraint?
     private var itemMaxWidthConstraint: NSLayoutConstraint?
-    private(set) var hasUnsavedChanges = false
 
     private let scrollView = UIScrollView()
     private let contentView = UIView()
@@ -72,20 +72,24 @@ extension SalesView {
     func setItems(salesMasterModel: [SalesMasterModel], salesModel: [SalesModel]) {
         self.salesMasterModel = salesMasterModel
         self.salesModel = salesModel
-        hasUnsavedChanges = false
+        self.hasUnsavedChanges = false
         reloadItemCards()
+    }
+
+    func closeIfPossible(completion: @escaping (Bool) -> Void) {
+        delegate?.salesViewWillClose(hasUnsavedChanges: hasUnsavedChanges, completion: completion)
+    }
+
+    func willClose(completion: @escaping (Bool) -> Void) {
+        closeIfPossible(completion: completion)
+    }
+
+    func discardUnsavedChanges() {
+        hasUnsavedChanges = false
     }
 
     func currentItems() -> [SalesMasterModel] {
         return salesMasterModel
-    }
-    
-    func willClose(completion: @escaping (Bool) -> Void) {
-        delegate?.salesViewWillClose(hasUnsavedChanges: hasUnsavedChanges, completion: completion)
-    }
-    
-    func discardUnsavedChanges() {
-        hasUnsavedChanges = false
     }
 }
 
@@ -366,12 +370,7 @@ private extension SalesView {
         let index = sender.tag
         guard salesMasterModel.indices.contains(index) else { return }
         let master = salesMasterModel[index]
-        guard let salesIndex = salesModel.firstIndex(where: { $0.salesMasterId == master.id }) else {
-            salesModel.append(SalesModel(date: "", salesMasterId: master.id, branch: 0, count: 0))
-            hasUnsavedChanges = true
-            countLabel(from: sender)?.text = "0"
-            return
-        }
+        guard let salesIndex = salesModel.firstIndex(where: { $0.salesMasterId == master.id }) else { return }
 
         guard salesModel[salesIndex].count > 0 else { return }
         salesModel[salesIndex].count -= 1

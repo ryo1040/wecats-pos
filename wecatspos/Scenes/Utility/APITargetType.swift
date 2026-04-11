@@ -16,7 +16,7 @@ extension ApiTargetType {
 
     /// The target's base `URL`.
     var baseURL: URL {
-        URL(string: "http://localhost:8000")!
+        fatalError("baseURL must be implemented in each ApiTargetType")
     }
 
     /// The path to be appended to `baseURL` to form the full `URL`.

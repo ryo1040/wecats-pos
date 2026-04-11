@@ -10,25 +10,17 @@ import UIKit
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
-    var window: UIWindow?
-
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // 1. ウィンドウ初期化
-        window = UIWindow(frame: UIScreen.main.bounds)
-        // 2. ルートビューコントローラ設定
-        window?.rootViewController = MenuBuilder().build()
-        // 3. ウィンドウ表示
-        window?.makeKeyAndVisible()
-        
         return true
     }
 
-//    // iOS 13以降でSceneDelegateを使う場合はこちらのメソッドを削除
-//    func applicationWillResignActive(_ application: UIApplication) {}
-//    func applicationDidEnterBackground(_ application: UIApplication) {}
-//    func applicationWillEnterForeground(_ application: UIApplication) {}
-//    func applicationDidBecomeActive(_ application: UIApplication) {}
-//    func applicationWillTerminate(_ application: UIApplication) {}
+    // MARK: - Scene Session (iOS 13+)
+
+    func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
+        UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
+    }
+
+    func application(_ application: UIApplication, didDiscardSceneSessions sceneSessions: Set<UISceneSession>) {}
 }
 
 
