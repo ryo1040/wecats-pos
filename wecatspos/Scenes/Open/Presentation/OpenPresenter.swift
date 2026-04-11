@@ -25,6 +25,7 @@ protocol OpenPresenterProtocol: AnyObject {
     func didTapEditVisitorInfoUpdateButton(id: Int, repeatFlag: Bool, patternId: Int, name: String?, date: String, holidayFlag: Bool, kidsDayFlag: Bool, adultCount: Int, childCount: Int, enterTime: String, leftTime: String, stayTime: Int, calcAmount: Int, discountAmount: Int, saleAmount: Int, gachaAmount: Int, totalAmount: Int, memo: String)
     func calcTotalAmount(enterTime: String, leftTime: String, adultCount: Int, childCount: Int, discountAmount: String, saleAmount: String)
     func getSalesMaster()
+    func didTapSalesRegisterButton(sales: [SalesModel])
 }
 
 final class OpenPresenter: OpenPresenterProtocol {
@@ -271,4 +272,40 @@ final class OpenPresenter: OpenPresenterProtocol {
             })
             .disposed(by: self.disposeBag)
     }
+    
+    func didTapSalesRegisterButton(sales: [SalesModel]) {
+        let requestSales = sales.map {
+            PostSalesRequestSales(
+                date: $0.date,
+                salesMasterId: $0.salesMasterId,
+                branch: $0.branch,
+                count: $0.count
+            )
+        }
+        let param = PostSalesRequestParam(sales: requestSales)
+        
+        Observable.just(Void())
+            .flatMap { [unowned self] in
+                self.useCase.setSales(param: param)
+            }
+            .subscribe(onNext: {
+                [unowned self] model in
+                self.viewSales.onNext(model)
+            }, onError: { error in
+                self.handleDidTapSalesRegisterButtonError(error, sales: sales)
+            })
+            .disposed(by: self.disposeBag)
+    }
+    
+    func handleDidTapSalesRegisterButtonError(_ error: Error, sales: [SalesModel]) {
+        self.wireframe.presentAlert(Sentence.MSG_NETWORK_ERROR, buttonTitle: Sentence.DIALOG_BTN_RETRY)
+            .subscribe(onNext: { option in
+                if option == Sentence.DIALOG_BTN_RETRY {
+                    // ボタンタップ時に再試行
+                    self.didTapSalesRegisterButton(sales: sales)
+                }
+            })
+            .disposed(by: self.disposeBag)
+    }
+    
 }

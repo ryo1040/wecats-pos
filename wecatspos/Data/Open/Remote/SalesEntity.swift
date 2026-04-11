@@ -5,6 +5,24 @@
 //  Created by matsumoto on 2026/04/06.
 //
 
+struct PostSalesRequestParam: Codable {
+    var sales: [PostSalesRequestSales] = []
+}
+
+struct PostSalesRequestSales: Codable {
+    var date: String
+    var salesMasterId: Int
+    var branch: Int
+    var count: Int
+    
+    enum CodingKeys: String, CodingKey {
+        case date = "date"
+        case salesMasterId = "salesMasterId"
+        case branch = "branch"
+        case count = "count"
+    }
+}
+
 public struct GetSalesEntity: Codable {
     var status: Int!
     var salesMaster: [SalesMasterEntity] = []
@@ -30,11 +48,13 @@ public struct SalesMasterEntity: Codable {
 public struct SalesEntity: Codable {
     var date: String
     var salesMasterId: Int
+    var branch: Int
     var count: Int
     
     enum CodingKeys: String, CodingKey {
         case date = "date"
         case salesMasterId = "sales_master_id"
+        case branch = "branch"
         case count = "count"
     }
 }

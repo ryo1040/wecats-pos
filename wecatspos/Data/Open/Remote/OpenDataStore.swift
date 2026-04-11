@@ -15,6 +15,7 @@ protocol OpenDataStoreProtocol {
     func deleteGuestInfo(param: PostDeleteGuestInfoRequestParam) -> Single<GetGuestInfoEntity>
     func calcTotalAmount(param: GetCalcTotalAmountRequestParam) -> Single<CalcTotalAmountEntity>
     func getSalesMaster() -> Single<GetSalesEntity>
+    func setSales(param: PostSalesRequestParam) -> Single<GetSalesEntity>
 }
 
 final class OpenDataStore: OpenDataStoreProtocol {
@@ -41,6 +42,10 @@ final class OpenDataStore: OpenDataStoreProtocol {
     
     func getSalesMaster() -> Single<GetSalesEntity> {
         return APIClient.shared.request(GetSalesMasterTargetType())
+    }
+    
+    func setSales(param: PostSalesRequestParam) -> Single<GetSalesEntity> {
+        return APIClient.shared.request(SetSalesTargetType(param))
     }
 }
 

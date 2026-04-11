@@ -9,57 +9,60 @@ import Foundation
 import UIKit
 
 protocol SalesDelegate: AnyObject {
-    func tapSalesMinus(item: SalesItem)
-    func tapSalesPlus(item: SalesItem)
-    func tapSalesEdit(item: SalesMasterModel)
-    func tapSalesDelete(item: SalesMasterModel)
-}
-
-struct SalesItem {
-    let id: Int
-    var name: String
-    var unitPrice: Int
-    var count: Int
+    func tapSalesRegisterButton(sales: [SalesModel])
+    func salesViewWillClose(hasUnsavedChanges: Bool, completion: @escaping (Bool) -> Void)
 }
 
 public class SalesView: UIView {
 
     weak var delegate: SalesDelegate?
 
-    private let screenWidth = UIScreen.main.bounds.width
     private var salesMasterModel: [SalesMasterModel] = []
     private var salesModel: [SalesModel] = []
+    private var isShowingTwoColumnLayout = false
+    private var itemPreferredWidthConstraint: NSLayoutConstraint?
+    private var itemMaxWidthConstraint: NSLayoutConstraint?
+    private(set) var hasUnsavedChanges = false
 
     private let scrollView = UIScrollView()
     private let contentView = UIView()
 
-    private let summaryStackView = UIStackView()
-    private let totalCountCard = UIView()
-    private let totalSalesCard = UIView()
-
-    private let totalCountTitleLabel = UILabel()
-    private let totalCountValueLabel = UILabel()
-    private let totalCountUnitLabel = UILabel()
-
-    private let totalSalesTitleLabel = UILabel()
-    private let totalSalesValueLabel = UILabel()
-    private let totalSalesUnitLabel = UILabel()
-
     private let itemStackView = UIStackView()
+    private let columnSeparatorView = UIView()
+    private let registerButton = UIButton()
 
     private let baseBackground = UIColor(red: 239/255, green: 236/255, blue: 231/255, alpha: 1.0)
     private let lineColor = UIColor.black
     private let accentColor = UIColor.black
-    private let deleteColor = UIColor.black
     private let textColor = UIColor.black
+    
+    private var today = ""
 
     public init() {
         super.init(frame: .zero)
+        
         setupViews()
+        
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "ja_JP_POSIX")
+        formatter.dateFormat = "yyyy-MM-dd"
+        today = formatter.string(from: Date())
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    public override func layoutSubviews() {
+        super.layoutSubviews()
+
+        updateItemStackWidthConstraints()
+
+        let shouldUseTwoColumnLayout = usesTwoColumnLayout
+        if shouldUseTwoColumnLayout != isShowingTwoColumnLayout {
+            isShowingTwoColumnLayout = shouldUseTwoColumnLayout
+            reloadItemCards()
+        }
     }
 }
 
@@ -69,23 +72,43 @@ extension SalesView {
     func setItems(salesMasterModel: [SalesMasterModel], salesModel: [SalesModel]) {
         self.salesMasterModel = salesMasterModel
         self.salesModel = salesModel
+        hasUnsavedChanges = false
         reloadItemCards()
-        updateSummary()
     }
 
     func currentItems() -> [SalesMasterModel] {
         return salesMasterModel
+    }
+    
+    func willClose(completion: @escaping (Bool) -> Void) {
+        delegate?.salesViewWillClose(hasUnsavedChanges: hasUnsavedChanges, completion: completion)
+    }
+    
+    func discardUnsavedChanges() {
+        hasUnsavedChanges = false
     }
 }
 
 // MARK: - Setup
 
 private extension SalesView {
+    var currentWidth: CGFloat {
+        return bounds.width > 0 ? bounds.width : UIScreen.main.bounds.width
+    }
+
+    var isCompactLayout: Bool {
+        return currentWidth < 668
+    }
+
+    var usesTwoColumnLayout: Bool {
+        return traitCollection.userInterfaceIdiom == .pad && bounds.width > bounds.height
+    }
+
     func setupViews() {
         backgroundColor = baseBackground
 
         setupScroll()
-        setupSummary()
+        setupRegisterButton()
         setupItemStack()
     }
 
@@ -110,117 +133,72 @@ private extension SalesView {
         ])
     }
 
-    func setupSummary() {
-        summaryStackView.axis = .horizontal
-        summaryStackView.alignment = .fill
-        summaryStackView.distribution = .fillEqually
-        summaryStackView.spacing = 12
+    func setupRegisterButton() {
+        registerButton.setTitle("登録", for: .normal)
+        registerButton.setTitleColor(.black, for: .normal)
+        registerButton.backgroundColor = .white
+        registerButton.layer.borderColor = UIColor.black.cgColor
+        registerButton.layer.borderWidth = 1.0
+        registerButton.layer.cornerRadius = 10
+        registerButton.titleLabel?.font = .systemFont(ofSize: isCompactLayout ? 16 : 32)
+        registerButton.translatesAutoresizingMaskIntoConstraints = false
+        registerButton.addTarget(self, action: #selector(tapRegisterButton), for: .touchUpInside)
 
-        contentView.addSubview(summaryStackView)
-        summaryStackView.translatesAutoresizingMaskIntoConstraints = false
-
-        configureSummaryCard(
-            card: totalCountCard,
-            titleLabel: totalCountTitleLabel,
-            valueLabel: totalCountValueLabel,
-            unitLabel: totalCountUnitLabel,
-            title: "本日の物販点数",
-            unit: "点"
-        )
-
-        configureSummaryCard(
-            card: totalSalesCard,
-            titleLabel: totalSalesTitleLabel,
-            valueLabel: totalSalesValueLabel,
-            unitLabel: totalSalesUnitLabel,
-            title: "本日の物販売上",
-            unit: "円"
-        )
-
-        summaryStackView.addArrangedSubview(totalCountCard)
-        summaryStackView.addArrangedSubview(totalSalesCard)
-
-        let summaryPreferredWidth = summaryStackView.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -40)
-        summaryPreferredWidth.priority = .defaultHigh
+        addSubview(registerButton)
 
         NSLayoutConstraint.activate([
-            summaryStackView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 12),
-            summaryStackView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            summaryPreferredWidth,
-            summaryStackView.widthAnchor.constraint(lessThanOrEqualToConstant: 980),
-            summaryStackView.heightAnchor.constraint(equalToConstant: screenWidth < 668 ? 84 : 108)
-        ])
-    }
-
-    func configureSummaryCard(card: UIView, titleLabel: UILabel, valueLabel: UILabel, unitLabel: UILabel, title: String, unit: String) {
-        card.backgroundColor = baseBackground
-        card.layer.cornerRadius = 18
-        card.layer.borderWidth = 0
-        card.layer.borderColor = lineColor.cgColor
-
-        titleLabel.text = title
-        titleLabel.textColor = .black
-        titleLabel.textAlignment = .center
-
-        valueLabel.text = "0"
-        valueLabel.textColor = accentColor
-        valueLabel.textAlignment = .center
-
-        unitLabel.text = unit
-        unitLabel.textColor = .black
-        unitLabel.textAlignment = .center
-
-        if screenWidth < 668 {
-            titleLabel.font = .systemFont(ofSize: 11, weight: .semibold)
-            valueLabel.font = .systemFont(ofSize: 36, weight: .regular)
-            unitLabel.font = .systemFont(ofSize: 15, weight: .regular)
-        } else {
-            titleLabel.font = .systemFont(ofSize: 22, weight: .semibold)
-            valueLabel.font = .systemFont(ofSize: 52, weight: .regular)
-            unitLabel.font = .systemFont(ofSize: 24, weight: .regular)
-        }
-
-        let valueUnitStack = UIStackView(arrangedSubviews: [valueLabel, unitLabel])
-        valueUnitStack.axis = .horizontal
-        valueUnitStack.alignment = .lastBaseline
-        valueUnitStack.spacing = 2
-
-        card.addSubview(titleLabel)
-        card.addSubview(valueUnitStack)
-
-        titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        valueLabel.translatesAutoresizingMaskIntoConstraints = false
-        unitLabel.translatesAutoresizingMaskIntoConstraints = false
-        valueUnitStack.translatesAutoresizingMaskIntoConstraints = false
-
-        NSLayoutConstraint.activate([
-            titleLabel.topAnchor.constraint(equalTo: card.topAnchor, constant: 12),
-            titleLabel.centerXAnchor.constraint(equalTo: card.centerXAnchor),
-
-            valueUnitStack.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: screenWidth < 668 ? 2 : 4),
-            valueUnitStack.centerXAnchor.constraint(equalTo: card.centerXAnchor)
+            registerButton.topAnchor.constraint(equalTo: topAnchor, constant: 24),
+            registerButton.rightAnchor.constraint(equalTo: rightAnchor, constant: -24),
+            registerButton.widthAnchor.constraint(equalToConstant: isCompactLayout ? 100 : 200),
+            registerButton.heightAnchor.constraint(equalToConstant: isCompactLayout ? 32 : 48)
         ])
     }
 
     func setupItemStack() {
         itemStackView.axis = .vertical
-        itemStackView.spacing = 12
+        itemStackView.spacing = 24
         itemStackView.alignment = .fill
         itemStackView.distribution = .fill
 
         contentView.addSubview(itemStackView)
+        contentView.addSubview(columnSeparatorView)
         itemStackView.translatesAutoresizingMaskIntoConstraints = false
+        columnSeparatorView.translatesAutoresizingMaskIntoConstraints = false
+        columnSeparatorView.backgroundColor = lineColor
+        columnSeparatorView.isHidden = true
 
-        let itemPreferredWidth = itemStackView.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -40)
+        let itemPreferredWidth = itemStackView.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -72)
         itemPreferredWidth.priority = .defaultHigh
+        itemPreferredWidthConstraint = itemPreferredWidth
+
+        let itemMaxWidth = itemStackView.widthAnchor.constraint(lessThanOrEqualToConstant: 860)
+        itemMaxWidthConstraint = itemMaxWidth
 
         NSLayoutConstraint.activate([
-            itemStackView.topAnchor.constraint(equalTo: summaryStackView.bottomAnchor, constant: 12),
+            itemStackView.topAnchor.constraint(equalTo: registerButton.bottomAnchor, constant: 24),
             itemStackView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             itemPreferredWidth,
-            itemStackView.widthAnchor.constraint(lessThanOrEqualToConstant: 980),
-            itemStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -12)
+            itemMaxWidth,
+            itemStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -12),
+
+            columnSeparatorView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            columnSeparatorView.topAnchor.constraint(equalTo: itemStackView.topAnchor),
+            columnSeparatorView.bottomAnchor.constraint(equalTo: itemStackView.bottomAnchor),
+            columnSeparatorView.widthAnchor.constraint(equalToConstant: 1)
         ])
+
+        updateItemStackWidthConstraints()
+    }
+
+    func updateItemStackWidthConstraints() {
+        if usesTwoColumnLayout {
+            itemPreferredWidthConstraint?.constant = -20
+            itemMaxWidthConstraint?.constant = 1120
+            return
+        }
+
+        itemPreferredWidthConstraint?.constant = -72
+        itemMaxWidthConstraint?.constant = 860
     }
 }
 
@@ -233,8 +211,44 @@ private extension SalesView {
             view.removeFromSuperview()
         }
 
+        isShowingTwoColumnLayout = usesTwoColumnLayout
+        columnSeparatorView.isHidden = !usesTwoColumnLayout
+
+        if usesTwoColumnLayout {
+            for startIndex in stride(from: 0, to: salesMasterModel.count, by: 2) {
+                let rowStack = UIStackView()
+                rowStack.axis = .horizontal
+                rowStack.alignment = .fill
+            rowStack.distribution = .fillEqually
+            rowStack.spacing = 24
+
+                let leftIndex = startIndex
+                let leftMaster = salesMasterModel[leftIndex]
+                let leftSales = salesModel.first(where: { $0.salesMasterId == leftMaster.id }) ?? SalesModel(date: "", salesMasterId: -1, branch: 0, count: 0)
+                let leftCard = buildItemCard(salesMasterModel: leftMaster, salesModel: leftSales, index: leftIndex)
+
+                let rightView: UIView
+                if startIndex + 1 < salesMasterModel.count {
+                    let rightIndex = startIndex + 1
+                    let rightMaster = salesMasterModel[rightIndex]
+                    let rightSales = salesModel.first(where: { $0.salesMasterId == rightMaster.id }) ?? SalesModel(date: "", salesMasterId: -1, branch: 0, count: 0)
+                    rightView = buildItemCard(salesMasterModel: rightMaster, salesModel: rightSales, index: rightIndex)
+                } else {
+                    let spacerView = UIView()
+                    spacerView.backgroundColor = .clear
+                    rightView = spacerView
+                }
+
+                rowStack.addArrangedSubview(leftCard)
+                rowStack.addArrangedSubview(rightView)
+
+                itemStackView.addArrangedSubview(rowStack)
+            }
+            return
+        }
+
         for (index, master) in salesMasterModel.enumerated() {
-            let sales = salesModel.first(where: { $0.salesMasterId == master.id }) ?? SalesModel(date: "", salesMasterId: -1, count: 0)
+            let sales = salesModel.first(where: { $0.salesMasterId == master.id }) ?? SalesModel(date: "", salesMasterId: -1, branch: 0, count: 0)
             let card = buildItemCard(salesMasterModel: master, salesModel: sales, index: index)
             itemStackView.addArrangedSubview(card)
         }
@@ -250,22 +264,25 @@ private extension SalesView {
         let nameLabel = UILabel()
         nameLabel.text = salesMasterModel.name
         nameLabel.textColor = textColor
-        nameLabel.font = .systemFont(ofSize: screenWidth < 668 ? 18 : 30, weight: .semibold)
+        nameLabel.font = .systemFont(ofSize: isCompactLayout ? 18 : 30, weight: .semibold)
         nameLabel.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        nameLabel.numberOfLines = 1
 
         let priceLabel = UILabel()
         priceLabel.text = "¥\(commaSeparateThreeDigits(salesMasterModel.price))/個"
         priceLabel.textColor = .black
-        priceLabel.font = .systemFont(ofSize: screenWidth < 668 ? 14 : 22, weight: .regular)
+        priceLabel.font = .systemFont(ofSize: isCompactLayout ? 14 : 22, weight: .regular)
         priceLabel.setContentHuggingPriority(.required, for: .horizontal)
 
-        let minusButton = UIButton(type: .system)
+        let minusButton = UIButton(type: .custom)
         minusButton.setTitle("−", for: .normal)
         minusButton.setTitleColor(accentColor, for: .normal)
-        minusButton.titleLabel?.font = .systemFont(ofSize: screenWidth < 668 ? 30 : 40, weight: .medium)
-        minusButton.layer.cornerRadius = screenWidth < 668 ? 20 : 26
+        minusButton.backgroundColor = .white
+        minusButton.titleLabel?.font = .systemFont(ofSize: isCompactLayout ? 30 : 40, weight: .medium)
+        minusButton.layer.cornerRadius = isCompactLayout ? 20 : 26
         minusButton.layer.borderWidth = 2
         minusButton.layer.borderColor = lineColor.cgColor
+        minusButton.layer.masksToBounds = true
         minusButton.tag = index
         minusButton.addTarget(self, action: #selector(tapMinus(_:)), for: .touchUpInside)
 
@@ -273,39 +290,21 @@ private extension SalesView {
         countLabel.text = "\(salesModel.count)"
         countLabel.textColor = accentColor
         countLabel.textAlignment = .center
-        countLabel.font = .systemFont(ofSize: screenWidth < 668 ? 28 : 40, weight: .regular)
+        countLabel.font = .systemFont(ofSize: isCompactLayout ? 28 : 40, weight: .regular)
+        countLabel.setContentHuggingPriority(.required, for: .horizontal)
+        countLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
 
-        let plusButton = UIButton(type: .system)
+        let plusButton = UIButton(type: .custom)
         plusButton.setTitle("+", for: .normal)
         plusButton.setTitleColor(accentColor, for: .normal)
-        plusButton.titleLabel?.font = .systemFont(ofSize: screenWidth < 668 ? 30 : 40, weight: .medium)
-        plusButton.layer.cornerRadius = screenWidth < 668 ? 20 : 26
+        plusButton.backgroundColor = .white
+        plusButton.titleLabel?.font = .systemFont(ofSize: isCompactLayout ? 30 : 40, weight: .medium)
+        plusButton.layer.cornerRadius = isCompactLayout ? 20 : 26
         plusButton.layer.borderWidth = 2
         plusButton.layer.borderColor = lineColor.cgColor
+        plusButton.layer.masksToBounds = true
         plusButton.tag = index
         plusButton.addTarget(self, action: #selector(tapPlus(_:)), for: .touchUpInside)
-
-        let editButton = UIButton(type: .system)
-        editButton.setTitle("編集", for: .normal)
-        editButton.setTitleColor(.black, for: .normal)
-        editButton.titleLabel?.font = .systemFont(ofSize: screenWidth < 668 ? 18 : 24, weight: .regular)
-        editButton.backgroundColor = UIColor.white.withAlphaComponent(0.75)
-        editButton.layer.cornerRadius = 10
-        editButton.layer.borderWidth = 1.5
-        editButton.layer.borderColor = lineColor.cgColor
-        editButton.tag = index
-        editButton.addTarget(self, action: #selector(tapEdit(_:)), for: .touchUpInside)
-
-        let deleteButton = UIButton(type: .system)
-        deleteButton.setTitle("削除", for: .normal)
-        deleteButton.setTitleColor(deleteColor, for: .normal)
-        deleteButton.titleLabel?.font = .systemFont(ofSize: screenWidth < 668 ? 18 : 24, weight: .regular)
-        deleteButton.layer.cornerRadius = 10
-        deleteButton.layer.borderWidth = 1.5
-        deleteButton.layer.borderColor = lineColor.cgColor
-        deleteButton.backgroundColor = UIColor.white.withAlphaComponent(0.75)
-        deleteButton.tag = index
-        deleteButton.addTarget(self, action: #selector(tapDelete(_:)), for: .touchUpInside)
 
         let namePriceStack = UIStackView(arrangedSubviews: [nameLabel, priceLabel])
         namePriceStack.axis = .vertical
@@ -315,113 +314,92 @@ private extension SalesView {
         let qtyStack = UIStackView(arrangedSubviews: [minusButton, countLabel, plusButton])
         qtyStack.axis = .horizontal
         qtyStack.alignment = .center
-        qtyStack.spacing = 12
-
-        let rightButtonStack = UIStackView(arrangedSubviews: [editButton, deleteButton])
-        rightButtonStack.axis = .horizontal
-        rightButtonStack.alignment = .center
-        rightButtonStack.spacing = screenWidth < 668 ? 8 : 12
+        qtyStack.spacing = isCompactLayout ? 20 : 28
 
         card.addSubview(namePriceStack)
         card.addSubview(qtyStack)
-        card.addSubview(rightButtonStack)
 
         namePriceStack.translatesAutoresizingMaskIntoConstraints = false
         qtyStack.translatesAutoresizingMaskIntoConstraints = false
-        rightButtonStack.translatesAutoresizingMaskIntoConstraints = false
-        minusButton.translatesAutoresizingMaskIntoConstraints = false
-        plusButton.translatesAutoresizingMaskIntoConstraints = false
-        editButton.translatesAutoresizingMaskIntoConstraints = false
-        deleteButton.translatesAutoresizingMaskIntoConstraints = false
 
-        let circleSize: CGFloat = screenWidth < 668 ? 40 : 52
-        let rightButtonHeight: CGFloat = screenWidth < 668 ? 34 : 44
-        let cardHeight: CGFloat = screenWidth < 668 ? 84 : 108
+        let circleSize: CGFloat = isCompactLayout ? 40 : 52
+        let cardHeight: CGFloat = isCompactLayout ? 78 : 96
+        let countLabelWidth: CGFloat = isCompactLayout ? 56 : 76
 
         NSLayoutConstraint.activate([
             card.heightAnchor.constraint(equalToConstant: cardHeight),
 
             namePriceStack.leftAnchor.constraint(equalTo: card.leftAnchor, constant: 16),
             namePriceStack.centerYAnchor.constraint(equalTo: card.centerYAnchor),
-            namePriceStack.rightAnchor.constraint(lessThanOrEqualTo: qtyStack.leftAnchor, constant: -8),
+            namePriceStack.rightAnchor.constraint(lessThanOrEqualTo: qtyStack.leftAnchor, constant: -16),
 
-            qtyStack.centerXAnchor.constraint(equalTo: card.centerXAnchor),
+            qtyStack.leftAnchor.constraint(greaterThanOrEqualTo: namePriceStack.rightAnchor, constant: 16),
             qtyStack.centerYAnchor.constraint(equalTo: card.centerYAnchor),
-
-            rightButtonStack.rightAnchor.constraint(equalTo: card.rightAnchor, constant: -16),
-            rightButtonStack.centerYAnchor.constraint(equalTo: card.centerYAnchor),
-            rightButtonStack.leftAnchor.constraint(greaterThanOrEqualTo: qtyStack.rightAnchor, constant: 8),
+            qtyStack.rightAnchor.constraint(equalTo: card.rightAnchor, constant: -16),
 
             minusButton.widthAnchor.constraint(equalToConstant: circleSize),
             minusButton.heightAnchor.constraint(equalToConstant: circleSize),
             plusButton.widthAnchor.constraint(equalToConstant: circleSize),
             plusButton.heightAnchor.constraint(equalToConstant: circleSize),
-
-            editButton.widthAnchor.constraint(equalToConstant: screenWidth < 668 ? 64 : 86),
-            editButton.heightAnchor.constraint(equalToConstant: rightButtonHeight),
-
-            deleteButton.widthAnchor.constraint(equalToConstant: screenWidth < 668 ? 64 : 86),
-            deleteButton.heightAnchor.constraint(equalToConstant: rightButtonHeight)
+            countLabel.widthAnchor.constraint(equalToConstant: countLabelWidth)
         ])
 
         return card
     }
 
-    func updateSummary() {
-        let totalCount = salesModel.reduce(0) { $0 + $1.count }
-        let totalSales = salesModel.reduce(0) { partial, s in
-            let price = salesMasterModel.first(where: { $0.id == s.salesMasterId })?.price ?? 0
-            return partial + s.count * price
-        }
-
-        totalCountValueLabel.text = "\(totalCount)"
-        totalSalesValueLabel.text = commaSeparateThreeDigits(totalSales)
-    }
 }
 
 // MARK: - Actions
 
 private extension SalesView {
+    func countLabel(from sender: UIButton) -> UILabel? {
+        guard let stackView = sender.superview as? UIStackView,
+              stackView.arrangedSubviews.count > 1,
+              let countLabel = stackView.arrangedSubviews[1] as? UILabel else {
+            return nil
+        }
+
+        return countLabel
+    }
+
     @objc func tapMinus(_ sender: UIButton) {
         let index = sender.tag
         guard salesMasterModel.indices.contains(index) else { return }
         let master = salesMasterModel[index]
-        guard let salesIndex = salesModel.firstIndex(where: { $0.salesMasterId == master.id }) else { return }
-        if salesModel[salesIndex].count > 0 {
-            salesModel[salesIndex].count -= 1
-            let item = SalesItem(id: master.id, name: master.name, unitPrice: master.price, count: salesModel[salesIndex].count)
-            delegate?.tapSalesMinus(item: item)
-            reloadItemCards()
-            updateSummary()
+        guard let salesIndex = salesModel.firstIndex(where: { $0.salesMasterId == master.id }) else {
+            salesModel.append(SalesModel(date: "", salesMasterId: master.id, branch: 0, count: 0))
+            hasUnsavedChanges = true
+            countLabel(from: sender)?.text = "0"
+            return
         }
+
+        guard salesModel[salesIndex].count > 0 else { return }
+        salesModel[salesIndex].count -= 1
+        hasUnsavedChanges = true
+        countLabel(from: sender)?.text = "\(salesModel[salesIndex].count)"
     }
 
     @objc func tapPlus(_ sender: UIButton) {
         let index = sender.tag
         guard salesMasterModel.indices.contains(index) else { return }
         let master = salesMasterModel[index]
-        guard let salesIndex = salesModel.firstIndex(where: { $0.salesMasterId == master.id }) else { return }
+        let salesIndex: Int
+        if let foundIndex = salesModel.firstIndex(where: { $0.salesMasterId == master.id }) {
+            salesIndex = foundIndex
+        } else {
+            salesModel.append(SalesModel(date: today, salesMasterId: master.id, branch: 0, count: 0))
+            salesIndex = salesModel.count - 1
+        }
+
         salesModel[salesIndex].count += 1
-        let item = SalesItem(id: master.id, name: master.name, unitPrice: master.price, count: salesModel[salesIndex].count)
-        delegate?.tapSalesPlus(item: item)
-        reloadItemCards()
-        updateSummary()
+        hasUnsavedChanges = true
+        countLabel(from: sender)?.text = "\(salesModel[salesIndex].count)"
     }
 
-    @objc func tapEdit(_ sender: UIButton) {
-        let index = sender.tag
-        guard salesMasterModel.indices.contains(index) else { return }
-        delegate?.tapSalesEdit(item: salesMasterModel[index])
+    @objc func tapRegisterButton() {
+        delegate?.tapSalesRegisterButton(sales: salesModel)
     }
 
-    @objc func tapDelete(_ sender: UIButton) {
-        let index = sender.tag
-        guard salesMasterModel.indices.contains(index) else { return }
-        delegate?.tapSalesDelete(item: salesMasterModel[index])
-        salesMasterModel.remove(at: index)
-        reloadItemCards()
-        updateSummary()
-    }
 }
 
 // MARK: - Helper

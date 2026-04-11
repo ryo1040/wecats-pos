@@ -44,6 +44,7 @@ final class SalesTranslator {
         var model: SalesModel = SalesModel()
         model.date = sales.date
         model.salesMasterId = sales.salesMasterId
+        model.branch = sales.branch
         model.count = sales.count
         return model
     }
