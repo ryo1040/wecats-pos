@@ -112,21 +112,35 @@ public class DenominationView: UIView {
         removeOrientationObserver()
     }
     
-    func setInitialDenomination() {
+    func setInitialDenomination(previousDayDenomination: DenominationModel?) {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd"
         dateLabel.text = formatter.string(from: Date())
         dailySalesLabel.text = ""
-        tenThousandYenCountTextField.text = "0"
-        fiveThousandYenCountTextField.text = "0"
-        twoThousandYenCountTextField.text = "0"
-        oneThousandYenCountTextField.text = "0"
-        fiveHundredYenCountTextField.text = "0"
-        oneHundredYenCountTextField.text = "0"
-        fiftyYenCountTextField.text = "0"
-        tenYenCountTextField.text = "0"
-        fiveYenCountTextField.text = "0"
-        oneYenCountTextField.text = "0"
+        
+        if let previousDayDenomination {
+            tenThousandYenCountTextField.text = String(previousDayDenomination.tenThousandYenCount)
+            fiveThousandYenCountTextField.text = String(previousDayDenomination.fiveThousandYenCount)
+            twoThousandYenCountTextField.text = String(previousDayDenomination.twoThousandYenCount)
+            oneThousandYenCountTextField.text = String(previousDayDenomination.oneThousandYenCount)
+            fiveHundredYenCountTextField.text = String(previousDayDenomination.fiveHundredYenCount)
+            oneHundredYenCountTextField.text = String(previousDayDenomination.oneHundredYenCount)
+            fiftyYenCountTextField.text = String(previousDayDenomination.fiftyYenCount)
+            tenYenCountTextField.text = String(previousDayDenomination.tenYenCount)
+            fiveYenCountTextField.text = String(previousDayDenomination.fiveYenCount)
+            oneYenCountTextField.text = String(previousDayDenomination.oneYenCount)
+        } else {
+            tenThousandYenCountTextField.text = "0"
+            fiveThousandYenCountTextField.text = "0"
+            twoThousandYenCountTextField.text = "0"
+            oneThousandYenCountTextField.text = "0"
+            fiveHundredYenCountTextField.text = "0"
+            oneHundredYenCountTextField.text = "0"
+            fiftyYenCountTextField.text = "0"
+            tenYenCountTextField.text = "0"
+            fiveYenCountTextField.text = "0"
+            oneYenCountTextField.text = "0"
+        }
         ticketYenTextField.text = "0"
         exportAmountTextField.text = "0"
         memoTextField.text = ""
