@@ -60,7 +60,7 @@ public class EnterView: UIView {
     
     // ドラムロールの選択肢
     let repeatPickerData = [(id: 1, name: "新規"), (id: 2, name: "リピーター")]
-    let patternPickerData = [(id: 1, name: "家族"), (id: 2, name: "友人"), (id: 3, name: "おひとり"), (id: 4, name: "その他")]
+    let patternPickerData = [(id: 1, name: "家族"), (id: 2, name: "友人"), (id: 3, name: "おひとり"), (id: 5, name: "カップル"), (id: 4, name: "その他")]
     let countAdultPickerData = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]
     let countChildPickerData = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]
     var selectedRepeatPickerId = 0
@@ -131,6 +131,9 @@ public class EnterView: UIView {
         } else if selectGuestInfo.patternId == 3 {
             patternTextField.text = "おひとり"
             selectedPatternPickerId = 3
+        } else if selectGuestInfo.patternId == 5 {
+            patternTextField.text = "カップル"
+            selectedPatternPickerId = 5
         } else {
             patternTextField.text = "その他"
             selectedPatternPickerId = 4
