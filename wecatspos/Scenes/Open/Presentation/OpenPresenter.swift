@@ -15,6 +15,7 @@ protocol OpenPresenterProtocol: AnyObject {
     var viewLeave: PublishSubject<[GuestInfoModel]> { get }
     var calcedTotalAmount: PublishSubject<CalcTotalAmountModel> { get }
     var viewSales: PublishSubject<GetSalesModel> { get }
+    var salesRegistrationCompleted: PublishSubject<Void> { get }
     func load()
     func checkDay(date: Date) -> Int
     func didTapMenuButton()
@@ -40,6 +41,7 @@ final class OpenPresenter: OpenPresenterProtocol {
     private(set) var viewLeave = PublishSubject<[GuestInfoModel]>()
     private(set) var calcedTotalAmount = PublishSubject<CalcTotalAmountModel>()
     private(set) var viewSales = PublishSubject<GetSalesModel>()
+    private(set) var salesRegistrationCompleted = PublishSubject<Void>()
     
     private let disposeBag = DisposeBag()
     

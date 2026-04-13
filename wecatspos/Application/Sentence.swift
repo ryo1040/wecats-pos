@@ -9,4 +9,8 @@ struct Sentence{
     static let MSG_NETWORK_ERROR = "通信に失敗しました。"
     
     static let DIALOG_BTN_RETRY = "リトライ"
+    
+    static let MSG_REGISTRATION_COMPLETE = "登録が完了しました。"
+    
+    static let DIALOG_BTN_OK = "OK"
 }

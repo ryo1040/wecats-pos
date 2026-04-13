@@ -319,6 +319,20 @@ private extension OpenViewController {
                 salesView.setItems(salesMasterModel: model.salesMasterModel, salesModel: model.salesModel)
                 stopLoading()
             }).disposed(by: disposeBag)
+        
+        presenter.salesRegistrationCompleted
+            .subscribe(onNext: { [unowned self] in
+                // 登録完了アラートを表示
+                let alert = UIAlertController(
+                    title: nil,
+                    message: Sentence.MSG_REGISTRATION_COMPLETE,
+                    preferredStyle: .alert
+                )
+                alert.addAction(UIAlertAction(title: Sentence.DIALOG_BTN_OK, style: .default) { _ in
+                    // OKボタンタップ時の処理
+                })
+                self.present(alert, animated: true)
+            }).disposed(by: disposeBag)
     }
     
     func setupActivityIndicator() {
@@ -347,41 +361,49 @@ private extension OpenViewController {
         overlayView.isHidden = true // 半透明ビューを非表示
     }
     
-    @objc func tapStayingButton(_ sender: UIButton) {
-        salesView.willClose { [weak self] shouldClose in
+    func closeSalesViewIfNeeded(_ completion: @escaping () -> Void) {
+        guard !salesView.isHidden else {
+            completion()
+            return
+        }
+
+        salesView.closeIfPossible { [weak self] shouldClose in
             guard let self else { return }
-            if shouldClose {
-                startLoading()
-                presenter.load()
-                stayingView.isHidden = false
-                leftView.isHidden = true
-                salesView.isHidden = true
-                stayingButton.backgroundColor = UIColor.lightGray
-                leftBotton.backgroundColor = UIColor(red: 239/255, green: 236/255, blue: 231/255, alpha: 1.0)
-                salesButton.backgroundColor = UIColor(red: 239/255, green: 236/255, blue: 231/255, alpha: 1.0)
-                stayingButton.setTitleColor(UIColor.white, for: .normal)
-                leftBotton.setTitleColor(UIColor.black, for: .normal)
-                salesButton.setTitleColor(UIColor.black, for: .normal)
-            }
+            guard shouldClose else { return }
+            salesView.isHidden = true
+            completion()
+        }
+    }
+    
+    @objc func tapStayingButton(_ sender: UIButton) {
+        closeSalesViewIfNeeded { [weak self] in
+            guard let self else { return }
+            startLoading()
+            presenter.load()
+            stayingView.isHidden = false
+            leftView.isHidden = true
+            stayingButton.backgroundColor = UIColor.lightGray
+            leftBotton.backgroundColor = UIColor(red: 239/255, green: 236/255, blue: 231/255, alpha: 1.0)
+            salesButton.backgroundColor = UIColor(red: 239/255, green: 236/255, blue: 231/255, alpha: 1.0)
+            stayingButton.setTitleColor(UIColor.white, for: .normal)
+            leftBotton.setTitleColor(UIColor.black, for: .normal)
+            salesButton.setTitleColor(UIColor.black, for: .normal)
         }
     }
     
     @objc func tapLeftButton(_ sender: UIButton) {
-        salesView.willClose { [weak self] shouldClose in
+        closeSalesViewIfNeeded { [weak self] in
             guard let self else { return }
-            if shouldClose {
-                startLoading()
-                presenter.load()
-                stayingView.isHidden = true
-                leftView.isHidden = false
-                salesView.isHidden = true
-                stayingButton.backgroundColor = UIColor(red: 239/255, green: 236/255, blue: 231/255, alpha: 1.0)
-                leftBotton.backgroundColor = UIColor.lightGray
-                salesButton.backgroundColor = UIColor(red: 239/255, green: 236/255, blue: 231/255, alpha: 1.0)
-                stayingButton.setTitleColor(UIColor.black, for: .normal)
-                leftBotton.setTitleColor(UIColor.white, for: .normal)
-                salesButton.setTitleColor(UIColor.black, for: .normal)
-            }
+            startLoading()
+            presenter.load()
+            stayingView.isHidden = true
+            leftView.isHidden = false
+            stayingButton.backgroundColor = UIColor(red: 239/255, green: 236/255, blue: 231/255, alpha: 1.0)
+            leftBotton.backgroundColor = UIColor.lightGray
+            salesButton.backgroundColor = UIColor(red: 239/255, green: 236/255, blue: 231/255, alpha: 1.0)
+            stayingButton.setTitleColor(UIColor.black, for: .normal)
+            leftBotton.setTitleColor(UIColor.white, for: .normal)
+            salesButton.setTitleColor(UIColor.black, for: .normal)
         }
     }
     
@@ -448,11 +470,9 @@ extension OpenViewController: LeftDelegate {
 
 extension OpenViewController: TitleDelegate {
     func tapMenuButton() {
-        salesView.willClose { [weak self] shouldClose in
+        closeSalesViewIfNeeded { [weak self] in
             guard let self else { return }
-            if shouldClose {
-                presenter.didTapMenuButton()
-            }
+            presenter.didTapMenuButton()
         }
     }
 }
@@ -535,19 +555,11 @@ extension OpenViewController: SalesDelegate {
     }
     
     func salesViewWillClose(hasUnsavedChanges: Bool, completion: @escaping (Bool) -> Void) {
-        // salesView が非表示の場合、そのまま閉じる
-        guard !salesView.isHidden else {
-            completion(true)
-            return
-        }
-        
-        // 未保存変更がない場合、そのまま閉じる
         guard hasUnsavedChanges else {
             completion(true)
             return
         }
         
-        // 未保存変更がある場合、確認アラート表示
         let alert = UIAlertController(
             title: "未保存の変更があります",
             message: "変更内容が保存されていません。保存せずに移動しますか？",
