@@ -292,7 +292,7 @@ final class OpenPresenter: OpenPresenterProtocol {
             }
             .subscribe(onNext: {
                 [unowned self] model in
-                self.viewSales.onNext(model)
+                self.salesRegistrationCompleted.onNext(())
             }, onError: { error in
                 self.handleDidTapSalesRegisterButtonError(error, sales: sales, totalAmount: totalAmount)
             })

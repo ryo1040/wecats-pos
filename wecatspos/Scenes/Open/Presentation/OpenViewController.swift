@@ -332,6 +332,7 @@ private extension OpenViewController {
                     // OKボタンタップ時の処理
                 })
                 self.present(alert, animated: true)
+                stopLoading()
             }).disposed(by: disposeBag)
     }
     
@@ -551,6 +552,7 @@ extension OpenViewController: CheckoutDelegate {
 
 extension OpenViewController: SalesDelegate {
     func tapSalesRegisterButton(sales: [SalesModel], totalAmount: Int) {
+        startLoading()
         presenter.didTapSalesRegisterButton(sales: sales, totalAmount: totalAmount)
     }
     
