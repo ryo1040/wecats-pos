@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 
 protocol SalesDelegate: AnyObject {
-    func tapSalesRegisterButton(sales: [SalesModel])
+    func tapSalesRegisterButton(sales: [SalesModel], totalAmount: Int)
     func salesViewWillClose(hasUnsavedChanges: Bool, completion: @escaping (Bool) -> Void)
 }
 
@@ -396,7 +396,12 @@ private extension SalesView {
     }
 
     @objc func tapRegisterButton() {
-        delegate?.tapSalesRegisterButton(sales: salesModel)
+        let priceByMasterId = Dictionary(uniqueKeysWithValues: salesMasterModel.map { ($0.id, $0.price) })
+        let totalAmount = salesModel.reduce(0) { result, sales in
+            let price = priceByMasterId[sales.salesMasterId] ?? 0
+            return result + (price * sales.count)
+        }
+        delegate?.tapSalesRegisterButton(sales: salesModel, totalAmount: totalAmount)
     }
 
 }

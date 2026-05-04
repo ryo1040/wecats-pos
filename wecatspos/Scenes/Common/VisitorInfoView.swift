@@ -61,6 +61,8 @@ public class VisitorInfoView: UIView {
             patternLabel.text = "友人"
         } else if selectGuestInfo.patternId == 3 {
             patternLabel.text = "おひとり"
+        } else if selectGuestInfo.patternId == 5 {
+            patternLabel.text = "カップル"
         } else {
             patternLabel.text = "その他"
         }

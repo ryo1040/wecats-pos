@@ -78,6 +78,8 @@ public class StayingView: UIView, UITableViewDelegate, UITableViewDataSource {
             patternLabel.text = "友人"
         case 3:
             patternLabel.text = "おひとり"
+        case 5:
+            patternLabel.text = "カップル"
         default:
             patternLabel.text = "その他"
         }

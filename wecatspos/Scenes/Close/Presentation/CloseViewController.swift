@@ -246,7 +246,7 @@ extension CloseViewController: CloseRegisterDelegate {
     }
     
     func tapNewButton() {
-        denominationView.setInitialDenomination()
+        denominationView.setInitialDenomination(previousDayDenomination: previousDayDenomination())
         denominationView.isHidden = false
     }
     
@@ -262,6 +262,32 @@ extension CloseViewController: CloseRegisterDelegate {
     
     func tapDeleteTableViewRow(selectedDenomination: DenominationModel) {
         presenter.didTapDenominationDeleteButton(date: selectedDenomination.date)
+    }
+
+    private func previousDayDenomination() -> DenominationModel? {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "ja_JP_POSIX")
+        formatter.dateFormat = "yyyy-MM-dd"
+
+        guard let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: Date()) else {
+            return nil
+        }
+
+        let yesterdayString = formatter.string(from: yesterday)
+
+        if let yesterdayData = closeRegisterView.denominationList.first(where: { $0.date == yesterdayString }) {
+            return yesterdayData
+        }
+
+        return closeRegisterView.denominationList
+            .compactMap { denomination -> (DenominationModel, Date)? in
+                guard let date = formatter.date(from: denomination.date), date < yesterday else {
+                    return nil
+                }
+                return (denomination, date)
+            }
+            .max(by: { $0.1 < $1.1 })?
+            .0
     }
 }
 

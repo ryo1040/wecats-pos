@@ -15,6 +15,7 @@ protocol OpenPresenterProtocol: AnyObject {
     var viewLeave: PublishSubject<[GuestInfoModel]> { get }
     var calcedTotalAmount: PublishSubject<CalcTotalAmountModel> { get }
     var viewSales: PublishSubject<GetSalesModel> { get }
+    var salesRegistrationCompleted: PublishSubject<Void> { get }
     func load()
     func checkDay(date: Date) -> Int
     func didTapMenuButton()
@@ -25,7 +26,7 @@ protocol OpenPresenterProtocol: AnyObject {
     func didTapEditVisitorInfoUpdateButton(id: Int, repeatFlag: Bool, patternId: Int, name: String?, date: String, holidayFlag: Bool, kidsDayFlag: Bool, adultCount: Int, childCount: Int, enterTime: String, leftTime: String, stayTime: Int, calcAmount: Int, discountAmount: Int, saleAmount: Int, gachaAmount: Int, totalAmount: Int, memo: String)
     func calcTotalAmount(enterTime: String, leftTime: String, adultCount: Int, childCount: Int, discountAmount: String, saleAmount: String)
     func getSalesMaster()
-    func didTapSalesRegisterButton(sales: [SalesModel])
+    func didTapSalesRegisterButton(sales: [SalesModel], totalAmount: Int)
 }
 
 final class OpenPresenter: OpenPresenterProtocol {
@@ -40,6 +41,7 @@ final class OpenPresenter: OpenPresenterProtocol {
     private(set) var viewLeave = PublishSubject<[GuestInfoModel]>()
     private(set) var calcedTotalAmount = PublishSubject<CalcTotalAmountModel>()
     private(set) var viewSales = PublishSubject<GetSalesModel>()
+    private(set) var salesRegistrationCompleted = PublishSubject<Void>()
     
     private let disposeBag = DisposeBag()
     
@@ -273,7 +275,7 @@ final class OpenPresenter: OpenPresenterProtocol {
             .disposed(by: self.disposeBag)
     }
     
-    func didTapSalesRegisterButton(sales: [SalesModel]) {
+    func didTapSalesRegisterButton(sales: [SalesModel], totalAmount: Int) {
         let requestSales = sales.map {
             PostSalesRequestSales(
                 date: $0.date,
@@ -282,7 +284,7 @@ final class OpenPresenter: OpenPresenterProtocol {
                 count: $0.count
             )
         }
-        let param = PostSalesRequestParam(sales: requestSales)
+        let param = PostSalesRequestParam(sales: requestSales, totalAmount: totalAmount)
         
         Observable.just(Void())
             .flatMap { [unowned self] in
@@ -290,19 +292,19 @@ final class OpenPresenter: OpenPresenterProtocol {
             }
             .subscribe(onNext: {
                 [unowned self] model in
-                self.viewSales.onNext(model)
+                self.salesRegistrationCompleted.onNext(())
             }, onError: { error in
-                self.handleDidTapSalesRegisterButtonError(error, sales: sales)
+                self.handleDidTapSalesRegisterButtonError(error, sales: sales, totalAmount: totalAmount)
             })
             .disposed(by: self.disposeBag)
     }
     
-    func handleDidTapSalesRegisterButtonError(_ error: Error, sales: [SalesModel]) {
+    func handleDidTapSalesRegisterButtonError(_ error: Error, sales: [SalesModel], totalAmount: Int) {
         self.wireframe.presentAlert(Sentence.MSG_NETWORK_ERROR, buttonTitle: Sentence.DIALOG_BTN_RETRY)
             .subscribe(onNext: { option in
                 if option == Sentence.DIALOG_BTN_RETRY {
                     // ボタンタップ時に再試行
-                    self.didTapSalesRegisterButton(sales: sales)
+                    self.didTapSalesRegisterButton(sales: sales, totalAmount: totalAmount)
                 }
             })
             .disposed(by: self.disposeBag)
