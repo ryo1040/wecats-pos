@@ -12,7 +12,7 @@ struct GetSalesMasterTargetType: ApiTargetType {
     typealias Reponse = GetSalesEntity
 
     var baseURL: URL {
-        URL(string: "https://6qbn0kz550.execute-api.ap-northeast-1.amazonaws.com/sales/")!
+        URL(string: "https://s4e53ii5yc.execute-api.ap-northeast-1.amazonaws.com/sales/")!
     }
     
     var path: String {

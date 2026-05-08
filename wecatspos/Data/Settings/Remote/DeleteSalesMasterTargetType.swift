@@ -1,14 +1,14 @@
 //
-//  SetSalesTargetType.swift
+//  DeleteSalesMasterTargetType.swift
 //  wecatspos
 //
-//  Created by matsumoto on 2026/04/11.
+//  Created by matsumoto on 2026/05/08.
 //
 
 import Foundation
 import Moya
 
-struct SetSalesTargetType: ApiTargetType {
+struct DeleteSalesMasterTargetType: ApiTargetType {
     typealias Reponse = GetSalesEntity
 
     var baseURL: URL {
@@ -16,7 +16,7 @@ struct SetSalesTargetType: ApiTargetType {
     }
 
     var path: String {
-        "set-sales"
+        "delete-sales-master"
     }
 
     var method: Moya.Method {
@@ -24,7 +24,7 @@ struct SetSalesTargetType: ApiTargetType {
     }
 
     var task: Task {
-        return .requestCustomJSONEncodable(sales, encoder: JSONEncoder())
+        return .requestCustomJSONEncodable(salesMaster, encoder: JSONEncoder())
     }
 
     var headers: [String: String]? {
@@ -34,9 +34,9 @@ struct SetSalesTargetType: ApiTargetType {
     }
 
     // MARK: - Arguments
-    let sales: PostSalesRequestParam
+    let salesMaster: PostSalesMasterRequestParam
 
-    init(_ sales: PostSalesRequestParam) {
-        self.sales = sales
+    init(_ salesMaster: PostSalesMasterRequestParam) {
+        self.salesMaster = salesMaster
     }
 }

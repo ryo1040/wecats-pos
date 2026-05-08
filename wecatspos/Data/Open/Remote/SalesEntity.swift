@@ -24,6 +24,14 @@ struct PostSalesRequestSales: Codable {
     }
 }
 
+struct PostSalesMasterRequestParam: Codable {
+    var id: Int
+    var name: String
+    var price: Int
+    var order: Int
+    var memo: String
+}
+
 public struct GetSalesEntity: Codable {
     var status: Int!
     var salesMaster: [SalesMasterEntity] = []
