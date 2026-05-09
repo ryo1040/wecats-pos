@@ -10,7 +10,7 @@ import UIKit
 import RxSwift
 
 protocol SettingsPresenterProtocol: AnyObject {
-    var viewSales: PublishSubject<GetSalesModel> { get }
+    var viewSalesMaster: PublishSubject<GetSalesMasterModel> { get }
     func load()
     func didTapMenuButton()
     func setSalesMaster(salesMaster: SalesMasterModel)
@@ -24,7 +24,7 @@ final class SettingsPresenter: SettingsPresenterProtocol {
     private let wireframe: SettingsWireframeProtocol!
     private let useCase: SettingsUseCaseProtocol!
     
-    private(set) var viewSales = PublishSubject<GetSalesModel>()
+    private(set) var viewSalesMaster = PublishSubject<GetSalesMasterModel>()
     
     private let disposeBag = DisposeBag()
     
@@ -40,7 +40,7 @@ final class SettingsPresenter: SettingsPresenterProtocol {
             }
             .subscribe(onNext: {
                 [unowned self] model in
-                self.viewSales.onNext(model)
+                self.viewSalesMaster.onNext(model)
             }, onError: { error in
                 self.handleLoadError(error)
             })
@@ -63,7 +63,7 @@ final class SettingsPresenter: SettingsPresenterProtocol {
     }
     
     func setSalesMaster(salesMaster: SalesMasterModel) {
-        let param = PostSalesMasterRequestParam(id: salesMaster.id, name: salesMaster.name, price: salesMaster.price, order: salesMaster.order, memo: salesMaster.memo)
+        let param = PostSalesMasterRequestParam(id: salesMaster.id, branch: salesMaster.branch, name: salesMaster.name, price: salesMaster.price, order: salesMaster.order, memo: salesMaster.memo)
 
         Observable.just(Void())
             .flatMap { [unowned self] in
@@ -71,7 +71,7 @@ final class SettingsPresenter: SettingsPresenterProtocol {
             }
             .subscribe(onNext: {
                 [unowned self] model in
-//                self.viewCloseResister.onNext(model)
+                self.viewSalesMaster.onNext(model)
             }, onError: { error in
                 self.handleSetSalesMasterError(error, salesMaster: salesMaster)
                 print(error)
@@ -91,7 +91,7 @@ final class SettingsPresenter: SettingsPresenterProtocol {
     }
     
     func deleteSalesMaster(selectedSalesMaster: SalesMasterModel) {
-        let param = PostSalesMasterRequestParam(id: selectedSalesMaster.id, name: selectedSalesMaster.name, price: selectedSalesMaster.price, order: selectedSalesMaster.order, memo: selectedSalesMaster.memo)
+        let param = PostSalesMasterRequestParam(id: selectedSalesMaster.id, branch: selectedSalesMaster.branch, name: selectedSalesMaster.name, price: selectedSalesMaster.price, order: selectedSalesMaster.order, memo: selectedSalesMaster.memo)
 
         Observable.just(Void())
             .flatMap { [unowned self] in
@@ -99,7 +99,7 @@ final class SettingsPresenter: SettingsPresenterProtocol {
             }
             .subscribe(onNext: {
                 [unowned self] model in
-//                self.viewCloseResister.onNext(model)
+                self.viewSalesMaster.onNext(model)
             }, onError: { error in
                 self.handleDeleteSalesMasterError(error, selectedSalesMaster: selectedSalesMaster)
                 print(error)

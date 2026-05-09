@@ -10,9 +10,9 @@ import RxSwift
 import HolidayJp
 
 protocol SettingsUseCaseProtocol: AnyObject {
-    func getSalesMaster() -> Observable<GetSalesModel>
-    func setSalesMaster(param: PostSalesMasterRequestParam) -> Observable<GetSalesModel>
-    func deleteSalesMaster(param: PostSalesMasterRequestParam) -> Observable<GetSalesModel>
+    func getSalesMaster() -> Observable<GetSalesMasterModel>
+    func setSalesMaster(param: PostSalesMasterRequestParam) -> Observable<GetSalesMasterModel>
+    func deleteSalesMaster(param: PostSalesMasterRequestParam) -> Observable<GetSalesMasterModel>
 }
 
 final class SettingsUseCase: SettingsUseCaseProtocol {
@@ -23,21 +23,21 @@ final class SettingsUseCase: SettingsUseCaseProtocol {
         self.settingsRepository = settingsRepository
     }
     
-    func getSalesMaster() -> Observable<GetSalesModel> {
+    func getSalesMaster() -> Observable<GetSalesMasterModel> {
         self.settingsRepository.getSalesMaster().asObservable().map { entity in
-            GetSalesTranslator.generate(getSalesEntity: entity)
+            GetSalesMasterTranslator.generate(getSalesMasterEntity: entity)
         }
     }
     
-    func setSalesMaster(param: PostSalesMasterRequestParam) -> Observable<GetSalesModel> {
+    func setSalesMaster(param: PostSalesMasterRequestParam) -> Observable<GetSalesMasterModel> {
         self.settingsRepository.setSalesMaster(param: param).asObservable().map { entity in
-            GetSalesTranslator.generate(getSalesEntity: entity)
+            GetSalesMasterTranslator.generate(getSalesMasterEntity: entity)
         }
     }
     
-    func deleteSalesMaster(param: PostSalesMasterRequestParam) -> Observable<GetSalesModel> {
+    func deleteSalesMaster(param: PostSalesMasterRequestParam) -> Observable<GetSalesMasterModel> {
         self.settingsRepository.deleteSalesMaster(param: param).asObservable().map { entity in
-            GetSalesTranslator.generate(getSalesEntity: entity)
+            GetSalesMasterTranslator.generate(getSalesMasterEntity: entity)
         }
     }
 

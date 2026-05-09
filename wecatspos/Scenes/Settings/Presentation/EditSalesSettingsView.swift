@@ -37,6 +37,8 @@ public class EditSalesSettingsView: UIView {
     let submitButton = UIButton()
     let cancelButton = UIButton()
     
+    var salesMasterModel = SalesMasterModel(id: -1, branch: 1, name: "", price: 0, order: 0, memo: "")
+    
     private var currentConstraints: [NSLayoutConstraint] = []
     var screenWidth = UIScreen.main.bounds.width
     // 画面向きを判定するプロパティ
@@ -65,10 +67,18 @@ public class EditSalesSettingsView: UIView {
     }
     
     func setSalesSettings(salesMaster: SalesMasterModel) {
+        self.salesMasterModel = salesMaster
         nameTextField.text = salesMaster.name
         priceTextField.text = "\(salesMaster.price)"
         orderByTextField.text = "\(salesMaster.order)"
         memoTextField.text = salesMaster.memo
+    }
+    
+    func clear() {
+        nameTextField.text = ""
+        priceTextField.text = ""
+        orderByTextField.text = ""
+        memoTextField.text = ""
     }
     
     /// スクロール位置を初期化するメソッド
@@ -230,7 +240,7 @@ private extension EditSalesSettingsView {
             return
         }
         
-        delegate?.didTapEditSalesSettingsSubmitButton(salesMaster: SalesMasterModel(id: -1, name: nameTextField.text!, price: Int(priceTextField.text!) ?? 0, order: Int(orderByTextField.text!) ?? 0, memo: memoTextField.text ?? ""))
+        delegate?.didTapEditSalesSettingsSubmitButton(salesMaster: SalesMasterModel(id: salesMasterModel.id, branch: salesMasterModel.branch + 1, name: nameTextField.text!, price: Int(priceTextField.text!) ?? 0, order: Int(orderByTextField.text!) ?? 0, memo: memoTextField.text ?? ""))
     }
     
     // キャンセルボタンタップ時のイベント

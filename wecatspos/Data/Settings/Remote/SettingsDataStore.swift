@@ -9,21 +9,21 @@ import Foundation
 import RxSwift
 
 protocol SettingsDataStoreProtocol {
-    func getSalesMaster() -> Single<GetSalesEntity>
-    func setSalesMaster(param: PostSalesMasterRequestParam) -> Single<GetSalesEntity>
-    func deleteSalesMaster(param: PostSalesMasterRequestParam) -> Single<GetSalesEntity>
+    func getSalesMaster() -> Single<GetSalesMasterEntity>
+    func setSalesMaster(param: PostSalesMasterRequestParam) -> Single<GetSalesMasterEntity>
+    func deleteSalesMaster(param: PostSalesMasterRequestParam) -> Single<GetSalesMasterEntity>
 }
 
 final class SettingsDataStore: SettingsDataStoreProtocol {
-    func getSalesMaster() -> Single<GetSalesEntity> {
+    func getSalesMaster() -> Single<GetSalesMasterEntity> {
         return APIClient.shared.request(GetSalesMasterTargetType())
     }
     
-    func setSalesMaster(param: PostSalesMasterRequestParam) -> Single<GetSalesEntity> {
+    func setSalesMaster(param: PostSalesMasterRequestParam) -> Single<GetSalesMasterEntity> {
         return APIClient.shared.request(SetSalesMasterTargetType(param))
     }
     
-    func deleteSalesMaster(param: PostSalesMasterRequestParam) -> Single<GetSalesEntity> {
+    func deleteSalesMaster(param: PostSalesMasterRequestParam) -> Single<GetSalesMasterEntity> {
         return APIClient.shared.request(DeleteSalesMasterTargetType(param))
     }
 }

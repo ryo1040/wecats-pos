@@ -332,6 +332,7 @@ private extension OpenViewController {
                     // OKボタンタップ時の処理
                 })
                 self.present(alert, animated: true)
+                salesView.hasUnsavedChanges = false
                 stopLoading()
             }).disposed(by: disposeBag)
     }

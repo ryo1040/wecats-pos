@@ -41,7 +41,7 @@ final class OpenDataStore: OpenDataStoreProtocol {
     }
     
     func getSalesMaster() -> Single<GetSalesEntity> {
-        return APIClient.shared.request(GetSalesMasterTargetType())
+        return APIClient.shared.request(GetSalesTargetType())
     }
     
     func setSales(param: PostSalesRequestParam) -> Single<GetSalesEntity> {

@@ -19,7 +19,7 @@ public class SalesView: UIView {
 
     private var salesMasterModel: [SalesMasterModel] = []
     private var salesModel: [SalesModel] = []
-    private(set) var hasUnsavedChanges = false
+    var hasUnsavedChanges = false
     private var isShowingTwoColumnLayout = false
     private var itemPreferredWidthConstraint: NSLayoutConstraint?
     private var itemMaxWidthConstraint: NSLayoutConstraint?

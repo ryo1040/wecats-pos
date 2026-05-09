@@ -1,22 +1,22 @@
 //
-//  GetSalesMasterTargetType.swift
+//  GetSalesItemMaster.swift
 //  wecatspos
 //
-//  Created by matsumoto on 2026/04/06.
+//  Created by matsumoto on 2026/05/09.
 //
 
 import Foundation
 import Moya
 
 struct GetSalesMasterTargetType: ApiTargetType {
-    typealias Reponse = GetSalesEntity
+    typealias Reponse = GetSalesMasterEntity
 
     var baseURL: URL {
         URL(string: "https://s4e53ii5yc.execute-api.ap-northeast-1.amazonaws.com/sales/")!
     }
     
     var path: String {
-        "get-sales-list"
+        "get-sales-master"
     }
     
     var method: Moya.Method {

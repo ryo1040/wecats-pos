@@ -24,34 +24,10 @@ struct PostSalesRequestSales: Codable {
     }
 }
 
-struct PostSalesMasterRequestParam: Codable {
-    var id: Int
-    var name: String
-    var price: Int
-    var order: Int
-    var memo: String
-}
-
 public struct GetSalesEntity: Codable {
     var status: Int!
     var salesMaster: [SalesMasterEntity] = []
     var sales: [SalesEntity] = []
-}
-
-public struct SalesMasterEntity: Codable {
-    var id: Int
-    var name: String
-    var price: Int
-    var order: Int
-    var memo: String
-    
-    enum CodingKeys: String, CodingKey {
-        case id = "id"
-        case name = "name"
-        case price = "price"
-        case order = "display_order"
-        case memo = "memo"
-    }
 }
 
 public struct SalesEntity: Codable {

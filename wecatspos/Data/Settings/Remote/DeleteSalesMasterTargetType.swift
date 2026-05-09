@@ -9,7 +9,7 @@ import Foundation
 import Moya
 
 struct DeleteSalesMasterTargetType: ApiTargetType {
-    typealias Reponse = GetSalesEntity
+    typealias Reponse = GetSalesMasterEntity
 
     var baseURL: URL {
         URL(string: "https://s4e53ii5yc.execute-api.ap-northeast-1.amazonaws.com/sales/")!

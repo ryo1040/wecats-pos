@@ -151,11 +151,13 @@ private extension SettingsViewController {
     }
     
     func setSubscribe() {
-        presenter.viewSales
+        presenter.viewSalesMaster
             .subscribe(onNext: { [unowned self] model in
                 print("Received cat info data: \(model)")
                 salesSettingsView.salesMasterList = model.salesMasterModel
                 salesSettingsView.tableView.reloadData()
+                editSalesSettingsView.clear()
+                editSalesSettingsView.isHidden = true
                 stopLoading()
             }).disposed(by: disposeBag)
     }
@@ -210,6 +212,7 @@ extension SettingsViewController: SalesSettingsViewDelegate {
 
 extension SettingsViewController: EditSalesSettingsViewDelegate {
     func didTapEditSalesSettingsSubmitButton(salesMaster: SalesMasterModel) {
+        startLoading()
         presenter.setSalesMaster(salesMaster: salesMaster)
     }
     
