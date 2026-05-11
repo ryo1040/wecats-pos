@@ -5,6 +5,10 @@
 //  Created by matsumoto on 2026/04/06.
 //
 
+struct GetSalesMasterRequestParam: Codable {
+    var date: String
+}
+
 struct PostSalesRequestParam: Codable {
     var sales: [PostSalesRequestSales] = []
     var totalAmount: Int

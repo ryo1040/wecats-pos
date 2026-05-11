@@ -20,7 +20,11 @@ struct GetSalesTargetType: ApiTargetType {
     }
     
     var method: Moya.Method {
-        .get
+        .post
+    }
+
+    var task: Task {
+        return .requestCustomJSONEncodable(date, encoder: JSONEncoder())
     }
     
     var headers: [String: String]? {
@@ -29,6 +33,10 @@ struct GetSalesTargetType: ApiTargetType {
         ]
     }
     
-    init(){
+    // MARK: - Arguments
+    let date: GetSalesMasterRequestParam
+
+    init(_ date: GetSalesMasterRequestParam) {
+        self.date = date
     }
 }

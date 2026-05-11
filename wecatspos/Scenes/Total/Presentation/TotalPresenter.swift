@@ -12,11 +12,13 @@ import RxSwift
 protocol TotalPresenterProtocol: AnyObject {
     var viewGuestInfo: PublishSubject<[GuestInfoModel]> { get }
     var viewTotalAmountList: PublishSubject<[TotalAmountListModel]> { get }
+    var viewSales: PublishSubject<GetSalesModel> { get }
     func load(date: String)
     func getTotalAmountList(month: String)
     func didTapMenuButton()
     func didTapDeleteButton(id: Int, date: String)
     func didTapEditVisitorInfoUpdateButton(id: Int, repeatFlag: Bool, patternId: Int, name: String?, date: String, holidayFlag: Bool, kidsDayFlag: Bool, adultCount: Int, childCount: Int, enterTime: String, leftTime: String, stayTime: Int, calcAmount: Int, discountAmount: Int, saleAmount: Int, gachaAmount: Int, totalAmount: Int, memo: String)
+    func getSales(date: String)
 }
 
 final class TotalPresenter: TotalPresenterProtocol {
@@ -28,6 +30,7 @@ final class TotalPresenter: TotalPresenterProtocol {
     
     private(set) var viewGuestInfo = PublishSubject<[GuestInfoModel]>()
     private(set) var viewTotalAmountList = PublishSubject<[TotalAmountListModel]>()
+    private(set) var viewSales = PublishSubject<GetSalesModel>()
     
     private let disposeBag = DisposeBag()
     
@@ -141,6 +144,33 @@ final class TotalPresenter: TotalPresenterProtocol {
                 if option == Sentence.DIALOG_BTN_RETRY {
                     // ボタンタップ時に再試行
                     self.didTapEditVisitorInfoUpdateButton(id: id, repeatFlag: repeatFlag, patternId: patternId, name: name, date: date, holidayFlag: holidayFlag, kidsDayFlag: kidsDayFlag, adultCount: adultCount, childCount: childCount, enterTime: enterTime, leftTime: leftTime, stayTime: stayTime, calcAmount: calcAmount, discountAmount: discountAmount, saleAmount: saleAmount, gachaAmount: gachaAmount, totalAmount: totalAmount, memo: memo)
+                }
+            })
+            .disposed(by: self.disposeBag)
+    }
+    
+    func getSales(date: String) {
+        let param = GetSalesMasterRequestParam(date: date)
+        
+        Observable.just(Void())
+            .flatMap { [unowned self] in
+                self.useCase.getSales(param: param)
+            }
+            .subscribe(onNext: {
+                [unowned self] model in
+                self.viewSales.onNext(model)
+            }, onError: { error in
+                self.handleGetSalesMasterError(error, date: date)
+            })
+            .disposed(by: self.disposeBag)
+    }
+    
+    func handleGetSalesMasterError(_ error: Error, date: String) {
+        self.wireframe.presentAlert(Sentence.MSG_NETWORK_ERROR, buttonTitle: Sentence.DIALOG_BTN_RETRY)
+            .subscribe(onNext: { option in
+                if option == Sentence.DIALOG_BTN_RETRY {
+                    // ボタンタップ時に再試行
+                    self.getSales(date: date)
                 }
             })
             .disposed(by: self.disposeBag)

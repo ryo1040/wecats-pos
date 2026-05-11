@@ -13,6 +13,7 @@ protocol TotalDataStoreProtocol {
     func getTotalAmountList(param: GetTotalAmountListRequestParam) -> Single<GetTotalAmountListEntity>
     func updateGuestInfo(param: PostGuestInfoRequestParam) -> Single<GetGuestInfoEntity>
     func deleteGuestInfo(param: PostDeleteGuestInfoRequestParam) -> Single<GetGuestInfoEntity>
+    func getSales(param: GetSalesMasterRequestParam) -> Single<GetSalesEntity>
 }
 
 final class TotalDataStore: TotalDataStoreProtocol {
@@ -31,6 +32,10 @@ final class TotalDataStore: TotalDataStoreProtocol {
     
     func deleteGuestInfo(param: PostDeleteGuestInfoRequestParam) -> Single<GetGuestInfoEntity> {
         return APIClient.shared.request(DeleteGuestInfoTargetType(param))
+    }
+    
+    func getSales(param: GetSalesMasterRequestParam) -> Single<GetSalesEntity> {
+        return APIClient.shared.request(GetSalesTargetType(param))
     }
 }
 

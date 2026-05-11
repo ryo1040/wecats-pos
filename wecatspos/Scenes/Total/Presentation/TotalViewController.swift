@@ -31,6 +31,7 @@ final class TotalViewController: UIViewController, TotalViewControllerProtocol {
     let monthTotalView = MonthTotalView()
     let visitorInfoView = VisitorInfoView()
     let editVisitorInfoView = EditVisitorInfoView()
+    let salesView = SalesView()
     
     var activityIndicator: UIActivityIndicatorView!
     var overlayView: UIView!
@@ -105,6 +106,10 @@ private extension TotalViewController {
         editVisitorInfoView.delegate = self
         mainLabel.addSubview(editVisitorInfoView)
         
+        salesView.isHidden = true
+        salesView.delegate = self
+        mainLabel.addSubview(salesView)
+        
         titleView.translatesAutoresizingMaskIntoConstraints = false
         mainLabel.translatesAutoresizingMaskIntoConstraints = false
         dayTotalButton.translatesAutoresizingMaskIntoConstraints = false
@@ -114,6 +119,7 @@ private extension TotalViewController {
         monthTotalView.translatesAutoresizingMaskIntoConstraints = false
         visitorInfoView.translatesAutoresizingMaskIntoConstraints = false
         editVisitorInfoView.translatesAutoresizingMaskIntoConstraints = false
+        salesView.translatesAutoresizingMaskIntoConstraints = false
         
         // レスポンシブルデザイン対応
         let screenWidth = UIScreen.main.bounds.width
@@ -149,7 +155,11 @@ private extension TotalViewController {
                 editVisitorInfoView.topAnchor.constraint(equalTo: mainLabel.topAnchor),
                 editVisitorInfoView.bottomAnchor.constraint(equalTo: mainLabel.bottomAnchor),
                 editVisitorInfoView.leftAnchor.constraint(equalTo: mainLabel.leftAnchor),
-                editVisitorInfoView.rightAnchor.constraint(equalTo: mainLabel.rightAnchor)
+                editVisitorInfoView.rightAnchor.constraint(equalTo: mainLabel.rightAnchor),
+                salesView.topAnchor.constraint(equalTo: mainLabel.topAnchor),
+                salesView.bottomAnchor.constraint(equalTo: mainLabel.bottomAnchor),
+                salesView.leftAnchor.constraint(equalTo: mainLabel.leftAnchor),
+                salesView.rightAnchor.constraint(equalTo: mainLabel.rightAnchor)
             ])
         } else { // 通常の画面の場合
             dayTotalButton.titleLabel?.font = UIFont.systemFont(ofSize: 32)
@@ -183,7 +193,11 @@ private extension TotalViewController {
                 editVisitorInfoView.topAnchor.constraint(equalTo: mainLabel.topAnchor),
                 editVisitorInfoView.bottomAnchor.constraint(equalTo: mainLabel.bottomAnchor),
                 editVisitorInfoView.leftAnchor.constraint(equalTo: mainLabel.leftAnchor),
-                editVisitorInfoView.rightAnchor.constraint(equalTo: mainLabel.rightAnchor)
+                editVisitorInfoView.rightAnchor.constraint(equalTo: mainLabel.rightAnchor),
+                salesView.topAnchor.constraint(equalTo: mainLabel.topAnchor),
+                salesView.bottomAnchor.constraint(equalTo: mainLabel.bottomAnchor),
+                salesView.leftAnchor.constraint(equalTo: mainLabel.leftAnchor),
+                salesView.rightAnchor.constraint(equalTo: mainLabel.rightAnchor)
             ])
         }
     }
@@ -197,6 +211,7 @@ private extension TotalViewController {
                 dayTotalView.tableView.reloadData()
                 visitorInfoView.isHidden = true
                 editVisitorInfoView.isHidden = true
+                salesView.isHidden = true
                 stopLoading()
             }).disposed(by: disposeBag)
         
@@ -208,6 +223,18 @@ private extension TotalViewController {
                 monthTotalView.tableView.reloadData()
                 visitorInfoView.isHidden = true
                 editVisitorInfoView.isHidden = true
+                salesView.isHidden = true
+                stopLoading()
+            }).disposed(by: disposeBag)
+        
+        presenter.viewSales
+            .subscribe(onNext: { [unowned self] model in
+                print("Received cat info data: \(model)")
+                salesView.readOnlyFlg = true
+                salesView.setItems(salesMasterModel: model.salesMasterModel, salesModel: model.salesModel)
+                visitorInfoView.isHidden = true
+                editVisitorInfoView.isHidden = true
+                salesView.isHidden = false
                 stopLoading()
             }).disposed(by: disposeBag)
     }
@@ -278,8 +305,13 @@ extension TotalViewController: DayTotalDelegate {
     }
     
     func tapDayTotalTableViewRow(selectGuestInfo: GuestInfoModel) {
-        visitorInfoView.setVisitorInfo(selectGuestInfo: selectGuestInfo)
-        visitorInfoView.isHidden = false
+        if selectGuestInfo.name == "物販" {
+            startLoading()
+            presenter.getSales(date: selectGuestInfo.date)
+        } else {
+            visitorInfoView.setVisitorInfo(selectGuestInfo: selectGuestInfo)
+            visitorInfoView.isHidden = false
+        }
     }
     
     func tapDeleteDayTotalTableVieRow(selectGuestInfo: GuestInfoModel) {
@@ -312,5 +344,19 @@ extension TotalViewController: EditVisitorInfoDelegate {
     
     func tapEditVisitorInfoBackButton() {
         editVisitorInfoView.isHidden = true
+    }
+}
+
+extension TotalViewController: SalesViewDelegate {
+    func tapSalesRegisterButton(sales: [SalesModel], totalAmount: Int) {
+        // TotalViewControllerではRegisterButtonをタップされることはない
+    }
+    
+    func tapSalesCancelButton() {
+        salesView.isHidden = true
+    }
+    
+    func salesViewWillClose(hasUnsavedChanges: Bool, completion: @escaping (Bool) -> Void) {
+        // TotalViewControllerでは値が変更されることはない
     }
 }

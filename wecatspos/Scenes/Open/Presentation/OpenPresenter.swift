@@ -25,7 +25,7 @@ protocol OpenPresenterProtocol: AnyObject {
     func didTapDeleteButton(id: Int, date: String)
     func didTapEditVisitorInfoUpdateButton(id: Int, repeatFlag: Bool, patternId: Int, name: String?, date: String, holidayFlag: Bool, kidsDayFlag: Bool, adultCount: Int, childCount: Int, enterTime: String, leftTime: String, stayTime: Int, calcAmount: Int, discountAmount: Int, saleAmount: Int, gachaAmount: Int, totalAmount: Int, memo: String)
     func calcTotalAmount(enterTime: String, leftTime: String, adultCount: Int, childCount: Int, discountAmount: String, saleAmount: String)
-    func getSalesMaster()
+    func getSales(date: String)
     func didTapSalesRegisterButton(sales: [SalesModel], totalAmount: Int)
 }
 
@@ -250,26 +250,28 @@ final class OpenPresenter: OpenPresenterProtocol {
             .disposed(by: self.disposeBag)
     }
     
-    func getSalesMaster() {
+    func getSales(date: String) {
+        let param = GetSalesMasterRequestParam(date: date)
+        
         Observable.just(Void())
             .flatMap { [unowned self] in
-                self.useCase.getSalesMaster()
+                self.useCase.getSales(param: param)
             }
             .subscribe(onNext: {
                 [unowned self] model in
                 self.viewSales.onNext(model)
             }, onError: { error in
-                self.handleGetSalesMasterError(error)
+                self.handleGetSalesMasterError(error, date: date)
             })
             .disposed(by: self.disposeBag)
     }
     
-    func handleGetSalesMasterError(_ error: Error) {
+    func handleGetSalesMasterError(_ error: Error, date: String) {
         self.wireframe.presentAlert(Sentence.MSG_NETWORK_ERROR, buttonTitle: Sentence.DIALOG_BTN_RETRY)
             .subscribe(onNext: { option in
                 if option == Sentence.DIALOG_BTN_RETRY {
                     // ボタンタップ時に再試行
-                    self.getSalesMaster()
+                    self.getSales(date: date)
                 }
             })
             .disposed(by: self.disposeBag)

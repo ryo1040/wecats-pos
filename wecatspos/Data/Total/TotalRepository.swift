@@ -13,6 +13,7 @@ protocol TotalRepositoryProtocol {
     func getTotalAmountList(param: GetTotalAmountListRequestParam) -> Single<GetTotalAmountListEntity>
     func updateGuestInfo(param: PostGuestInfoRequestParam) -> Single<GetGuestInfoEntity>
     func deleteGuestInfo(param: PostDeleteGuestInfoRequestParam) -> Single<GetGuestInfoEntity>
+    func getSales(param: GetSalesMasterRequestParam) -> Single<GetSalesEntity>
 }
 
 final class TotalRepository: TotalRepositoryProtocol {
@@ -32,5 +33,9 @@ final class TotalRepository: TotalRepositoryProtocol {
     
     func deleteGuestInfo(param: PostDeleteGuestInfoRequestParam) -> Single<GetGuestInfoEntity> {
         return totalDataStore.deleteGuestInfo(param: param)
+    }
+    
+    func getSales(param: GetSalesMasterRequestParam) -> Single<GetSalesEntity> {
+        return totalDataStore.getSales(param: param)
     }
 }

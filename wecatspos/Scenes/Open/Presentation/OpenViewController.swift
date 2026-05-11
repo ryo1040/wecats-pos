@@ -40,6 +40,8 @@ final class OpenViewController: UIViewController, OpenViewControllerProtocol {
     var activityIndicator: UIActivityIndicatorView!
     var overlayView: UIView!
     
+    var salesReadOnlyFlg: Bool = false
+    
     private let disposeBag = DisposeBag()
     
     public func inject(presenter: OpenPresenterProtocol) {
@@ -316,6 +318,8 @@ private extension OpenViewController {
         presenter.viewSales
             .subscribe(onNext: { [unowned self] model in
                 print("Received cat info data: \(model)")
+                // TODO: salesView.readOnlyFlgの制御をする
+                
                 salesView.setItems(salesMasterModel: model.salesMasterModel, salesModel: model.salesModel)
                 stopLoading()
             }).disposed(by: disposeBag)
@@ -411,7 +415,8 @@ private extension OpenViewController {
     
     @objc func tapSalesButton(_ sender: UIButton) {
         startLoading()
-        presenter.getSalesMaster()
+        salesReadOnlyFlg = false
+        presenter.getSales(date: "")
         stayingView.isHidden = true
         leftView.isHidden = true
         salesView.isHidden = false
@@ -456,8 +461,14 @@ extension OpenViewController: StayingDelegate {
 
 extension OpenViewController: LeftDelegate {
     func tapLeftTableViewRow(selectGuestInfo: GuestInfoModel) {
-        visitorInfoView.setVisitorInfo(selectGuestInfo: selectGuestInfo)
-        visitorInfoView.isHidden = false
+        if selectGuestInfo.name == "物販" {
+            salesReadOnlyFlg = true
+            presenter.getSales(date: selectGuestInfo.date)
+            salesView.isHidden = false
+        } else {
+            visitorInfoView.setVisitorInfo(selectGuestInfo: selectGuestInfo)
+            visitorInfoView.isHidden = false
+        }
     }
     
     func tapDeleteLeftTableVieRow(selectGuestInfo: GuestInfoModel) {
@@ -551,10 +562,14 @@ extension OpenViewController: CheckoutDelegate {
     }
 }
 
-extension OpenViewController: SalesDelegate {
+extension OpenViewController: SalesViewDelegate {
     func tapSalesRegisterButton(sales: [SalesModel], totalAmount: Int) {
         startLoading()
         presenter.didTapSalesRegisterButton(sales: sales, totalAmount: totalAmount)
+    }
+    
+    func tapSalesCancelButton() {
+        salesView.isHidden = true
     }
     
     func salesViewWillClose(hasUnsavedChanges: Bool, completion: @escaping (Bool) -> Void) {

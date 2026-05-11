@@ -13,6 +13,7 @@ protocol TotalUseCaseProtocol: AnyObject {
     func getTotalAmountList(param: GetTotalAmountListRequestParam) -> Observable<[TotalAmountListModel]>
     func updateGuestInfo(param: PostGuestInfoRequestParam) -> Observable<[GuestInfoModel]>
     func deleteGuestInfo(param: PostDeleteGuestInfoRequestParam) -> Observable<[GuestInfoModel]>
+    func getSales(param: GetSalesMasterRequestParam) -> Observable<GetSalesModel>
 }
 
 final class TotalUseCase: TotalUseCaseProtocol {
@@ -44,6 +45,12 @@ final class TotalUseCase: TotalUseCaseProtocol {
     func deleteGuestInfo(param: PostDeleteGuestInfoRequestParam) -> Observable<[GuestInfoModel]> {
         totalRepository.deleteGuestInfo(param: param).asObservable().map { entity in
             GetGuestInfoTranslator.generate(getGuestInfo: entity)
+        }
+    }
+    
+    func getSales(param: GetSalesMasterRequestParam) -> Observable<GetSalesModel> {
+        totalRepository.getSales(param: param).asObservable().map { entity in
+            GetSalesTranslator.generate(getSalesEntity: entity)
         }
     }
 }

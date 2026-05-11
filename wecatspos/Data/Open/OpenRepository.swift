@@ -14,7 +14,7 @@ protocol OpenRepositoryProtocol {
     func updateGuestInfo(param: PostGuestInfoRequestParam) -> Single<GetGuestInfoEntity>
     func deleteGuestInfo(param: PostDeleteGuestInfoRequestParam) -> Single<GetGuestInfoEntity>
     func calcTotalAmount(param: GetCalcTotalAmountRequestParam) -> Single<CalcTotalAmountEntity>
-    func getSalesMaster() -> Single<GetSalesEntity>
+    func getSales(param: GetSalesMasterRequestParam) -> Single<GetSalesEntity>
     func setSales(param: PostSalesRequestParam) -> Single<GetSalesEntity>
 }
 
@@ -41,8 +41,8 @@ final class OpenRepository: OpenRepositoryProtocol {
         return openDataStore.calcTotalAmount(param: param)
     }
     
-    func getSalesMaster() -> Single<GetSalesEntity> {
-        return openDataStore.getSalesMaster()
+    func getSales(param: GetSalesMasterRequestParam) -> Single<GetSalesEntity> {
+        return openDataStore.getSales(param: param)
     }
     
     func setSales(param: PostSalesRequestParam) -> Single<GetSalesEntity> {

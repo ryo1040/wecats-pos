@@ -8,14 +8,15 @@
 import Foundation
 import UIKit
 
-protocol SalesDelegate: AnyObject {
+protocol SalesViewDelegate: AnyObject {
     func tapSalesRegisterButton(sales: [SalesModel], totalAmount: Int)
+    func tapSalesCancelButton()
     func salesViewWillClose(hasUnsavedChanges: Bool, completion: @escaping (Bool) -> Void)
 }
 
 public class SalesView: UIView {
 
-    weak var delegate: SalesDelegate?
+    weak var delegate: SalesViewDelegate?
 
     private var salesMasterModel: [SalesMasterModel] = []
     private var salesModel: [SalesModel] = []
@@ -23,6 +24,7 @@ public class SalesView: UIView {
     private var isShowingTwoColumnLayout = false
     private var itemPreferredWidthConstraint: NSLayoutConstraint?
     private var itemMaxWidthConstraint: NSLayoutConstraint?
+    private var itemStackViewTopConstraint: NSLayoutConstraint?
 
     private let scrollView = UIScrollView()
     private let contentView = UIView()
@@ -30,12 +32,14 @@ public class SalesView: UIView {
     private let itemStackView = UIStackView()
     private let columnSeparatorView = UIView()
     private let registerButton = UIButton()
+    private let cancelButton = UIButton()
 
     private let baseBackground = UIColor(red: 239/255, green: 236/255, blue: 231/255, alpha: 1.0)
     private let lineColor = UIColor.black
     private let accentColor = UIColor.black
     private let textColor = UIColor.black
-    
+
+    var readOnlyFlg: Bool = false
     private var today = ""
 
     public init() {
@@ -74,6 +78,14 @@ extension SalesView {
         self.salesModel = salesModel
         self.hasUnsavedChanges = false
         reloadItemCards()
+        
+        if self.readOnlyFlg {
+            itemStackViewTopConstraint?.constant = 74  // 24 + 50
+        } else {
+            itemStackViewTopConstraint?.constant = 24
+        }
+        self.registerButton.isHidden = self.readOnlyFlg
+        self.cancelButton.isHidden = !self.readOnlyFlg
     }
 
     func closeIfPossible(completion: @escaping (Bool) -> Void) {
@@ -113,6 +125,7 @@ private extension SalesView {
 
         setupScroll()
         setupRegisterButton()
+        setupCancelButton()
         setupItemStack()
     }
 
@@ -158,6 +171,27 @@ private extension SalesView {
         ])
     }
 
+    func setupCancelButton() {
+        cancelButton.setTitle("戻る", for: .normal)
+        cancelButton.setTitleColor(.black, for: .normal)
+        cancelButton.backgroundColor = .white
+        cancelButton.layer.borderColor = UIColor.black.cgColor
+        cancelButton.layer.borderWidth = 1.0
+        cancelButton.layer.cornerRadius = 10
+        cancelButton.titleLabel?.font = .systemFont(ofSize: isCompactLayout ? 16 : 32)
+        cancelButton.translatesAutoresizingMaskIntoConstraints = false
+        cancelButton.addTarget(self, action: #selector(tapCancelButton), for: .touchUpInside)
+
+        addSubview(cancelButton)
+
+        NSLayoutConstraint.activate([
+            cancelButton.topAnchor.constraint(equalTo: topAnchor, constant: 24),
+            cancelButton.leftAnchor.constraint(equalTo: leftAnchor, constant: 24),
+            cancelButton.widthAnchor.constraint(equalToConstant: isCompactLayout ? 100 : 200),
+            cancelButton.heightAnchor.constraint(equalToConstant: isCompactLayout ? 32 : 48)
+        ])
+    }
+    
     func setupItemStack() {
         itemStackView.axis = .vertical
         itemStackView.spacing = 24
@@ -178,8 +212,11 @@ private extension SalesView {
         let itemMaxWidth = itemStackView.widthAnchor.constraint(lessThanOrEqualToConstant: 860)
         itemMaxWidthConstraint = itemMaxWidth
 
+        let itemStackViewTop = itemStackView.topAnchor.constraint(equalTo: registerButton.bottomAnchor, constant: 24)
+        itemStackViewTopConstraint = itemStackViewTop
+
         NSLayoutConstraint.activate([
-            itemStackView.topAnchor.constraint(equalTo: registerButton.bottomAnchor, constant: 24),
+            itemStackViewTop,
             itemStackView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             itemPreferredWidth,
             itemMaxWidth,
@@ -223,8 +260,8 @@ private extension SalesView {
                 let rowStack = UIStackView()
                 rowStack.axis = .horizontal
                 rowStack.alignment = .fill
-            rowStack.distribution = .fillEqually
-            rowStack.spacing = 24
+                rowStack.distribution = .fillEqually
+                rowStack.spacing = 24
 
                 let leftIndex = startIndex
                 let leftMaster = salesMasterModel[leftIndex]
@@ -319,6 +356,11 @@ private extension SalesView {
         qtyStack.axis = .horizontal
         qtyStack.alignment = .center
         qtyStack.spacing = isCompactLayout ? 20 : 28
+        
+        if readOnlyFlg {
+            minusButton.isHidden = true
+            plusButton.isHidden = true
+        }
 
         card.addSubview(namePriceStack)
         card.addSubview(qtyStack)
@@ -403,7 +445,10 @@ private extension SalesView {
         }
         delegate?.tapSalesRegisterButton(sales: salesModel, totalAmount: totalAmount)
     }
-
+    
+    @objc func tapCancelButton() {
+        delegate?.tapSalesCancelButton()
+    }
 }
 
 // MARK: - Helper
