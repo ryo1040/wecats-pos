@@ -173,10 +173,12 @@ private extension EditSalesSettingsView {
         contentView.addSubview(errorMessageLabel)
         
         setupLabel(nameTitleLabel, text: "名前：")
-        nameTextField.keyboardType = .default
         contentView.addSubview(nameTitleLabel)
         
         setupTextField(nameTextField)
+        nameTextField.keyboardType = .default
+        nameTextField.autocorrectionType = .no
+        nameTextField.spellCheckingType = .no
         contentView.addSubview(nameTextField)
         
         setupLabel(priceTitleLabel, text: "価格：")
@@ -192,10 +194,12 @@ private extension EditSalesSettingsView {
         contentView.addSubview(orderByTextField)
         
         setupLabel(memoTitleLabel, text: "メモ：")
-        memoTextField.keyboardType = .default
         contentView.addSubview(memoTitleLabel)
         
         setupTextField(memoTextField)
+        memoTextField.keyboardType = .default
+        memoTextField.autocorrectionType = .no
+        memoTextField.spellCheckingType = .no
         contentView.addSubview(memoTextField)
         
         setupButton(submitButton, text: "登録")

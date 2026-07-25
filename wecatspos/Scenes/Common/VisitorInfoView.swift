@@ -94,6 +94,26 @@ public class VisitorInfoView: UIView {
                 feeLabel.text = commaSeparateThreeDigits(selectGuestInfo.totalAmount) + "円"
                 memoLabel.text = selectGuestInfo.memo ?? ""
             }
+        } else {
+            repeatLabel.text = selectGuestInfo.repeatFlag ? "リピーター" : "新規"
+            if selectGuestInfo.patternId == 1 {
+                patternLabel.text = "家族"
+            } else if selectGuestInfo.patternId == 2 {
+                patternLabel.text = "友人"
+            } else if selectGuestInfo.patternId == 3 {
+                patternLabel.text = "おひとり"
+            } else if selectGuestInfo.patternId == 5 {
+                patternLabel.text = "カップル"
+            } else {
+                patternLabel.text = "その他"
+            }
+            nameLabel.text = selectGuestInfo.name ?? ""
+            countLabel.text = "大人：" + String(selectGuestInfo.adultCount) + "名、子供：" + String(selectGuestInfo.childCount) + "名"
+            stayTimeLabel.text = selectGuestInfo.enterTime + "～" + selectGuestInfo.leftTime + "　" + String(selectGuestInfo.stayTime) + "分"
+            basicPriceLabel.text = commaSeparateThreeDigits(selectGuestInfo.calcAmount) + "円"
+            discountAmountLabel.text = commaSeparateThreeDigits(selectGuestInfo.discountAmount) + "円"
+            feeLabel.text = commaSeparateThreeDigits(selectGuestInfo.totalAmount) + "円"
+            memoLabel.text = selectGuestInfo.memo ?? ""
         }
     }
 }
