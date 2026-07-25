@@ -199,7 +199,8 @@ private extension CatInfoView {
     func setupViews() {
         self.backgroundColor = UIColor(red: 239/255, green: 236/255, blue: 231/255, alpha: 1.0)
 
-        catPicture.contentMode = .scaleAspectFill
+        catPicture.contentMode = .scaleAspectFit
+        catPicture.clipsToBounds = true
         self.addSubview(catPicture)
         
         catSexTitleLabel.text = "性別："
@@ -290,6 +291,7 @@ private extension CatInfoView {
                 catPicture.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 32),
                 catPicture.centerYAnchor.constraint(equalTo: self.centerYAnchor),
                 catPicture.widthAnchor.constraint(equalToConstant: 150),
+                catPicture.heightAnchor.constraint(equalToConstant: 200),
 
                 catSexTitleLabel.topAnchor.constraint(equalTo: self.topAnchor, constant: 32),
                 catSexTitleLabel.rightAnchor.constraint(equalTo: catMicroChipTitleLabel.rightAnchor),
@@ -337,9 +339,10 @@ private extension CatInfoView {
             catSalesPriceLabel.font = UIFont.systemFont(ofSize: 32)
             
             NSLayoutConstraint.activate([
-                catPicture.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 64),
+                catPicture.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 32),
                 catPicture.centerYAnchor.constraint(equalTo: self.centerYAnchor),
-                catPicture.widthAnchor.constraint(equalToConstant: 300),
+                catPicture.widthAnchor.constraint(equalToConstant: 350),
+                catPicture.heightAnchor.constraint(equalToConstant: 420),
 
                 catSexTitleLabel.topAnchor.constraint(equalTo: self.topAnchor, constant: 64),
                 catSexTitleLabel.rightAnchor.constraint(equalTo: catMicroChipTitleLabel.rightAnchor),

@@ -11,13 +11,14 @@ import Moya
 struct GetCatInfoTargetType: ApiTargetType {
     typealias Reponse = GetCatInfoEntity
 
-    var baseURL: URL {
-//        URL(string: API.baseURL)!
-        URL(string: "https://fflmwt4z6e.execute-api.ap-northeast-1.amazonaws.com/cat/")!
-    }
+//    var baseURL: URL {
+////        URL(string: API.baseURL)!
+//        URL(string: "https://fflmwt4z6e.execute-api.ap-northeast-1.amazonaws.com/cat/")!
+//    }
+    var baseURL: URL { URL(string: API.catBaseURL)! }
 
     var path: String {
-        "catlist"
+        "get-cat-list"
     }
 
     var method: Moya.Method {

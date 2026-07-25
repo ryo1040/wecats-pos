@@ -32,6 +32,7 @@ final class TotalViewController: UIViewController, TotalViewControllerProtocol {
     let visitorInfoView = VisitorInfoView()
     let editVisitorInfoView = EditVisitorInfoView()
     let salesView = SalesView()
+    let reservationNightView = ReservationNightView()
     
     var activityIndicator: UIActivityIndicatorView!
     var overlayView: UIView!
@@ -110,6 +111,10 @@ private extension TotalViewController {
         salesView.delegate = self
         mainLabel.addSubview(salesView)
         
+        reservationNightView.isHidden = true
+        reservationNightView.delegate = self
+        mainLabel.addSubview(reservationNightView)
+        
         titleView.translatesAutoresizingMaskIntoConstraints = false
         mainLabel.translatesAutoresizingMaskIntoConstraints = false
         dayTotalButton.translatesAutoresizingMaskIntoConstraints = false
@@ -120,6 +125,7 @@ private extension TotalViewController {
         visitorInfoView.translatesAutoresizingMaskIntoConstraints = false
         editVisitorInfoView.translatesAutoresizingMaskIntoConstraints = false
         salesView.translatesAutoresizingMaskIntoConstraints = false
+        reservationNightView.translatesAutoresizingMaskIntoConstraints = false
         
         // レスポンシブルデザイン対応
         let screenWidth = UIScreen.main.bounds.width
@@ -159,7 +165,11 @@ private extension TotalViewController {
                 salesView.topAnchor.constraint(equalTo: mainLabel.topAnchor),
                 salesView.bottomAnchor.constraint(equalTo: mainLabel.bottomAnchor),
                 salesView.leftAnchor.constraint(equalTo: mainLabel.leftAnchor),
-                salesView.rightAnchor.constraint(equalTo: mainLabel.rightAnchor)
+                salesView.rightAnchor.constraint(equalTo: mainLabel.rightAnchor),
+                reservationNightView.topAnchor.constraint(equalTo: mainLabel.topAnchor),
+                reservationNightView.bottomAnchor.constraint(equalTo: mainLabel.bottomAnchor),
+                reservationNightView.leftAnchor.constraint(equalTo: mainLabel.leftAnchor),
+                reservationNightView.rightAnchor.constraint(equalTo: mainLabel.rightAnchor)
             ])
         } else { // 通常の画面の場合
             dayTotalButton.titleLabel?.font = UIFont.systemFont(ofSize: 32)
@@ -197,7 +207,11 @@ private extension TotalViewController {
                 salesView.topAnchor.constraint(equalTo: mainLabel.topAnchor),
                 salesView.bottomAnchor.constraint(equalTo: mainLabel.bottomAnchor),
                 salesView.leftAnchor.constraint(equalTo: mainLabel.leftAnchor),
-                salesView.rightAnchor.constraint(equalTo: mainLabel.rightAnchor)
+                salesView.rightAnchor.constraint(equalTo: mainLabel.rightAnchor),
+                reservationNightView.topAnchor.constraint(equalTo: mainLabel.topAnchor),
+                reservationNightView.bottomAnchor.constraint(equalTo: mainLabel.bottomAnchor),
+                reservationNightView.leftAnchor.constraint(equalTo: mainLabel.leftAnchor),
+                reservationNightView.rightAnchor.constraint(equalTo: mainLabel.rightAnchor)
             ])
         }
     }
@@ -212,6 +226,7 @@ private extension TotalViewController {
                 visitorInfoView.isHidden = true
                 editVisitorInfoView.isHidden = true
                 salesView.isHidden = true
+                reservationNightView.isHidden = true
                 stopLoading()
             }).disposed(by: disposeBag)
         
@@ -224,6 +239,7 @@ private extension TotalViewController {
                 visitorInfoView.isHidden = true
                 editVisitorInfoView.isHidden = true
                 salesView.isHidden = true
+                reservationNightView.isHidden = true
                 stopLoading()
             }).disposed(by: disposeBag)
         
@@ -235,6 +251,14 @@ private extension TotalViewController {
                 visitorInfoView.isHidden = true
                 editVisitorInfoView.isHidden = true
                 salesView.isHidden = false
+                reservationNightView.isHidden = true
+                stopLoading()
+            }).disposed(by: disposeBag)
+        
+        presenter.getReservationNightInfo
+            .subscribe(onNext: { [unowned self] model in
+                reservationNightView.setReservationNightInfo(reservationNightViewModel: model)
+                reservationNightView.isHidden = false
                 stopLoading()
             }).disposed(by: disposeBag)
     }
@@ -290,6 +314,15 @@ private extension TotalViewController {
         dayTotalButton.setTitleColor(UIColor.black, for: .normal)
         monthTotalButton.setTitleColor(UIColor.white, for: .normal)
     }
+    
+    func extractInteger(from text: String, pattern: String) -> Int? {
+        guard let regex = try? NSRegularExpression(pattern: pattern),
+              let match = regex.firstMatch(in: text, range: NSRange(text.startIndex..., in: text)),
+              let range = Range(match.range(at: 1), in: text) else {
+            return nil
+        }
+        return Int(text[range])
+    }
 }
 
 extension TotalViewController: TitleDelegate {
@@ -308,6 +341,18 @@ extension TotalViewController: DayTotalDelegate {
         if selectGuestInfo.name == "物販" {
             startLoading()
             presenter.getSales(date: selectGuestInfo.date)
+        } else if selectGuestInfo.name!.hasPrefix("夜猫カフェ") {
+            if let memo = selectGuestInfo.memo,
+                let range = memo.range(of: #"\d{4}-\d{2}-\d{2}"#, options: .regularExpression) {
+                let date = String(memo[range])
+                var name = selectGuestInfo.name!
+                name.removeFirst("夜猫カフェ".count)
+                name.removeLast("様".count)
+                startLoading()
+                reservationNightView.updateFlg = false
+                reservationNightView.selectedVisitorHistoryId = selectGuestInfo.id
+                presenter.getReservationNightInfo(date: date, name: name)
+            }
         } else {
             visitorInfoView.setVisitorInfo(selectGuestInfo: selectGuestInfo)
             visitorInfoView.isHidden = false
@@ -315,12 +360,42 @@ extension TotalViewController: DayTotalDelegate {
     }
     
     func tapDeleteDayTotalTableVieRow(selectGuestInfo: GuestInfoModel) {
-        presenter.didTapDeleteButton(id: selectGuestInfo.id, date: selectGuestInfo.date)
+        if selectGuestInfo.name!.hasPrefix("夜猫カフェ") {
+            if let memo = selectGuestInfo.memo {
+                var name = selectGuestInfo.name!
+                name.removeFirst("夜猫カフェ".count)
+                name.removeLast("様".count)
+                let id = extractInteger(from: memo, pattern: #"reservation_id:\s*(-?\d+)"#) ?? -1
+                let branch = extractInteger(from: memo, pattern: #"branch:\s*(-?\d+)"#) ?? -1
+                presenter.didTapReservationNightDeleteButton(id: id, branch: branch, date: selectGuestInfo.date, visitorHistoryId: selectGuestInfo.id)
+            }
+        } else {
+            presenter.didTapDeleteButton(id: selectGuestInfo.id, date: selectGuestInfo.date)
+        }
     }
     
     func tapEditDayTotalTableViewRow(selectGuestInfo: GuestInfoModel) {
-        editVisitorInfoView.setVisitorInfo(selectGuestInfo: selectGuestInfo)
-        editVisitorInfoView.isHidden = false
+        if let name = selectGuestInfo.name, !name.isEmpty {
+            if selectGuestInfo.name!.hasPrefix("夜猫カフェ") {
+                if let memo = selectGuestInfo.memo,
+                    let range = memo.range(of: #"\d{4}-\d{2}-\d{2}"#, options: .regularExpression) {
+                    let date = String(memo[range])
+                    var name = selectGuestInfo.name!
+                    name.removeFirst("夜猫カフェ".count)
+                    name.removeLast("様".count)
+                    startLoading()
+                    reservationNightView.updateFlg = true
+                    reservationNightView.selectedVisitorHistoryId = selectGuestInfo.id
+                    presenter.getReservationNightInfo(date: date, name: name)
+                }
+            } else {
+                editVisitorInfoView.setVisitorInfo(selectGuestInfo: selectGuestInfo)
+                editVisitorInfoView.isHidden = false
+            }
+        } else {
+            editVisitorInfoView.setVisitorInfo(selectGuestInfo: selectGuestInfo)
+            editVisitorInfoView.isHidden = false
+        }
     }
 }
 
@@ -358,5 +433,16 @@ extension TotalViewController: SalesViewDelegate {
     
     func salesViewWillClose(hasUnsavedChanges: Bool, completion: @escaping (Bool) -> Void) {
         // TotalViewControllerでは値が変更されることはない
+    }
+}
+
+extension TotalViewController: ReservationNightViewDelegate {
+    func tapReservationNightSubmitButton(id: Int, branch: Int, date: String, name: String, tel: String, count: Int, price: Int, memo: String, visitorHistoryId: Int) {
+        startLoading()
+        presenter.didTapReservationNightSubmitButton(id: id, branch: branch, date: date, name: name, tel: tel, count: count, price: price, memo: memo, visitorHistoryId: visitorHistoryId)
+    }
+    
+    func tapReservationNightCancelButton() {
+        reservationNightView.isHidden = true
     }
 }

@@ -11,9 +11,10 @@ import Moya
 struct CheckTotalAmountTargetType: ApiTargetType {
     typealias Reponse = PostCheckTotalAmountEntity
 
-    var baseURL: URL {
-        URL(string: "https://i4tz3xyms2.execute-api.ap-northeast-1.amazonaws.com/close/")!
-    }
+//    var baseURL: URL {
+//        URL(string: "https://i4tz3xyms2.execute-api.ap-northeast-1.amazonaws.com/close/")!
+//    }
+    var baseURL: URL { URL(string: API.closeBaseURL)! }
 
     var path: String {
         "check-close-total-amount"

@@ -16,6 +16,9 @@ protocol OpenDataStoreProtocol {
     func calcTotalAmount(param: GetCalcTotalAmountRequestParam) -> Single<CalcTotalAmountEntity>
     func getSales(param: GetSalesMasterRequestParam) -> Single<GetSalesEntity>
     func setSales(param: PostSalesRequestParam) -> Single<GetSalesEntity>
+    func getReservationNightInfo(param: GetReservationNightRequestParam) -> Single<GetReservationNightEntity>
+    func setReservationNightInfo(param: PostReservationNightRequestParam) -> Single<GetGuestInfoEntity>
+    func deleteReservationNightInfo(param: PostDeleteReservationNightRequestParam) -> Single<GetGuestInfoEntity>
 }
 
 final class OpenDataStore: OpenDataStoreProtocol {
@@ -46,6 +49,18 @@ final class OpenDataStore: OpenDataStoreProtocol {
     
     func setSales(param: PostSalesRequestParam) -> Single<GetSalesEntity> {
         return APIClient.shared.request(SetSalesTargetType(param))
+    }
+    
+    func getReservationNightInfo(param: GetReservationNightRequestParam) -> Single<GetReservationNightEntity> {
+        return APIClient.shared.request(GetReservationNightTargetType(param))
+    }
+    
+    func setReservationNightInfo(param: PostReservationNightRequestParam) -> Single<GetGuestInfoEntity> {
+        return APIClient.shared.request(SetReservationNightTargetType(param))
+    }
+    
+    func deleteReservationNightInfo(param: PostDeleteReservationNightRequestParam) -> Single<GetGuestInfoEntity> {
+        return APIClient.shared.request(DeleteReservationNightTargetType(param))
     }
 }
 

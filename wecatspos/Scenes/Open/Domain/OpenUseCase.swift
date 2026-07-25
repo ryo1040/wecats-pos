@@ -18,6 +18,9 @@ protocol OpenUseCaseProtocol: AnyObject {
     func calcTotalAmount(param: GetCalcTotalAmountRequestParam) -> Observable<CalcTotalAmountModel>
     func getSales(param: GetSalesMasterRequestParam) -> Observable<GetSalesModel>
     func setSales(param: PostSalesRequestParam) -> Observable<GetSalesModel>
+    func getReservationNightInfo(param: GetReservationNightRequestParam) -> Observable<GetReservationNightViewModel>
+    func setReservationNightInfo(param: PostReservationNightRequestParam) -> Observable<[GuestInfoModel]>
+    func deleteReservationNightInfo(param: PostDeleteReservationNightRequestParam) -> Observable<[GuestInfoModel]>
 }
 
 final class OpenUseCase: OpenUseCaseProtocol {
@@ -82,6 +85,24 @@ final class OpenUseCase: OpenUseCaseProtocol {
     func setSales(param: PostSalesRequestParam) -> Observable<GetSalesModel> {
         self.openRepository.setSales(param: param).asObservable().map { entity in
             GetSalesTranslator.generate(getSalesEntity: entity)
+        }
+    }
+    
+    func getReservationNightInfo(param: GetReservationNightRequestParam) -> Observable<GetReservationNightViewModel> {
+        self.openRepository.getReservationNightInfo(param: param).asObservable().map { entity in
+            GetReservationNightInfoTranslator.generate(getReservationNightInfo: entity)
+        }
+    }
+    
+    func setReservationNightInfo(param: PostReservationNightRequestParam) -> Observable<[GuestInfoModel]> {
+        self.openRepository.setReservationNightInfo(param: param).asObservable().map { entity in
+            GetGuestInfoTranslator.generate(getGuestInfo: entity)
+        }
+    }
+    
+    func deleteReservationNightInfo(param: PostDeleteReservationNightRequestParam) -> Observable<[GuestInfoModel]> {
+        self.openRepository.deleteReservationNightInfo(param: param).asObservable().map { entity in
+            GetGuestInfoTranslator.generate(getGuestInfo: entity)
         }
     }
 }

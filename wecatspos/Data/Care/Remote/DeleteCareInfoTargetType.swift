@@ -11,9 +11,10 @@ import Moya
 struct DeleteCareInfoTargetType: ApiTargetType {
     typealias Reponse = GetCareInfoEntity
 
-    var baseURL: URL {
-        URL(string: "https://au0rfnsgi3.execute-api.ap-northeast-1.amazonaws.com/care-info/")!
-    }
+//    var baseURL: URL {
+//        URL(string: "https://au0rfnsgi3.execute-api.ap-northeast-1.amazonaws.com/care-info/")!
+//    }
+    var baseURL: URL { URL(string: API.careInfoBaseURL)! }
 
     var path: String {
         "delete-care-info"

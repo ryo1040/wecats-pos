@@ -11,10 +11,12 @@ import Moya
 struct GetCalcTotalAmountTargetType: ApiTargetType {
     typealias Reponse = CalcTotalAmountEntity
 
-    var baseURL: URL {
-        URL(string: "https://vl1sxpjk81.execute-api.ap-northeast-1.amazonaws.com/guest/")!
-    }
+//    var baseURL: URL {
+//        URL(string: "https://vl1sxpjk81.execute-api.ap-northeast-1.amazonaws.com/guest/")!
+//    }
 
+    var baseURL: URL { URL(string: API.calcGuestBaseURL)! }
+    
     var path: String {
         "get-total-amount"
     }

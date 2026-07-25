@@ -11,9 +11,10 @@ import Moya
 struct DeleteDenominationTargetType: ApiTargetType {
     typealias Reponse = GetDenominationEntity
 
-    var baseURL: URL {
-        URL(string: "https://4a42jtm29b.execute-api.ap-northeast-1.amazonaws.com/denomination/")!
-    }
+//    var baseURL: URL {
+//        URL(string: "https://4a42jtm29b.execute-api.ap-northeast-1.amazonaws.com/denomination/")!
+//    }
+    var baseURL: URL { URL(string: API.denominationBaseURL)! }
 
     var path: String {
         "delete-denomination"

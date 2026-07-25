@@ -16,6 +16,7 @@ protocol OpenPresenterProtocol: AnyObject {
     var calcedTotalAmount: PublishSubject<CalcTotalAmountModel> { get }
     var viewSales: PublishSubject<GetSalesModel> { get }
     var salesRegistrationCompleted: PublishSubject<Void> { get }
+    var getReservationNightInfo: PublishSubject<ReservationNightViewModel> { get }
     func load()
     func checkDay(date: Date) -> Int
     func didTapMenuButton()
@@ -27,6 +28,9 @@ protocol OpenPresenterProtocol: AnyObject {
     func calcTotalAmount(enterTime: String, leftTime: String, adultCount: Int, childCount: Int, discountAmount: String, saleAmount: String)
     func getSales(date: String)
     func didTapSalesRegisterButton(sales: [SalesModel], totalAmount: Int)
+    func getReservationNightInfo(date: String, name: String)
+    func didTapReservationNightSubmitButton(id: Int, branch: Int, date: String, name: String, tel: String, count: Int, price: Int, memo: String, visitorHistoryId: Int)
+    func didTapReservationNightDeleteButton(id: Int, branch: Int, date: String, visitorHistoryId: Int)
 }
 
 final class OpenPresenter: OpenPresenterProtocol {
@@ -42,6 +46,7 @@ final class OpenPresenter: OpenPresenterProtocol {
     private(set) var calcedTotalAmount = PublishSubject<CalcTotalAmountModel>()
     private(set) var viewSales = PublishSubject<GetSalesModel>()
     private(set) var salesRegistrationCompleted = PublishSubject<Void>()
+    private(set) var getReservationNightInfo = PublishSubject<ReservationNightViewModel>()
     
     private let disposeBag = DisposeBag()
     
@@ -312,4 +317,84 @@ final class OpenPresenter: OpenPresenterProtocol {
             .disposed(by: self.disposeBag)
     }
     
+    func getReservationNightInfo(date: String, name: String) {
+        let param = GetReservationNightRequestParam(date: date, name: name)
+            
+        Observable.just(Void())
+            .flatMap { [unowned self] in
+                self.useCase.getReservationNightInfo(param: param)
+            }
+            .subscribe(onNext: {
+                [unowned self] model in
+                self.getReservationNightInfo.onNext(model.reservationNightViewModel[0])
+            }, onError: { error in
+                self.handleGetReservationNightInfoError(error, date: date, name: name)
+            })
+            .disposed(by: self.disposeBag)
+    }
+    
+    func handleGetReservationNightInfoError(_ error: Error, date: String, name: String) {
+        self.wireframe.presentAlert(Sentence.MSG_NETWORK_ERROR, buttonTitle: Sentence.DIALOG_BTN_RETRY)
+            .subscribe(onNext: { option in
+                if option == Sentence.DIALOG_BTN_RETRY {
+                    // ボタンタップ時に再試行
+                    self.getReservationNightInfo(date: date, name: name)
+                }
+            })
+            .disposed(by: self.disposeBag)
+    }
+    
+    func didTapReservationNightSubmitButton(id: Int, branch: Int, date: String, name: String, tel: String, count: Int, price: Int, memo: String, visitorHistoryId: Int) {
+        let param = PostReservationNightRequestParam(id: id, branch: branch, reservationType: 1, date: date, name: name, tel: tel, count: count, price: price, memo: memo, visitorHistoryId: visitorHistoryId)
+        
+        Observable.just(Void())
+            .flatMap { [unowned self] in
+                self.useCase.setReservationNightInfo(param: param)
+            }
+            .subscribe(onNext: {
+                [unowned self] model in
+                self.viewGuestInfo.onNext(model)
+            }, onError: { error in
+                self.handleDidTapeservationNightSubmitButtonError(error, id: id, branch: branch, date: date, name: name, tel: tel, count: count, price: price, memo: memo, visitorHistoryId: visitorHistoryId)
+            })
+            .disposed(by: self.disposeBag)
+    }
+    
+    func handleDidTapeservationNightSubmitButtonError(_ error: Error, id: Int, branch: Int, date: String, name: String, tel: String, count: Int, price: Int, memo: String, visitorHistoryId: Int) {
+        self.wireframe.presentAlert(Sentence.MSG_NETWORK_ERROR, buttonTitle: Sentence.DIALOG_BTN_RETRY)
+            .subscribe(onNext: { option in
+                if option == Sentence.DIALOG_BTN_RETRY {
+                    // ボタンタップ時に再試行
+                    self.didTapReservationNightSubmitButton(id: id, branch: branch, date: date, name: name, tel: tel, count: count, price: price, memo: memo, visitorHistoryId: visitorHistoryId)
+                }
+            })
+            .disposed(by: self.disposeBag)
+    }
+    
+    func didTapReservationNightDeleteButton(id: Int, branch: Int, date: String, visitorHistoryId: Int) {
+        let param = PostDeleteReservationNightRequestParam(id: id, branch: branch, date: date, visitorHistoryId: visitorHistoryId)
+        
+        Observable.just(Void())
+            .flatMap { [unowned self] in
+                self.useCase.deleteReservationNightInfo(param: param)
+            }
+            .subscribe(onNext: {
+                [unowned self] model in
+                self.viewGuestInfo.onNext(model)
+            }, onError: { error in
+                self.handleDidTapeservationNightDeleteButtonError(error, id: id, branch: branch, date: date, visitorHistoryId: visitorHistoryId)
+            })
+            .disposed(by: self.disposeBag)
+    }
+    
+    func handleDidTapeservationNightDeleteButtonError(_ error: Error, id: Int, branch: Int, date: String, visitorHistoryId: Int) {
+        self.wireframe.presentAlert(Sentence.MSG_NETWORK_ERROR, buttonTitle: Sentence.DIALOG_BTN_RETRY)
+            .subscribe(onNext: { option in
+                if option == Sentence.DIALOG_BTN_RETRY {
+                    // ボタンタップ時に再試行
+                    self.didTapReservationNightDeleteButton(id: id, branch: branch, date: date, visitorHistoryId: visitorHistoryId)
+                }
+            })
+            .disposed(by: self.disposeBag)
+    }
 }

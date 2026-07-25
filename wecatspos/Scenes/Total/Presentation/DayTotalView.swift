@@ -109,6 +109,27 @@ public class DayTotalView: UIView, UITableViewDelegate, UITableViewDataSource {
             leftTimeLabel.text = "-"
         }
         
+        if let name = guest.name, !name.isEmpty {
+            if guest.name!.hasPrefix("夜猫カフェ") {
+                let prefix = "夜猫カフェ"
+                let suffix = name.dropFirst(prefix.count)
+                
+                // 2行表示にする
+                nameLabel.numberOfLines = 2
+                nameLabel.lineBreakMode = .byWordWrapping
+                
+                // 先頭の「夜猫カフェ」で改行
+                if suffix.isEmpty {
+                    nameLabel.text = "\(prefix)\n "
+                } else {
+                    nameLabel.text = "\(prefix)\n\(suffix)"
+                }
+                countLabel.text = String(guest.adultCount) + "名"
+                enterTimeLabel.text = "-"
+                leftTimeLabel.text = "-"
+            }
+        }
+        
         cell.contentView.addSubview(nameLabel)
         cell.contentView.addSubview(countLabel)
         cell.contentView.addSubview(enterTimeLabel)

@@ -11,9 +11,10 @@ import Moya
 struct GetSalesTargetType: ApiTargetType {
     typealias Reponse = GetSalesEntity
 
-    var baseURL: URL {
-        URL(string: "https://s4e53ii5yc.execute-api.ap-northeast-1.amazonaws.com/sales/")!
-    }
+//    var baseURL: URL {
+//        URL(string: "https://s4e53ii5yc.execute-api.ap-northeast-1.amazonaws.com/sales/")!
+//    }
+    var baseURL: URL { URL(string: API.salesBaseURL)! }
     
     var path: String {
         "get-sales"
