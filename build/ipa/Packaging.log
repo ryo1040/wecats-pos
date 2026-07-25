@@ -1,0 +1,397 @@
+2026-07-25 08:19:13 +0000 [MT] Initial pipeline context: <IDEDistributionProcessingPipelineContext: 0x11bccbb00; archive(resolved)="<IDEArchive: 0x116ddf770>", distributionTask(resolved)="2", distributionDestination(resolved)="1", distributionMethod(resolved)="<IDEDistributionMethodiOSAdHoc: 0x117f90e90>", team(resolved)="<IDEProvisioningBasicTeam: 0x11845dca0; teamID='5UX42Y3VW8', teamName='(null)'>">
+	Chain (14, self inclusive):
+	<IDEDistributionProcessingPipelineContext: 0x11bccbb00; archive = "<IDEArchive: 0x116ddf770>", distributionMethod="<IDEDistributionMethodiOSAdHoc: 0x117f90e90>", team="<IDEProvisioningBasicTeam: 0x11845dca0; teamID='5UX42Y3VW8', teamName='(null)'>">
+	<IDEDistributionProcessingPipelineContext: 0x11bce7170; archive = "<IDEArchive: 0x116ddf770>", distributionMethod="<IDEDistributionMethodiOSAdHoc: 0x117f90e90>", team="<IDEProvisioningBasicTeam: 0x11845dca0; teamID='5UX42Y3VW8', teamName='(null)'>">
+	<IDEDistributionContext: 0x11bce6f60; archive = "<IDEArchive: 0x116ddf770>", distributionMethod="<IDEDistributionMethodiOSAdHoc: 0x117f90e90>", team="<IDEProvisioningBasicTeam: 0x11845dca0; teamID='5UX42Y3VW8', teamName='(null)'>">
+	<IDEDistributionContext: 0x11bc3aed0; archive = "<IDEArchive: 0x116ddf770>", distributionMethod="<IDEDistributionMethodiOSAdHoc: 0x117f90e90>", team="<IDEProvisioningBasicTeam: 0x11845dca0; teamID='5UX42Y3VW8', teamName='(null)'>">
+	<IDEDistributionContext: 0x11bc85fa0; archive = "<IDEArchive: 0x116ddf770>", distributionMethod="<IDEDistributionMethodiOSAdHoc: 0x117f90e90>", team="<IDEProvisioningBasicTeam: 0x11845dca0; teamID='5UX42Y3VW8', teamName='(null)'>">
+	<IDEDistributionContext: 0x118522710; archive = "<IDEArchive: 0x116ddf770>", distributionMethod="<IDEDistributionMethodiOSAdHoc: 0x117f90e90>", team="<IDEProvisioningBasicTeam: 0x11845dca0; teamID='5UX42Y3VW8', teamName='(null)'>">
+	<IDEDistributionContext: 0x118575c40; archive = "<IDEArchive: 0x116ddf770>", distributionMethod="<IDEDistributionMethodiOSAdHoc: 0x117f90e90>", team="<IDEProvisioningBasicTeam: 0x11845dca0; teamID='5UX42Y3VW8', teamName='(null)'>">
+	<IDEDistributionContext: 0x118548730; archive = "<IDEArchive: 0x116ddf770>", distributionMethod="<IDEDistributionMethodiOSAdHoc: 0x117f90e90>", team="<IDEProvisioningBasicTeam: 0x11845dca0; teamID='5UX42Y3VW8', teamName='(null)'>">
+	<IDEDistributionContext: 0x1185504b0; archive = "<IDEArchive: 0x116ddf770>", distributionMethod="<IDEDistributionMethodiOSAdHoc: 0x117f90e90>", team="<IDEProvisioningBasicTeam: 0x11845dca0; teamID='5UX42Y3VW8', teamName='(null)'>">
+	<IDEDistributionContext: 0x118550180; archive = "<IDEArchive: 0x116ddf770>", distributionMethod="<IDEDistributionMethodiOSAdHoc: 0x117f90e90>", team="(null)">
+	<IDEDistributionContext: 0x11bc50f70; archive = "<IDEArchive: 0x116ddf770>", distributionMethod="<IDEDistributionMethodiOSAdHoc: 0x117f90e90>", team="(null)">
+	<IDEDistributionContext: 0x11854f960; archive = "<IDEArchive: 0x116ddf770>", distributionMethod="<IDEDistributionMethodiOSAdHoc: 0x117f90e90>", team="(null)">
+	<IDEDistributionContext: 0x14220b320; archive = "<IDEArchive: 0x116ddf770>", distributionMethod="<IDEDistributionMethodiOSAdHoc: 0x117f90e90>", team="(null)">
+	<IDEDistributionContext: 0x116de2620; archive = "<IDEArchive: 0x116ddf770>", distributionMethod="(null)", team="(null)">
+</IDEDistributionProcessingPipelineContext: 0x11bccbb00>
+2026-07-25 08:19:13 +0000 [MT] Processing step: IDEDistributionCreateDestRootStep
+2026-07-25 08:19:13 +0000 [MT] Processing step: IDEDistributionCopyItemStep
+2026-07-25 08:19:13 +0000 [MT] Running /usr/bin/ditto '-V' '/Users/matsumoto/Work/src/wecats-pos/build/wecatspos.xcarchive/Products/Applications/wecatspos.app' '/var/folders/tf/48ysslz95q146yxwxd248jt00000gn/T/XcodeDistPipeline.~~~7JrJFc/Root/Payload/wecatspos.app'
+2026-07-25 08:19:13 +0000  >>> Copying /Users/matsumoto/Work/src/wecats-pos/build/wecatspos.xcarchive/Products/Applications/wecatspos.app 
+2026-07-25 08:19:13 +0000  copying file ./_CodeSignature/CodeResources ... 
+2026-07-25 08:19:13 +0000  8393 bytes for ./_CodeSignature/CodeResources
+2026-07-25 08:19:13 +0000  copying file ./wecatspos ... 
+2026-07-25 08:19:13 +0000  1391568 bytes for ./wecatspos
+2026-07-25 08:19:13 +0000  copying file ./AppIcon60x60@2x.png ... 
+2026-07-25 08:19:13 +0000  6321 bytes for ./AppIcon60x60@2x.png
+2026-07-25 08:19:13 +0000  copying file ./main.storyboardc/Info.plist ... 
+2026-07-25 08:19:13 +0000  115 bytes for ./main.storyboardc/Info.plist
+2026-07-25 08:19:13 +0000  copying file ./Assets.car ... 
+2026-07-25 08:19:13 +0000  1238776 bytes for ./Assets.car
+2026-07-25 08:19:13 +0000  copying file ./AppIcon76x76@2x~ipad.png ... 
+2026-07-25 08:19:13 +0000  8827 bytes for ./AppIcon76x76@2x~ipad.png
+2026-07-25 08:19:13 +0000  copying file ./Frameworks/HolidayJp.framework/_CodeSignature/CodeResources ... 
+2026-07-25 08:19:13 +0000  1798 bytes for ./Frameworks/HolidayJp.framework/_CodeSignature/CodeResources
+2026-07-25 08:19:13 +0000  copying file ./Frameworks/HolidayJp.framework/HolidayJp ... 
+2026-07-25 08:19:13 +0000  351728 bytes for ./Frameworks/HolidayJp.framework/HolidayJp
+2026-07-25 08:19:13 +0000  copying file ./Frameworks/HolidayJp.framework/Info.plist ... 
+2026-07-25 08:19:13 +0000  787 bytes for ./Frameworks/HolidayJp.framework/Info.plist
+2026-07-25 08:19:13 +0000  copying file ./Frameworks/Moya.framework/_CodeSignature/CodeResources ... 
+2026-07-25 08:19:13 +0000  1798 bytes for ./Frameworks/Moya.framework/_CodeSignature/CodeResources
+2026-07-25 08:19:13 +0000  copying file ./Frameworks/Moya.framework/Moya ... 
+2026-07-25 08:19:13 +0000  500352 bytes for ./Frameworks/Moya.framework/Moya
+2026-07-25 08:19:13 +0000  copying file ./Frameworks/Moya.framework/Info.plist ... 
+2026-07-25 08:19:13 +0000  778 bytes for ./Frameworks/Moya.framework/Info.plist
+2026-07-25 08:19:13 +0000  copying file ./Frameworks/Alamofire.framework/_CodeSignature/CodeResources ... 
+2026-07-25 08:19:13 +0000  2308 bytes for ./Frameworks/Alamofire.framework/_CodeSignature/CodeResources
+2026-07-25 08:19:13 +0000  copying file ./Frameworks/Alamofire.framework/Alamofire ... 
+2026-07-25 08:19:13 +0000  2831776 bytes for ./Frameworks/Alamofire.framework/Alamofire
+2026-07-25 08:19:13 +0000  copying file ./Frameworks/Alamofire.framework/Alamofire.bundle/PrivacyInfo.xcprivacy ... 
+2026-07-25 08:19:13 +0000  600 bytes for ./Frameworks/Alamofire.framework/Alamofire.bundle/PrivacyInfo.xcprivacy
+2026-07-25 08:19:13 +0000  copying file ./Frameworks/Alamofire.framework/Alamofire.bundle/Info.plist ... 
+2026-07-25 08:19:13 +0000  763 bytes for ./Frameworks/Alamofire.framework/Alamofire.bundle/Info.plist
+2026-07-25 08:19:13 +0000  copying file ./Frameworks/Alamofire.framework/Info.plist ... 
+2026-07-25 08:19:13 +0000  788 bytes for ./Frameworks/Alamofire.framework/Info.plist
+2026-07-25 08:19:13 +0000  copying file ./Frameworks/Rswift.framework/Rswift ... 
+2026-07-25 08:19:13 +0000  214928 bytes for ./Frameworks/Rswift.framework/Rswift
+2026-07-25 08:19:13 +0000  copying file ./Frameworks/Rswift.framework/_CodeSignature/CodeResources ... 
+2026-07-25 08:19:13 +0000  1798 bytes for ./Frameworks/Rswift.framework/_CodeSignature/CodeResources
+2026-07-25 08:19:13 +0000  copying file ./Frameworks/Rswift.framework/Info.plist ... 
+2026-07-25 08:19:13 +0000  781 bytes for ./Frameworks/Rswift.framework/Info.plist
+2026-07-25 08:19:13 +0000  copying file ./Frameworks/RxSwift.framework/_CodeSignature/CodeResources ... 
+2026-07-25 08:19:13 +0000  2332 bytes for ./Frameworks/RxSwift.framework/_CodeSignature/CodeResources
+2026-07-25 08:19:13 +0000  copying file ./Frameworks/RxSwift.framework/RxSwift ... 
+2026-07-25 08:19:13 +0000  2121648 bytes for ./Frameworks/RxSwift.framework/RxSwift
+2026-07-25 08:19:13 +0000  copying file ./Frameworks/RxSwift.framework/RxSwift_Privacy.bundle/PrivacyInfo.xcprivacy ... 
+2026-07-25 08:19:13 +0000  372 bytes for ./Frameworks/RxSwift.framework/RxSwift_Privacy.bundle/PrivacyInfo.xcprivacy
+2026-07-25 08:19:13 +0000  copying file ./Frameworks/RxSwift.framework/RxSwift_Privacy.bundle/Info.plist ... 
+2026-07-25 08:19:13 +0000  776 bytes for ./Frameworks/RxSwift.framework/RxSwift_Privacy.bundle/Info.plist
+2026-07-25 08:19:13 +0000  copying file ./Frameworks/RxSwift.framework/Info.plist ... 
+2026-07-25 08:19:13 +0000  783 bytes for ./Frameworks/RxSwift.framework/Info.plist
+2026-07-25 08:19:13 +0000  copying file ./embedded.mobileprovision ... 
+2026-07-25 08:19:13 +0000  12399 bytes for ./embedded.mobileprovision
+2026-07-25 08:19:13 +0000  copying file ./Info.plist ... 
+2026-07-25 08:19:13 +0000  1671 bytes for ./Info.plist
+2026-07-25 08:19:13 +0000  copying file ./PkgInfo ... 
+2026-07-25 08:19:13 +0000  8 bytes for ./PkgInfo
+2026-07-25 08:19:13 +0000 [MT] /usr/bin/ditto exited with 0
+2026-07-25 08:19:13 +0000 [MT] Processing step: IDEDistributionEmbedProfileStep
+2026-07-25 08:19:13 +0000 [MT] Skipping profile for item: <IDEDistributionItem: 0x118495bc0; bundleID='org.cocoapods.Alamofire', path='<DVTFilePath:0x11bc0f640:'/Users/matsumoto/Work/src/wecats-pos/build/wecatspos.xcarchive/Products/Applications/wecatspos.app/Frameworks/Alamofire.framework'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x11bc78220; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x11bcc3e90; name='Apple Distribution: Kouji Yoshimura (5UX42Y3VW8)', hash='23844DCF0789884AD89B3A4B6954A2DF2C558D14', serialNumber='7C19497E24BC704388C99C1442C3D625', certificateKinds='(
+    "1.2.840.113635.100.6.1.7",
+    "1.2.840.113635.100.6.1.4"
+), issueDate='2025-08-08 05:22:20 +0000''>', entitlements='(null)', teamID='5UX42Y3VW8', identifier='org.cocoapods.Alamofire', executablePath='<DVTFilePath:0x11bc10650:'/Users/matsumoto/Work/src/wecats-pos/build/wecatspos.xcarchive/Products/Applications/wecatspos.app/Frameworks/Alamofire.framework/Alamofire'>', hardenedRuntime='0'>'>
+2026-07-25 08:19:13 +0000 [MT] Skipping profile for item: <IDEDistributionItem: 0x11bc78a70; bundleID='org.cocoapods.HolidayJp', path='<DVTFilePath:0x11bc0a860:'/Users/matsumoto/Work/src/wecats-pos/build/wecatspos.xcarchive/Products/Applications/wecatspos.app/Frameworks/HolidayJp.framework'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x11855e110; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x11bf68c70; name='Apple Distribution: Kouji Yoshimura (5UX42Y3VW8)', hash='23844DCF0789884AD89B3A4B6954A2DF2C558D14', serialNumber='7C19497E24BC704388C99C1442C3D625', certificateKinds='(
+    "1.2.840.113635.100.6.1.7",
+    "1.2.840.113635.100.6.1.4"
+), issueDate='2025-08-08 05:22:20 +0000''>', entitlements='(null)', teamID='5UX42Y3VW8', identifier='org.cocoapods.HolidayJp', executablePath='<DVTFilePath:0x11bc09a90:'/Users/matsumoto/Work/src/wecats-pos/build/wecatspos.xcarchive/Products/Applications/wecatspos.app/Frameworks/HolidayJp.framework/HolidayJp'>', hardenedRuntime='0'>'>
+2026-07-25 08:19:13 +0000 [MT] Skipping profile for item: <IDEDistributionItem: 0x1184a74d0; bundleID='org.cocoapods.Moya', path='<DVTFilePath:0x11bc072e0:'/Users/matsumoto/Work/src/wecats-pos/build/wecatspos.xcarchive/Products/Applications/wecatspos.app/Frameworks/Moya.framework'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x1184a5ed0; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x117dfe160; name='Apple Distribution: Kouji Yoshimura (5UX42Y3VW8)', hash='23844DCF0789884AD89B3A4B6954A2DF2C558D14', serialNumber='7C19497E24BC704388C99C1442C3D625', certificateKinds='(
+    "1.2.840.113635.100.6.1.7",
+    "1.2.840.113635.100.6.1.4"
+), issueDate='2025-08-08 05:22:20 +0000''>', entitlements='(null)', teamID='5UX42Y3VW8', identifier='org.cocoapods.Moya', executablePath='<DVTFilePath:0x11bc0d3c0:'/Users/matsumoto/Work/src/wecats-pos/build/wecatspos.xcarchive/Products/Applications/wecatspos.app/Frameworks/Moya.framework/Moya'>', hardenedRuntime='0'>'>
+2026-07-25 08:19:13 +0000 [MT] Skipping profile for item: <IDEDistributionItem: 0x1184a4810; bundleID='org.cocoapods.Rswift', path='<DVTFilePath:0x11bc13f20:'/Users/matsumoto/Work/src/wecats-pos/build/wecatspos.xcarchive/Products/Applications/wecatspos.app/Frameworks/Rswift.framework'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x11bc80610; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x11c067470; name='Apple Distribution: Kouji Yoshimura (5UX42Y3VW8)', hash='23844DCF0789884AD89B3A4B6954A2DF2C558D14', serialNumber='7C19497E24BC704388C99C1442C3D625', certificateKinds='(
+    "1.2.840.113635.100.6.1.7",
+    "1.2.840.113635.100.6.1.4"
+), issueDate='2025-08-08 05:22:20 +0000''>', entitlements='(null)', teamID='5UX42Y3VW8', identifier='org.cocoapods.Rswift', executablePath='<DVTFilePath:0x11bc14160:'/Users/matsumoto/Work/src/wecats-pos/build/wecatspos.xcarchive/Products/Applications/wecatspos.app/Frameworks/Rswift.framework/Rswift'>', hardenedRuntime='0'>'>
+2026-07-25 08:19:13 +0000 [MT] Skipping profile for item: <IDEDistributionItem: 0x11bc79e10; bundleID='org.cocoapods.RxSwift', path='<DVTFilePath:0x11bc16e40:'/Users/matsumoto/Work/src/wecats-pos/build/wecatspos.xcarchive/Products/Applications/wecatspos.app/Frameworks/RxSwift.framework'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x11856c460; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x11c00c0e0; name='Apple Distribution: Kouji Yoshimura (5UX42Y3VW8)', hash='23844DCF0789884AD89B3A4B6954A2DF2C558D14', serialNumber='7C19497E24BC704388C99C1442C3D625', certificateKinds='(
+    "1.2.840.113635.100.6.1.7",
+    "1.2.840.113635.100.6.1.4"
+), issueDate='2025-08-08 05:22:20 +0000''>', entitlements='(null)', teamID='5UX42Y3VW8', identifier='org.cocoapods.RxSwift', executablePath='<DVTFilePath:0x11bc17e50:'/Users/matsumoto/Work/src/wecats-pos/build/wecatspos.xcarchive/Products/Applications/wecatspos.app/Frameworks/RxSwift.framework/RxSwift'>', hardenedRuntime='0'>'>
+2026-07-25 08:19:13 +0000 [MT] Processing step: IDEDistributionInfoPlistStep
+2026-07-25 08:19:13 +0000 [MT] Skipping step: IDEDistributionInfoPlistStep because it said so
+2026-07-25 08:19:13 +0000 [MT] Skipping step: IDEDistributionInfoPlistStep because it said so
+2026-07-25 08:19:13 +0000 [MT] Skipping step: IDEDistributionInfoPlistStep because it said so
+2026-07-25 08:19:13 +0000 [MT] Skipping step: IDEDistributionInfoPlistStep because it said so
+2026-07-25 08:19:13 +0000 [MT] Skipping step: IDEDistributionInfoPlistStep because it said so
+2026-07-25 08:19:13 +0000 [MT] Skipping step: IDEDistributionInfoPlistStep because it said so
+2026-07-25 08:19:13 +0000 [MT] Processing step: IDEDistributionAppThinningPlistStep
+2026-07-25 08:19:13 +0000 [MT] Skipping step: IDEDistributionAppThinningPlistStep because it said so
+2026-07-25 08:19:13 +0000 [MT] Processing step: IDEDistributionSymbolsStep
+2026-07-25 08:19:13 +0000 [MT] Skipping step: IDEDistributionSymbolsStep because it said so
+2026-07-25 08:19:13 +0000 [MT] Processing step: IDEDistributionAppThinningStep
+2026-07-25 08:19:13 +0000 [MT] Skipping step: IDEDistributionAppThinningStep because it said so
+2026-07-25 08:19:13 +0000 [MT] Processing step: IDEDistributionArchThinningStep
+2026-07-25 08:19:13 +0000 [MT] Archs to thin for item /Users/matsumoto/Work/src/wecats-pos/build/wecatspos.xcarchive/Products/Applications/wecatspos.app/Frameworks/Alamofire.framework are []
+2026-07-25 08:19:13 +0000 [MT] Archs to thin for item /Users/matsumoto/Work/src/wecats-pos/build/wecatspos.xcarchive/Products/Applications/wecatspos.app/Frameworks/HolidayJp.framework are []
+2026-07-25 08:19:13 +0000 [MT] Archs to thin for item /Users/matsumoto/Work/src/wecats-pos/build/wecatspos.xcarchive/Products/Applications/wecatspos.app/Frameworks/Moya.framework are []
+2026-07-25 08:19:13 +0000 [MT] Archs to thin for item /Users/matsumoto/Work/src/wecats-pos/build/wecatspos.xcarchive/Products/Applications/wecatspos.app/Frameworks/Rswift.framework are []
+2026-07-25 08:19:13 +0000 [MT] Archs to thin for item /Users/matsumoto/Work/src/wecats-pos/build/wecatspos.xcarchive/Products/Applications/wecatspos.app/Frameworks/RxSwift.framework are []
+2026-07-25 08:19:13 +0000 [MT] Archs to thin for item /Users/matsumoto/Work/src/wecats-pos/build/wecatspos.xcarchive/Products/Applications/wecatspos.app are []
+2026-07-25 08:19:13 +0000 [MT] Processing step: IDEDistributionODRStep
+2026-07-25 08:19:13 +0000 [MT] Processing step: IDEDistributionStripXattrsStep
+2026-07-25 08:19:13 +0000 [MT] Skipping stripping extended attributes because the codesign step will strip them.
+2026-07-25 08:19:13 +0000 [MT] Skipping stripping extended attributes because the codesign step will strip them.
+2026-07-25 08:19:13 +0000 [MT] Skipping stripping extended attributes because the codesign step will strip them.
+2026-07-25 08:19:13 +0000 [MT] Skipping stripping extended attributes because the codesign step will strip them.
+2026-07-25 08:19:13 +0000 [MT] Skipping stripping extended attributes because the codesign step will strip them.
+2026-07-25 08:19:13 +0000 [MT] Skipping stripping extended attributes because the codesign step will strip them.
+2026-07-25 08:19:13 +0000 [MT] Processing step: IDEDistributionCodesignStep
+2026-07-25 08:19:13 +0000 [MT] Entitlements for <IDEDistributionItem: 0x118495bc0; bundleID='org.cocoapods.Alamofire', path='<DVTFilePath:0x11bc0f640:'/Users/matsumoto/Work/src/wecats-pos/build/wecatspos.xcarchive/Products/Applications/wecatspos.app/Frameworks/Alamofire.framework'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x11bc78220; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x11bf10f10; name='Apple Distribution: Kouji Yoshimura (5UX42Y3VW8)', hash='23844DCF0789884AD89B3A4B6954A2DF2C558D14', serialNumber='7C19497E24BC704388C99C1442C3D625', certificateKinds='(
+    "1.2.840.113635.100.6.1.7",
+    "1.2.840.113635.100.6.1.4"
+), issueDate='2025-08-08 05:22:20 +0000''>', entitlements='(null)', teamID='5UX42Y3VW8', identifier='org.cocoapods.Alamofire', executablePath='<DVTFilePath:0x11bc10650:'/Users/matsumoto/Work/src/wecats-pos/build/wecatspos.xcarchive/Products/Applications/wecatspos.app/Frameworks/Alamofire.framework/Alamofire'>', hardenedRuntime='0'>'>: {
+}
+2026-07-25 08:19:13 +0000 [MT] Associated App Clip Identifiers Filter: Skipping because "com.apple.developer.associated-appclip-app-identifiers" is not present
+2026-07-25 08:19:13 +0000 [MT] Entitlements for <IDEDistributionItem: 0x118495bc0; bundleID='org.cocoapods.Alamofire', path='<DVTFilePath:0x11bc0f640:'/Users/matsumoto/Work/src/wecats-pos/build/wecatspos.xcarchive/Products/Applications/wecatspos.app/Frameworks/Alamofire.framework'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x11bc78220; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x11bf6ef30; name='Apple Distribution: Kouji Yoshimura (5UX42Y3VW8)', hash='23844DCF0789884AD89B3A4B6954A2DF2C558D14', serialNumber='7C19497E24BC704388C99C1442C3D625', certificateKinds='(
+    "1.2.840.113635.100.6.1.7",
+    "1.2.840.113635.100.6.1.4"
+), issueDate='2025-08-08 05:22:20 +0000''>', entitlements='(null)', teamID='5UX42Y3VW8', identifier='org.cocoapods.Alamofire', executablePath='<DVTFilePath:0x11bc10650:'/Users/matsumoto/Work/src/wecats-pos/build/wecatspos.xcarchive/Products/Applications/wecatspos.app/Frameworks/Alamofire.framework/Alamofire'>', hardenedRuntime='0'>'> are: {
+}
+2026-07-25 08:19:13 +0000 [MT] Writing entitlements for <IDEDistributionItem: 0x118495bc0; bundleID='org.cocoapods.Alamofire', path='<DVTFilePath:0x11bc0f640:'/Users/matsumoto/Work/src/wecats-pos/build/wecatspos.xcarchive/Products/Applications/wecatspos.app/Frameworks/Alamofire.framework'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x11bc78220; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x11bf6ef30; name='Apple Distribution: Kouji Yoshimura (5UX42Y3VW8)', hash='23844DCF0789884AD89B3A4B6954A2DF2C558D14', serialNumber='7C19497E24BC704388C99C1442C3D625', certificateKinds='(
+    "1.2.840.113635.100.6.1.7",
+    "1.2.840.113635.100.6.1.4"
+), issueDate='2025-08-08 05:22:20 +0000''>', entitlements='(null)', teamID='5UX42Y3VW8', identifier='org.cocoapods.Alamofire', executablePath='<DVTFilePath:0x11bc10650:'/Users/matsumoto/Work/src/wecats-pos/build/wecatspos.xcarchive/Products/Applications/wecatspos.app/Frameworks/Alamofire.framework/Alamofire'>', hardenedRuntime='0'>'> to: /var/folders/tf/48ysslz95q146yxwxd248jt00000gn/T/XcodeDistPipeline.~~~7JrJFc/entitlements~~~ONqyuo
+2026-07-25 08:19:13 +0000 [MT] invoking codesign: <NSConcreteTask: 0x11bff3a00; launchPath='/usr/bin/codesign', arguments='(
+    "-f",
+    "-s",
+    23844DCF0789884AD89B3A4B6954A2DF2C558D14,
+    "--entitlements",
+    "/var/folders/tf/48ysslz95q146yxwxd248jt00000gn/T/XcodeDistPipeline.~~~7JrJFc/entitlements~~~ONqyuo",
+    "--preserve-metadata=identifier,flags,runtime,launch-constraints,library-constraints",
+    "--generate-entitlement-der",
+    "--strip-disallowed-xattrs",
+    "-vvv",
+    "/var/folders/tf/48ysslz95q146yxwxd248jt00000gn/T/XcodeDistPipeline.~~~7JrJFc/Root/Payload/wecatspos.app/Frameworks/Alamofire.framework"
+)'>
+2026-07-25 08:19:13 +0000 [MT] codesign output: /var/folders/tf/48ysslz95q146yxwxd248jt00000gn/T/XcodeDistPipeline.~~~7JrJFc/Root/Payload/wecatspos.app/Frameworks/Alamofire.framework: replacing existing signature
+/var/folders/tf/48ysslz95q146yxwxd248jt00000gn/T/XcodeDistPipeline.~~~7JrJFc/Root/Payload/wecatspos.app/Frameworks/Alamofire.framework: signed bundle with Mach-O thin (arm64) [org.cocoapods.Alamofire]
+2026-07-25 08:19:13 +0000 [MT] Entitlements for <IDEDistributionItem: 0x11bc78a70; bundleID='org.cocoapods.HolidayJp', path='<DVTFilePath:0x11bc0a860:'/Users/matsumoto/Work/src/wecats-pos/build/wecatspos.xcarchive/Products/Applications/wecatspos.app/Frameworks/HolidayJp.framework'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x11855e110; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x11bcc73f0; name='Apple Distribution: Kouji Yoshimura (5UX42Y3VW8)', hash='23844DCF0789884AD89B3A4B6954A2DF2C558D14', serialNumber='7C19497E24BC704388C99C1442C3D625', certificateKinds='(
+    "1.2.840.113635.100.6.1.7",
+    "1.2.840.113635.100.6.1.4"
+), issueDate='2025-08-08 05:22:20 +0000''>', entitlements='(null)', teamID='5UX42Y3VW8', identifier='org.cocoapods.HolidayJp', executablePath='<DVTFilePath:0x11bc09a90:'/Users/matsumoto/Work/src/wecats-pos/build/wecatspos.xcarchive/Products/Applications/wecatspos.app/Frameworks/HolidayJp.framework/HolidayJp'>', hardenedRuntime='0'>'>: {
+}
+2026-07-25 08:19:13 +0000 [MT] Associated App Clip Identifiers Filter: Skipping because "com.apple.developer.associated-appclip-app-identifiers" is not present
+2026-07-25 08:19:13 +0000 [MT] Entitlements for <IDEDistributionItem: 0x11bc78a70; bundleID='org.cocoapods.HolidayJp', path='<DVTFilePath:0x11bc0a860:'/Users/matsumoto/Work/src/wecats-pos/build/wecatspos.xcarchive/Products/Applications/wecatspos.app/Frameworks/HolidayJp.framework'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x11855e110; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x11bcc7e40; name='Apple Distribution: Kouji Yoshimura (5UX42Y3VW8)', hash='23844DCF0789884AD89B3A4B6954A2DF2C558D14', serialNumber='7C19497E24BC704388C99C1442C3D625', certificateKinds='(
+    "1.2.840.113635.100.6.1.7",
+    "1.2.840.113635.100.6.1.4"
+), issueDate='2025-08-08 05:22:20 +0000''>', entitlements='(null)', teamID='5UX42Y3VW8', identifier='org.cocoapods.HolidayJp', executablePath='<DVTFilePath:0x11bc09a90:'/Users/matsumoto/Work/src/wecats-pos/build/wecatspos.xcarchive/Products/Applications/wecatspos.app/Frameworks/HolidayJp.framework/HolidayJp'>', hardenedRuntime='0'>'> are: {
+}
+2026-07-25 08:19:13 +0000 [MT] Writing entitlements for <IDEDistributionItem: 0x11bc78a70; bundleID='org.cocoapods.HolidayJp', path='<DVTFilePath:0x11bc0a860:'/Users/matsumoto/Work/src/wecats-pos/build/wecatspos.xcarchive/Products/Applications/wecatspos.app/Frameworks/HolidayJp.framework'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x11855e110; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x11bcc7e40; name='Apple Distribution: Kouji Yoshimura (5UX42Y3VW8)', hash='23844DCF0789884AD89B3A4B6954A2DF2C558D14', serialNumber='7C19497E24BC704388C99C1442C3D625', certificateKinds='(
+    "1.2.840.113635.100.6.1.7",
+    "1.2.840.113635.100.6.1.4"
+), issueDate='2025-08-08 05:22:20 +0000''>', entitlements='(null)', teamID='5UX42Y3VW8', identifier='org.cocoapods.HolidayJp', executablePath='<DVTFilePath:0x11bc09a90:'/Users/matsumoto/Work/src/wecats-pos/build/wecatspos.xcarchive/Products/Applications/wecatspos.app/Frameworks/HolidayJp.framework/HolidayJp'>', hardenedRuntime='0'>'> to: /var/folders/tf/48ysslz95q146yxwxd248jt00000gn/T/XcodeDistPipeline.~~~7JrJFc/entitlements~~~fF4bQc
+2026-07-25 08:19:13 +0000 [MT] invoking codesign: <NSConcreteTask: 0x11bf9fd10; launchPath='/usr/bin/codesign', arguments='(
+    "-f",
+    "-s",
+    23844DCF0789884AD89B3A4B6954A2DF2C558D14,
+    "--entitlements",
+    "/var/folders/tf/48ysslz95q146yxwxd248jt00000gn/T/XcodeDistPipeline.~~~7JrJFc/entitlements~~~fF4bQc",
+    "--preserve-metadata=identifier,flags,runtime,launch-constraints,library-constraints",
+    "--generate-entitlement-der",
+    "--strip-disallowed-xattrs",
+    "-vvv",
+    "/var/folders/tf/48ysslz95q146yxwxd248jt00000gn/T/XcodeDistPipeline.~~~7JrJFc/Root/Payload/wecatspos.app/Frameworks/HolidayJp.framework"
+)'>
+2026-07-25 08:19:13 +0000 [MT] codesign output: /var/folders/tf/48ysslz95q146yxwxd248jt00000gn/T/XcodeDistPipeline.~~~7JrJFc/Root/Payload/wecatspos.app/Frameworks/HolidayJp.framework: replacing existing signature
+/var/folders/tf/48ysslz95q146yxwxd248jt00000gn/T/XcodeDistPipeline.~~~7JrJFc/Root/Payload/wecatspos.app/Frameworks/HolidayJp.framework: signed bundle with Mach-O thin (arm64) [org.cocoapods.HolidayJp]
+2026-07-25 08:19:13 +0000 [MT] Entitlements for <IDEDistributionItem: 0x1184a74d0; bundleID='org.cocoapods.Moya', path='<DVTFilePath:0x11bc072e0:'/Users/matsumoto/Work/src/wecats-pos/build/wecatspos.xcarchive/Products/Applications/wecatspos.app/Frameworks/Moya.framework'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x1184a5ed0; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x11bf6eff0; name='Apple Distribution: Kouji Yoshimura (5UX42Y3VW8)', hash='23844DCF0789884AD89B3A4B6954A2DF2C558D14', serialNumber='7C19497E24BC704388C99C1442C3D625', certificateKinds='(
+    "1.2.840.113635.100.6.1.7",
+    "1.2.840.113635.100.6.1.4"
+), issueDate='2025-08-08 05:22:20 +0000''>', entitlements='(null)', teamID='5UX42Y3VW8', identifier='org.cocoapods.Moya', executablePath='<DVTFilePath:0x11bc0d3c0:'/Users/matsumoto/Work/src/wecats-pos/build/wecatspos.xcarchive/Products/Applications/wecatspos.app/Frameworks/Moya.framework/Moya'>', hardenedRuntime='0'>'>: {
+}
+2026-07-25 08:19:13 +0000 [MT] Associated App Clip Identifiers Filter: Skipping because "com.apple.developer.associated-appclip-app-identifiers" is not present
+2026-07-25 08:19:13 +0000 [MT] Entitlements for <IDEDistributionItem: 0x1184a74d0; bundleID='org.cocoapods.Moya', path='<DVTFilePath:0x11bc072e0:'/Users/matsumoto/Work/src/wecats-pos/build/wecatspos.xcarchive/Products/Applications/wecatspos.app/Frameworks/Moya.framework'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x1184a5ed0; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x11bffbb50; name='Apple Distribution: Kouji Yoshimura (5UX42Y3VW8)', hash='23844DCF0789884AD89B3A4B6954A2DF2C558D14', serialNumber='7C19497E24BC704388C99C1442C3D625', certificateKinds='(
+    "1.2.840.113635.100.6.1.7",
+    "1.2.840.113635.100.6.1.4"
+), issueDate='2025-08-08 05:22:20 +0000''>', entitlements='(null)', teamID='5UX42Y3VW8', identifier='org.cocoapods.Moya', executablePath='<DVTFilePath:0x11bc0d3c0:'/Users/matsumoto/Work/src/wecats-pos/build/wecatspos.xcarchive/Products/Applications/wecatspos.app/Frameworks/Moya.framework/Moya'>', hardenedRuntime='0'>'> are: {
+}
+2026-07-25 08:19:13 +0000 [MT] Writing entitlements for <IDEDistributionItem: 0x1184a74d0; bundleID='org.cocoapods.Moya', path='<DVTFilePath:0x11bc072e0:'/Users/matsumoto/Work/src/wecats-pos/build/wecatspos.xcarchive/Products/Applications/wecatspos.app/Frameworks/Moya.framework'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x1184a5ed0; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x11bffbb50; name='Apple Distribution: Kouji Yoshimura (5UX42Y3VW8)', hash='23844DCF0789884AD89B3A4B6954A2DF2C558D14', serialNumber='7C19497E24BC704388C99C1442C3D625', certificateKinds='(
+    "1.2.840.113635.100.6.1.7",
+    "1.2.840.113635.100.6.1.4"
+), issueDate='2025-08-08 05:22:20 +0000''>', entitlements='(null)', teamID='5UX42Y3VW8', identifier='org.cocoapods.Moya', executablePath='<DVTFilePath:0x11bc0d3c0:'/Users/matsumoto/Work/src/wecats-pos/build/wecatspos.xcarchive/Products/Applications/wecatspos.app/Frameworks/Moya.framework/Moya'>', hardenedRuntime='0'>'> to: /var/folders/tf/48ysslz95q146yxwxd248jt00000gn/T/XcodeDistPipeline.~~~7JrJFc/entitlements~~~jhHnnM
+2026-07-25 08:19:13 +0000 [MT] invoking codesign: <NSConcreteTask: 0x11bf9ce90; launchPath='/usr/bin/codesign', arguments='(
+    "-f",
+    "-s",
+    23844DCF0789884AD89B3A4B6954A2DF2C558D14,
+    "--entitlements",
+    "/var/folders/tf/48ysslz95q146yxwxd248jt00000gn/T/XcodeDistPipeline.~~~7JrJFc/entitlements~~~jhHnnM",
+    "--preserve-metadata=identifier,flags,runtime,launch-constraints,library-constraints",
+    "--generate-entitlement-der",
+    "--strip-disallowed-xattrs",
+    "-vvv",
+    "/var/folders/tf/48ysslz95q146yxwxd248jt00000gn/T/XcodeDistPipeline.~~~7JrJFc/Root/Payload/wecatspos.app/Frameworks/Moya.framework"
+)'>
+2026-07-25 08:19:13 +0000 [MT] codesign output: /var/folders/tf/48ysslz95q146yxwxd248jt00000gn/T/XcodeDistPipeline.~~~7JrJFc/Root/Payload/wecatspos.app/Frameworks/Moya.framework: replacing existing signature
+/var/folders/tf/48ysslz95q146yxwxd248jt00000gn/T/XcodeDistPipeline.~~~7JrJFc/Root/Payload/wecatspos.app/Frameworks/Moya.framework: signed bundle with Mach-O thin (arm64) [org.cocoapods.Moya]
+2026-07-25 08:19:13 +0000 [MT] Entitlements for <IDEDistributionItem: 0x1184a4810; bundleID='org.cocoapods.Rswift', path='<DVTFilePath:0x11bc13f20:'/Users/matsumoto/Work/src/wecats-pos/build/wecatspos.xcarchive/Products/Applications/wecatspos.app/Frameworks/Rswift.framework'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x11bc80610; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x11bff3880; name='Apple Distribution: Kouji Yoshimura (5UX42Y3VW8)', hash='23844DCF0789884AD89B3A4B6954A2DF2C558D14', serialNumber='7C19497E24BC704388C99C1442C3D625', certificateKinds='(
+    "1.2.840.113635.100.6.1.7",
+    "1.2.840.113635.100.6.1.4"
+), issueDate='2025-08-08 05:22:20 +0000''>', entitlements='(null)', teamID='5UX42Y3VW8', identifier='org.cocoapods.Rswift', executablePath='<DVTFilePath:0x11bc14160:'/Users/matsumoto/Work/src/wecats-pos/build/wecatspos.xcarchive/Products/Applications/wecatspos.app/Frameworks/Rswift.framework/Rswift'>', hardenedRuntime='0'>'>: {
+}
+2026-07-25 08:19:13 +0000 [MT] Associated App Clip Identifiers Filter: Skipping because "com.apple.developer.associated-appclip-app-identifiers" is not present
+2026-07-25 08:19:13 +0000 [MT] Entitlements for <IDEDistributionItem: 0x1184a4810; bundleID='org.cocoapods.Rswift', path='<DVTFilePath:0x11bc13f20:'/Users/matsumoto/Work/src/wecats-pos/build/wecatspos.xcarchive/Products/Applications/wecatspos.app/Frameworks/Rswift.framework'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x11bc80610; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x11bffbb50; name='Apple Distribution: Kouji Yoshimura (5UX42Y3VW8)', hash='23844DCF0789884AD89B3A4B6954A2DF2C558D14', serialNumber='7C19497E24BC704388C99C1442C3D625', certificateKinds='(
+    "1.2.840.113635.100.6.1.7",
+    "1.2.840.113635.100.6.1.4"
+), issueDate='2025-08-08 05:22:20 +0000''>', entitlements='(null)', teamID='5UX42Y3VW8', identifier='org.cocoapods.Rswift', executablePath='<DVTFilePath:0x11bc14160:'/Users/matsumoto/Work/src/wecats-pos/build/wecatspos.xcarchive/Products/Applications/wecatspos.app/Frameworks/Rswift.framework/Rswift'>', hardenedRuntime='0'>'> are: {
+}
+2026-07-25 08:19:13 +0000 [MT] Writing entitlements for <IDEDistributionItem: 0x1184a4810; bundleID='org.cocoapods.Rswift', path='<DVTFilePath:0x11bc13f20:'/Users/matsumoto/Work/src/wecats-pos/build/wecatspos.xcarchive/Products/Applications/wecatspos.app/Frameworks/Rswift.framework'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x11bc80610; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x11bffbb50; name='Apple Distribution: Kouji Yoshimura (5UX42Y3VW8)', hash='23844DCF0789884AD89B3A4B6954A2DF2C558D14', serialNumber='7C19497E24BC704388C99C1442C3D625', certificateKinds='(
+    "1.2.840.113635.100.6.1.7",
+    "1.2.840.113635.100.6.1.4"
+), issueDate='2025-08-08 05:22:20 +0000''>', entitlements='(null)', teamID='5UX42Y3VW8', identifier='org.cocoapods.Rswift', executablePath='<DVTFilePath:0x11bc14160:'/Users/matsumoto/Work/src/wecats-pos/build/wecatspos.xcarchive/Products/Applications/wecatspos.app/Frameworks/Rswift.framework/Rswift'>', hardenedRuntime='0'>'> to: /var/folders/tf/48ysslz95q146yxwxd248jt00000gn/T/XcodeDistPipeline.~~~7JrJFc/entitlements~~~ZcGHTi
+2026-07-25 08:19:13 +0000 [MT] invoking codesign: <NSConcreteTask: 0x11bf9cea0; launchPath='/usr/bin/codesign', arguments='(
+    "-f",
+    "-s",
+    23844DCF0789884AD89B3A4B6954A2DF2C558D14,
+    "--entitlements",
+    "/var/folders/tf/48ysslz95q146yxwxd248jt00000gn/T/XcodeDistPipeline.~~~7JrJFc/entitlements~~~ZcGHTi",
+    "--preserve-metadata=identifier,flags,runtime,launch-constraints,library-constraints",
+    "--generate-entitlement-der",
+    "--strip-disallowed-xattrs",
+    "-vvv",
+    "/var/folders/tf/48ysslz95q146yxwxd248jt00000gn/T/XcodeDistPipeline.~~~7JrJFc/Root/Payload/wecatspos.app/Frameworks/Rswift.framework"
+)'>
+2026-07-25 08:19:13 +0000 [MT] codesign output: /var/folders/tf/48ysslz95q146yxwxd248jt00000gn/T/XcodeDistPipeline.~~~7JrJFc/Root/Payload/wecatspos.app/Frameworks/Rswift.framework: replacing existing signature
+/var/folders/tf/48ysslz95q146yxwxd248jt00000gn/T/XcodeDistPipeline.~~~7JrJFc/Root/Payload/wecatspos.app/Frameworks/Rswift.framework: signed bundle with Mach-O thin (arm64) [org.cocoapods.Rswift]
+2026-07-25 08:19:13 +0000 [MT] Entitlements for <IDEDistributionItem: 0x11bc79e10; bundleID='org.cocoapods.RxSwift', path='<DVTFilePath:0x11bc16e40:'/Users/matsumoto/Work/src/wecats-pos/build/wecatspos.xcarchive/Products/Applications/wecatspos.app/Frameworks/RxSwift.framework'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x11856c460; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x11bf6efd0; name='Apple Distribution: Kouji Yoshimura (5UX42Y3VW8)', hash='23844DCF0789884AD89B3A4B6954A2DF2C558D14', serialNumber='7C19497E24BC704388C99C1442C3D625', certificateKinds='(
+    "1.2.840.113635.100.6.1.7",
+    "1.2.840.113635.100.6.1.4"
+), issueDate='2025-08-08 05:22:20 +0000''>', entitlements='(null)', teamID='5UX42Y3VW8', identifier='org.cocoapods.RxSwift', executablePath='<DVTFilePath:0x11bc17e50:'/Users/matsumoto/Work/src/wecats-pos/build/wecatspos.xcarchive/Products/Applications/wecatspos.app/Frameworks/RxSwift.framework/RxSwift'>', hardenedRuntime='0'>'>: {
+}
+2026-07-25 08:19:13 +0000 [MT] Associated App Clip Identifiers Filter: Skipping because "com.apple.developer.associated-appclip-app-identifiers" is not present
+2026-07-25 08:19:13 +0000 [MT] Entitlements for <IDEDistributionItem: 0x11bc79e10; bundleID='org.cocoapods.RxSwift', path='<DVTFilePath:0x11bc16e40:'/Users/matsumoto/Work/src/wecats-pos/build/wecatspos.xcarchive/Products/Applications/wecatspos.app/Frameworks/RxSwift.framework'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x11856c460; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x11bffbb50; name='Apple Distribution: Kouji Yoshimura (5UX42Y3VW8)', hash='23844DCF0789884AD89B3A4B6954A2DF2C558D14', serialNumber='7C19497E24BC704388C99C1442C3D625', certificateKinds='(
+    "1.2.840.113635.100.6.1.7",
+    "1.2.840.113635.100.6.1.4"
+), issueDate='2025-08-08 05:22:20 +0000''>', entitlements='(null)', teamID='5UX42Y3VW8', identifier='org.cocoapods.RxSwift', executablePath='<DVTFilePath:0x11bc17e50:'/Users/matsumoto/Work/src/wecats-pos/build/wecatspos.xcarchive/Products/Applications/wecatspos.app/Frameworks/RxSwift.framework/RxSwift'>', hardenedRuntime='0'>'> are: {
+}
+2026-07-25 08:19:13 +0000 [MT] Writing entitlements for <IDEDistributionItem: 0x11bc79e10; bundleID='org.cocoapods.RxSwift', path='<DVTFilePath:0x11bc16e40:'/Users/matsumoto/Work/src/wecats-pos/build/wecatspos.xcarchive/Products/Applications/wecatspos.app/Frameworks/RxSwift.framework'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x11856c460; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x11bffbb50; name='Apple Distribution: Kouji Yoshimura (5UX42Y3VW8)', hash='23844DCF0789884AD89B3A4B6954A2DF2C558D14', serialNumber='7C19497E24BC704388C99C1442C3D625', certificateKinds='(
+    "1.2.840.113635.100.6.1.7",
+    "1.2.840.113635.100.6.1.4"
+), issueDate='2025-08-08 05:22:20 +0000''>', entitlements='(null)', teamID='5UX42Y3VW8', identifier='org.cocoapods.RxSwift', executablePath='<DVTFilePath:0x11bc17e50:'/Users/matsumoto/Work/src/wecats-pos/build/wecatspos.xcarchive/Products/Applications/wecatspos.app/Frameworks/RxSwift.framework/RxSwift'>', hardenedRuntime='0'>'> to: /var/folders/tf/48ysslz95q146yxwxd248jt00000gn/T/XcodeDistPipeline.~~~7JrJFc/entitlements~~~BZQDnX
+2026-07-25 08:19:13 +0000 [MT] invoking codesign: <NSConcreteTask: 0x11bfed210; launchPath='/usr/bin/codesign', arguments='(
+    "-f",
+    "-s",
+    23844DCF0789884AD89B3A4B6954A2DF2C558D14,
+    "--entitlements",
+    "/var/folders/tf/48ysslz95q146yxwxd248jt00000gn/T/XcodeDistPipeline.~~~7JrJFc/entitlements~~~BZQDnX",
+    "--preserve-metadata=identifier,flags,runtime,launch-constraints,library-constraints",
+    "--generate-entitlement-der",
+    "--strip-disallowed-xattrs",
+    "-vvv",
+    "/var/folders/tf/48ysslz95q146yxwxd248jt00000gn/T/XcodeDistPipeline.~~~7JrJFc/Root/Payload/wecatspos.app/Frameworks/RxSwift.framework"
+)'>
+2026-07-25 08:19:13 +0000 [MT] codesign output: /var/folders/tf/48ysslz95q146yxwxd248jt00000gn/T/XcodeDistPipeline.~~~7JrJFc/Root/Payload/wecatspos.app/Frameworks/RxSwift.framework: replacing existing signature
+/var/folders/tf/48ysslz95q146yxwxd248jt00000gn/T/XcodeDistPipeline.~~~7JrJFc/Root/Payload/wecatspos.app/Frameworks/RxSwift.framework: signed bundle with Mach-O thin (arm64) [org.cocoapods.RxSwift]
+2026-07-25 08:19:13 +0000 [MT] Entitlements for <IDEDistributionItem: 0x117f89610; bundleID='jp.co.yas.wecats.pos', path='<DVTFilePath:0x116de2330:'/Users/matsumoto/Work/src/wecats-pos/build/wecatspos.xcarchive/Products/Applications/wecatspos.app'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x11857e190; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x11bfed4a0; name='Apple Distribution: Kouji Yoshimura (5UX42Y3VW8)', hash='23844DCF0789884AD89B3A4B6954A2DF2C558D14', serialNumber='7C19497E24BC704388C99C1442C3D625', certificateKinds='(
+    "1.2.840.113635.100.6.1.7",
+    "1.2.840.113635.100.6.1.4"
+), issueDate='2025-08-08 05:22:20 +0000''>', entitlements='{
+    "application-identifier" = "5UX42Y3VW8.jp.co.yas.wecats.pos";
+    "com.apple.developer.team-identifier" = 5UX42Y3VW8;
+    "get-task-allow" = 0;
+}', teamID='5UX42Y3VW8', identifier='jp.co.yas.wecats.pos', executablePath='<DVTFilePath:0x11bc054a0:'/Users/matsumoto/Work/src/wecats-pos/build/wecatspos.xcarchive/Products/Applications/wecatspos.app/wecatspos'>', hardenedRuntime='0'>'>: {
+    "application-identifier" = "5UX42Y3VW8.jp.co.yas.wecats.pos";
+    "com.apple.developer.team-identifier" = 5UX42Y3VW8;
+    "get-task-allow" = 0;
+}
+2026-07-25 08:19:13 +0000 [MT] Associated App Clip Identifiers Filter: Skipping because "com.apple.developer.associated-appclip-app-identifiers" is not present
+2026-07-25 08:19:13 +0000 [MT] Entitlements for <IDEDistributionItem: 0x117f89610; bundleID='jp.co.yas.wecats.pos', path='<DVTFilePath:0x116de2330:'/Users/matsumoto/Work/src/wecats-pos/build/wecatspos.xcarchive/Products/Applications/wecatspos.app'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x11857e190; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x11bfeb7c0; name='Apple Distribution: Kouji Yoshimura (5UX42Y3VW8)', hash='23844DCF0789884AD89B3A4B6954A2DF2C558D14', serialNumber='7C19497E24BC704388C99C1442C3D625', certificateKinds='(
+    "1.2.840.113635.100.6.1.7",
+    "1.2.840.113635.100.6.1.4"
+), issueDate='2025-08-08 05:22:20 +0000''>', entitlements='{
+    "application-identifier" = "5UX42Y3VW8.jp.co.yas.wecats.pos";
+    "com.apple.developer.team-identifier" = 5UX42Y3VW8;
+    "get-task-allow" = 0;
+}', teamID='5UX42Y3VW8', identifier='jp.co.yas.wecats.pos', executablePath='<DVTFilePath:0x11bc054a0:'/Users/matsumoto/Work/src/wecats-pos/build/wecatspos.xcarchive/Products/Applications/wecatspos.app/wecatspos'>', hardenedRuntime='0'>'> are: {
+    "application-identifier" = "5UX42Y3VW8.jp.co.yas.wecats.pos";
+    "com.apple.developer.team-identifier" = 5UX42Y3VW8;
+    "get-task-allow" = 0;
+}
+2026-07-25 08:19:13 +0000 [MT] Writing entitlements for <IDEDistributionItem: 0x117f89610; bundleID='jp.co.yas.wecats.pos', path='<DVTFilePath:0x116de2330:'/Users/matsumoto/Work/src/wecats-pos/build/wecatspos.xcarchive/Products/Applications/wecatspos.app'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x11857e190; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x11bfeb7c0; name='Apple Distribution: Kouji Yoshimura (5UX42Y3VW8)', hash='23844DCF0789884AD89B3A4B6954A2DF2C558D14', serialNumber='7C19497E24BC704388C99C1442C3D625', certificateKinds='(
+    "1.2.840.113635.100.6.1.7",
+    "1.2.840.113635.100.6.1.4"
+), issueDate='2025-08-08 05:22:20 +0000''>', entitlements='{
+    "application-identifier" = "5UX42Y3VW8.jp.co.yas.wecats.pos";
+    "com.apple.developer.team-identifier" = 5UX42Y3VW8;
+    "get-task-allow" = 0;
+}', teamID='5UX42Y3VW8', identifier='jp.co.yas.wecats.pos', executablePath='<DVTFilePath:0x11bc054a0:'/Users/matsumoto/Work/src/wecats-pos/build/wecatspos.xcarchive/Products/Applications/wecatspos.app/wecatspos'>', hardenedRuntime='0'>'> to: /var/folders/tf/48ysslz95q146yxwxd248jt00000gn/T/XcodeDistPipeline.~~~7JrJFc/entitlements~~~Crti9M
+2026-07-25 08:19:13 +0000 [MT] invoking codesign: <NSConcreteTask: 0x11bfeb120; launchPath='/usr/bin/codesign', arguments='(
+    "-f",
+    "-s",
+    23844DCF0789884AD89B3A4B6954A2DF2C558D14,
+    "--entitlements",
+    "/var/folders/tf/48ysslz95q146yxwxd248jt00000gn/T/XcodeDistPipeline.~~~7JrJFc/entitlements~~~Crti9M",
+    "--preserve-metadata=identifier,flags,runtime,launch-constraints,library-constraints",
+    "--generate-entitlement-der",
+    "--strip-disallowed-xattrs",
+    "-vvv",
+    "/var/folders/tf/48ysslz95q146yxwxd248jt00000gn/T/XcodeDistPipeline.~~~7JrJFc/Root/Payload/wecatspos.app"
+)'>
+2026-07-25 08:19:14 +0000 [MT] codesign output: /var/folders/tf/48ysslz95q146yxwxd248jt00000gn/T/XcodeDistPipeline.~~~7JrJFc/Root/Payload/wecatspos.app: replacing existing signature
+/var/folders/tf/48ysslz95q146yxwxd248jt00000gn/T/XcodeDistPipeline.~~~7JrJFc/Root/Payload/wecatspos.app: signed app bundle with Mach-O thin (arm64) [jp.co.yas.wecats.pos]
+2026-07-25 08:19:14 +0000 [MT] Processing step: IDEDistributionZipODRItemStep
+2026-07-25 08:19:14 +0000 [MT] Skipping step: IDEDistributionZipODRItemStep because it said so
+2026-07-25 08:19:14 +0000 [MT] Skipping step: IDEDistributionZipODRItemStep because it said so
+2026-07-25 08:19:14 +0000 [MT] Skipping step: IDEDistributionZipODRItemStep because it said so
+2026-07-25 08:19:14 +0000 [MT] Skipping step: IDEDistributionZipODRItemStep because it said so
+2026-07-25 08:19:14 +0000 [MT] Skipping step: IDEDistributionZipODRItemStep because it said so
+2026-07-25 08:19:14 +0000 [MT] Skipping step: IDEDistributionZipODRItemStep because it said so
+2026-07-25 08:19:14 +0000 [MT] Processing step: IDEDistributionCreateIPAStep
+2026-07-25 08:19:14 +0000 [MT] Running /usr/bin/ditto '-V' '-c' '-k' '--norsrc' '/var/folders/tf/48ysslz95q146yxwxd248jt00000gn/T/XcodeDistPipeline.~~~7JrJFc/Root' '/var/folders/tf/48ysslz95q146yxwxd248jt00000gn/T/XcodeDistPipeline.~~~7JrJFc/Packages/wecatspos.ipa'
+2026-07-25 08:19:14 +0000  >>> Copying /var/folders/tf/48ysslz95q146yxwxd248jt00000gn/T/XcodeDistPipeline.~~~7JrJFc/Root 
+2026-07-25 08:19:14 +0000  copying file ./Payload/wecatspos.app/_CodeSignature/CodeResources ... 
+2026-07-25 08:19:14 +0000  8393 bytes for ./Payload/wecatspos.app/_CodeSignature/CodeResources
+2026-07-25 08:19:14 +0000  copying file ./Payload/wecatspos.app/wecatspos ... 
+2026-07-25 08:19:14 +0000  1391568 bytes for ./Payload/wecatspos.app/wecatspos
+2026-07-25 08:19:14 +0000  copying file ./Payload/wecatspos.app/AppIcon60x60@2x.png ... 
+2026-07-25 08:19:14 +0000  6321 bytes for ./Payload/wecatspos.app/AppIcon60x60@2x.png
+2026-07-25 08:19:14 +0000  copying file ./Payload/wecatspos.app/main.storyboardc/Info.plist ... 
+2026-07-25 08:19:14 +0000  115 bytes for ./Payload/wecatspos.app/main.storyboardc/Info.plist
+2026-07-25 08:19:14 +0000  copying file ./Payload/wecatspos.app/Assets.car ... 
+2026-07-25 08:19:14 +0000  1238776 bytes for ./Payload/wecatspos.app/Assets.car
+2026-07-25 08:19:14 +0000  copying file ./Payload/wecatspos.app/AppIcon76x76@2x~ipad.png ... 
+2026-07-25 08:19:14 +0000  8827 bytes for ./Payload/wecatspos.app/AppIcon76x76@2x~ipad.png
+2026-07-25 08:19:14 +0000  copying file ./Payload/wecatspos.app/Frameworks/HolidayJp.framework/_CodeSignature/CodeResources ... 
+2026-07-25 08:19:14 +0000  1798 bytes for ./Payload/wecatspos.app/Frameworks/HolidayJp.framework/_CodeSignature/CodeResources
+2026-07-25 08:19:14 +0000  copying file ./Payload/wecatspos.app/Frameworks/HolidayJp.framework/HolidayJp ... 
+2026-07-25 08:19:14 +0000  351728 bytes for ./Payload/wecatspos.app/Frameworks/HolidayJp.framework/HolidayJp
+2026-07-25 08:19:14 +0000  copying file ./Payload/wecatspos.app/Frameworks/HolidayJp.framework/Info.plist ... 
+2026-07-25 08:19:14 +0000  787 bytes for ./Payload/wecatspos.app/Frameworks/HolidayJp.framework/Info.plist
+2026-07-25 08:19:14 +0000  copying file ./Payload/wecatspos.app/Frameworks/Moya.framework/_CodeSignature/CodeResources ... 
+2026-07-25 08:19:14 +0000  1798 bytes for ./Payload/wecatspos.app/Frameworks/Moya.framework/_CodeSignature/CodeResources
+2026-07-25 08:19:14 +0000  copying file ./Payload/wecatspos.app/Frameworks/Moya.framework/Moya ... 
+2026-07-25 08:19:14 +0000  500352 bytes for ./Payload/wecatspos.app/Frameworks/Moya.framework/Moya
+2026-07-25 08:19:14 +0000  copying file ./Payload/wecatspos.app/Frameworks/Moya.framework/Info.plist ... 
+2026-07-25 08:19:14 +0000  778 bytes for ./Payload/wecatspos.app/Frameworks/Moya.framework/Info.plist
+2026-07-25 08:19:14 +0000  copying file ./Payload/wecatspos.app/Frameworks/Alamofire.framework/_CodeSignature/CodeResources ... 
+2026-07-25 08:19:14 +0000  2308 bytes for ./Payload/wecatspos.app/Frameworks/Alamofire.framework/_CodeSignature/CodeResources
+2026-07-25 08:19:14 +0000  copying file ./Payload/wecatspos.app/Frameworks/Alamofire.framework/Alamofire ... 
+2026-07-25 08:19:14 +0000  2831776 bytes for ./Payload/wecatspos.app/Frameworks/Alamofire.framework/Alamofire
+2026-07-25 08:19:14 +0000  copying file ./Payload/wecatspos.app/Frameworks/Alamofire.framework/Alamofire.bundle/PrivacyInfo.xcprivacy ... 
+2026-07-25 08:19:14 +0000  600 bytes for ./Payload/wecatspos.app/Frameworks/Alamofire.framework/Alamofire.bundle/PrivacyInfo.xcprivacy
+copying file ./Payload/wecatspos.app/Frameworks/Alamofire.framework/Alamofire.bundle/Info.plist ... 
+2026-07-25 08:19:14 +0000  763 bytes for ./Payload/wecatspos.app/Frameworks/Alamofire.framework/Alamofire.bundle/Info.plist
+2026-07-25 08:19:14 +0000  copying file ./Payload/wecatspos.app/Frameworks/Alamofire.framework/Info.plist ... 
+2026-07-25 08:19:14 +0000  788 bytes for ./Payload/wecatspos.app/Frameworks/Alamofire.framework/Info.plist
+2026-07-25 08:19:14 +0000  copying file ./Payload/wecatspos.app/Frameworks/Rswift.framework/Rswift ... 
+2026-07-25 08:19:14 +0000  214928 bytes for ./Payload/wecatspos.app/Frameworks/Rswift.framework/Rswift
+2026-07-25 08:19:14 +0000  copying file ./Payload/wecatspos.app/Frameworks/Rswift.framework/_CodeSignature/CodeResources ... 
+2026-07-25 08:19:14 +0000  1798 bytes for ./Payload/wecatspos.app/Frameworks/Rswift.framework/_CodeSignature/CodeResources
+2026-07-25 08:19:14 +0000  copying file ./Payload/wecatspos.app/Frameworks/Rswift.framework/Info.plist ... 
+2026-07-25 08:19:14 +0000  781 bytes for ./Payload/wecatspos.app/Frameworks/Rswift.framework/Info.plist
+2026-07-25 08:19:14 +0000  copying file ./Payload/wecatspos.app/Frameworks/RxSwift.framework/_CodeSignature/CodeResources ... 
+2026-07-25 08:19:14 +0000  2332 bytes for ./Payload/wecatspos.app/Frameworks/RxSwift.framework/_CodeSignature/CodeResources
+2026-07-25 08:19:14 +0000  copying file ./Payload/wecatspos.app/Frameworks/RxSwift.framework/RxSwift ... 
+2026-07-25 08:19:14 +0000  2121648 bytes for ./Payload/wecatspos.app/Frameworks/RxSwift.framework/RxSwift
+2026-07-25 08:19:14 +0000  copying file ./Payload/wecatspos.app/Frameworks/RxSwift.framework/RxSwift_Privacy.bundle/PrivacyInfo.xcprivacy ... 
+2026-07-25 08:19:14 +0000  372 bytes for ./Payload/wecatspos.app/Frameworks/RxSwift.framework/RxSwift_Privacy.bundle/PrivacyInfo.xcprivacy
+copying file ./Payload/wecatspos.app/Frameworks/RxSwift.framework/RxSwift_Privacy.bundle/Info.plist ... 
+2026-07-25 08:19:14 +0000  776 bytes for ./Payload/wecatspos.app/Frameworks/RxSwift.framework/RxSwift_Privacy.bundle/Info.plist
+2026-07-25 08:19:14 +0000  copying file ./Payload/wecatspos.app/Frameworks/RxSwift.framework/Info.plist ... 
+2026-07-25 08:19:14 +0000  783 bytes for ./Payload/wecatspos.app/Frameworks/RxSwift.framework/Info.plist
+2026-07-25 08:19:14 +0000  copying file ./Payload/wecatspos.app/embedded.mobileprovision ... 
+2026-07-25 08:19:14 +0000  12399 bytes for ./Payload/wecatspos.app/embedded.mobileprovision
+2026-07-25 08:19:14 +0000  copying file ./Payload/wecatspos.app/Info.plist ... 
+2026-07-25 08:19:14 +0000  1671 bytes for ./Payload/wecatspos.app/Info.plist
+2026-07-25 08:19:14 +0000  copying file ./Payload/wecatspos.app/PkgInfo ... 
+2026-07-25 08:19:14 +0000  8 bytes for ./Payload/wecatspos.app/PkgInfo
+2026-07-25 08:19:14 +0000 [MT] /usr/bin/ditto exited with 0
+2026-07-25 08:19:14 +0000 [MT] Processing step: IDEDistributionAppStoreInformationStep
+2026-07-25 08:19:14 +0000 [MT] Skipping step: IDEDistributionAppStoreInformationStep because it said so
+2026-07-25 08:19:14 +0000 [MT] Processing step: IDEDistributionGenerateProcessedDistributionItems
+2026-07-25 08:19:14 +0000 [MT] IDEDistributionItem init <DVTFilePath:0x11bcc5870:'/var/folders/tf/48ysslz95q146yxwxd248jt00000gn/T/XcodeDistPipeline.~~~7JrJFc/Root/Payload/wecatspos.app/Frameworks/Rswift.framework'>
+2026-07-25 08:19:14 +0000 [MT] IDEDistributionItem init <DVTFilePath:0x11bcc47e0:'/var/folders/tf/48ysslz95q146yxwxd248jt00000gn/T/XcodeDistPipeline.~~~7JrJFc/Root/Payload/wecatspos.app/Frameworks/HolidayJp.framework'>
+2026-07-25 08:19:14 +0000 [MT] IDEDistributionItem init <DVTFilePath:0x118566cf0:'/var/folders/tf/48ysslz95q146yxwxd248jt00000gn/T/XcodeDistPipeline.~~~7JrJFc/Root/Payload/wecatspos.app/Frameworks/Alamofire.framework'>
+2026-07-25 08:19:14 +0000 [MT] IDEDistributionItem init <DVTFilePath:0x11c05cc10:'/var/folders/tf/48ysslz95q146yxwxd248jt00000gn/T/XcodeDistPipeline.~~~7JrJFc/Root/Payload/wecatspos.app/Frameworks/RxSwift.framework'>
+2026-07-25 08:19:14 +0000 [MT] IDEDistributionItem init <DVTFilePath:0x11bcf4e00:'/var/folders/tf/48ysslz95q146yxwxd248jt00000gn/T/XcodeDistPipeline.~~~7JrJFc/Root/Payload/wecatspos.app/Frameworks/Moya.framework'>
+2026-07-25 08:19:14 +0000 [MT] IDEDistributionItem init <DVTFilePath:0x11bccf240:'/var/folders/tf/48ysslz95q146yxwxd248jt00000gn/T/XcodeDistPipeline.~~~7JrJFc/Root/Payload/wecatspos.app'>
+2026-07-25 08:19:14 +0000 [MT] Processing step: IDEDistributionCreateManifestStep

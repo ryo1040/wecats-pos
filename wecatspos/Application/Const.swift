@@ -7,6 +7,23 @@
 
 
 import Foundation
+import UIKit
+
+enum LayoutBreakpoint {
+    static let compactThreshold: CGFloat = 500
+
+    static var compactSideLength: CGFloat {
+        return min(UIScreen.main.bounds.width, UIScreen.main.bounds.height)
+    }
+
+    static func isCompact(sideLength: CGFloat) -> Bool {
+        return sideLength < compactThreshold
+    }
+
+    static var isCompactScreen: Bool {
+        return isCompact(sideLength: compactSideLength)
+    }
+}
 
 enum AppEnvironment {
     case production

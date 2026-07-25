@@ -25,7 +25,7 @@ public class MedicalHistoryView: UIView, UITableViewDelegate, UITableViewDataSou
     public init() {
         super.init(frame: .zero)
         
-        screenWidth = UIScreen.main.bounds.width
+        screenWidth = min(UIScreen.main.bounds.width, UIScreen.main.bounds.height)
         
         setupView()
     }
@@ -70,7 +70,7 @@ public class MedicalHistoryView: UIView, UITableViewDelegate, UITableViewDataSou
             summaryLabel.translatesAutoresizingMaskIntoConstraints = false
             
             // レスポンシブルデザイン対応
-            if screenWidth < 668 { // 小さい画面の場合
+            if LayoutBreakpoint.isCompact(sideLength: screenWidth) { // 小さい画面の場合
                 dateLabel.font = UIFont.systemFont(ofSize: 12)
                 summaryLabel.font = UIFont.systemFont(ofSize: 12)
             } else { // 通常の画面の場合
@@ -112,7 +112,7 @@ public class MedicalHistoryView: UIView, UITableViewDelegate, UITableViewDataSou
             summaryLabel.translatesAutoresizingMaskIntoConstraints = false
             
             // レスポンシブルデザイン対応
-            if screenWidth < 668 { // 小さい画面の場合
+            if LayoutBreakpoint.isCompact(sideLength: screenWidth) { // 小さい画面の場合
                 dateLabel.font = UIFont.boldSystemFont(ofSize: 12)
                 summaryLabel.font = UIFont.boldSystemFont(ofSize: 12)
             } else { // 通常の画面の場合
@@ -135,7 +135,7 @@ public class MedicalHistoryView: UIView, UITableViewDelegate, UITableViewDataSou
         
     public func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         // レスポンシブルデザイン対応
-        if screenWidth < 668 { // 小さい画面の場合
+        if LayoutBreakpoint.isCompact(sideLength: screenWidth) { // 小さい画面の場合
             return 20
         } else { // 通常の画面の場合
             return 40
@@ -144,7 +144,7 @@ public class MedicalHistoryView: UIView, UITableViewDelegate, UITableViewDataSou
     
     public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         // レスポンシブデザイン対応
-        if screenWidth < 668 { // 小さい画面の場合
+        if LayoutBreakpoint.isCompact(sideLength: screenWidth) { // 小さい画面の場合
             return 40
         } else { // 通常の画面の場合
             return 60
@@ -211,7 +211,7 @@ private extension MedicalHistoryView {
         addButton.translatesAutoresizingMaskIntoConstraints = false
         
         // レスポンシブルデザイン対応
-        if screenWidth < 668 { // 小さい画面の場合
+        if LayoutBreakpoint.isCompact(sideLength: screenWidth) { // 小さい画面の場合
             NSLayoutConstraint.activate([
                 tableView.topAnchor.constraint(equalTo: self.topAnchor, constant: 16),
                 tableView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -16),

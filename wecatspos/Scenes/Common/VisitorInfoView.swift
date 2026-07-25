@@ -39,7 +39,7 @@ public class VisitorInfoView: UIView {
     let submitButton = UIButton()
     let backButton = UIButton()
     
-    let screenWidth = UIScreen.main.bounds.width
+    let screenWidth = min(UIScreen.main.bounds.width, UIScreen.main.bounds.height)
     
     weak var delegate: VisitorInfoDelegate?
     
@@ -124,7 +124,7 @@ private extension VisitorInfoView {
         
         func setupLabel(_ label: UILabel, text: String = "") {
             label.text = text
-            if screenWidth < 668 {
+            if LayoutBreakpoint.isCompact(sideLength: screenWidth) {
                 label.font = UIFont.systemFont(ofSize: 16)
             } else {
                 label.font = UIFont.systemFont(ofSize: 32)
@@ -226,7 +226,7 @@ private extension VisitorInfoView {
 //        submitButton.translatesAutoresizingMaskIntoConstraints = false
         backButton.translatesAutoresizingMaskIntoConstraints = false
         
-        if screenWidth < 668 {
+        if LayoutBreakpoint.isCompact(sideLength: screenWidth) {
             NSLayoutConstraint.activate([
                 repeatTitleLabel.topAnchor.constraint(equalTo: self.safeAreaLayoutGuide.topAnchor, constant: 32),
                 repeatTitleLabel.leftAnchor.constraint(equalTo: self.safeAreaLayoutGuide.leftAnchor, constant: 32),

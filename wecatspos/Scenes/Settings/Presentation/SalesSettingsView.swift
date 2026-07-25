@@ -30,7 +30,7 @@ public class SalesSettingsView: UIView, UITableViewDelegate, UITableViewDataSour
     public init() {
         super.init(frame: .zero)
         
-        screenWidth = UIScreen.main.bounds.width
+        screenWidth = min(UIScreen.main.bounds.width, UIScreen.main.bounds.height)
         
         setupViews()
 //        presenter.load()
@@ -93,7 +93,7 @@ public class SalesSettingsView: UIView, UITableViewDelegate, UITableViewDataSour
         memoLabel.translatesAutoresizingMaskIntoConstraints = false
         
         // レスポンシブルデザイン対応
-        if screenWidth < 668 { // 小さい画面の場合
+        if LayoutBreakpoint.isCompact(sideLength: screenWidth) { // 小さい画面の場合
             nameLabel.font = UIFont.systemFont(ofSize: 12)
             priceLabel.font = UIFont.systemFont(ofSize: 12)
             orderByLabel.font = UIFont.systemFont(ofSize: 12)
@@ -160,7 +160,7 @@ public class SalesSettingsView: UIView, UITableViewDelegate, UITableViewDataSour
         memoLabel.translatesAutoresizingMaskIntoConstraints = false
                 
         // レスポンシブルデザイン対応
-        if screenWidth < 668 { // 小さい画面の場合
+        if LayoutBreakpoint.isCompact(sideLength: screenWidth) { // 小さい画面の場合
             nameLabel.font = UIFont.boldSystemFont(ofSize: 12)
             priceLabel.font = UIFont.boldSystemFont(ofSize: 12)
             orderByLabel.font = UIFont.boldSystemFont(ofSize: 12)
@@ -207,7 +207,7 @@ public class SalesSettingsView: UIView, UITableViewDelegate, UITableViewDataSour
     
     public func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         // レスポンシブルデザイン対応
-        if screenWidth < 668 { // 小さい画面の場合
+        if LayoutBreakpoint.isCompact(sideLength: screenWidth) { // 小さい画面の場合
             return 20
         } else { // 通常の画面の場合
             return 40
@@ -216,7 +216,7 @@ public class SalesSettingsView: UIView, UITableViewDelegate, UITableViewDataSour
     
     public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         // レスポンシブデザイン対応
-        if screenWidth < 668 { // 小さい画面の場合
+        if LayoutBreakpoint.isCompact(sideLength: screenWidth) { // 小さい画面の場合
             return 40
         } else { // 通常の画面の場合
             return 60
@@ -312,7 +312,7 @@ private extension SalesSettingsView {
         newButton.translatesAutoresizingMaskIntoConstraints = false
         
         // レスポンシブルデザイン対応
-        if screenWidth < 668 { // 小さい画面の場合
+        if LayoutBreakpoint.isCompact(sideLength: screenWidth) { // 小さい画面の場合
             newButton.titleLabel?.font = UIFont.systemFont(ofSize: 16)
             
             NSLayoutConstraint.activate([

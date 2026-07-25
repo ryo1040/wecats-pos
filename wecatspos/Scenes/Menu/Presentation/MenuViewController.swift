@@ -26,7 +26,7 @@ final class MenuViewController: UIViewController, MenuViewControllerProtocol {
     let careButton = UIButton()
     let settingsButton = UIButton()
     
-    let screenWidth = UIScreen.main.bounds.width
+    let screenWidth = min(UIScreen.main.bounds.width, UIScreen.main.bounds.height)
     
     public func inject(presenter: MenuPresenterProtocol) {
         self.presenter = presenter
@@ -56,7 +56,7 @@ private extension MenuViewController {
         
         func setupButton(_ button: UIButton, text: String = "") {
             button.backgroundColor = UIColor.white
-            if screenWidth < 668 {
+            if LayoutBreakpoint.isCompact(sideLength: screenWidth) {
                 button.titleLabel?.font = UIFont.systemFont(ofSize: 12)
                 button.layer.cornerRadius = 15
             } else {
@@ -66,7 +66,7 @@ private extension MenuViewController {
             button.layer.borderColor = UIColor.black.cgColor
             button.layer.borderWidth = 2.0
             button.setTitle(text, for: .normal)
-            if screenWidth < 668 {
+            if LayoutBreakpoint.isCompact(sideLength: screenWidth) {
                 button.titleLabel?.font = UIFont.systemFont(ofSize: 24)
                 button.layer.cornerRadius = 15
             } else {
@@ -125,7 +125,7 @@ private extension MenuViewController {
         mainStack.translatesAutoresizingMaskIntoConstraints = false
       
         // レスポンシブルデザイン対応
-        if screenWidth < 668 { // 小さい画面の場合
+        if LayoutBreakpoint.isCompact(sideLength: screenWidth) { // 小さい画面の場合
             row1Stack.spacing = 32
             row2Stack.spacing = 32
             mainStack.spacing = 32

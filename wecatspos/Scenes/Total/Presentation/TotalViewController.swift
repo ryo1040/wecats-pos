@@ -128,8 +128,8 @@ private extension TotalViewController {
         reservationNightView.translatesAutoresizingMaskIntoConstraints = false
         
         // レスポンシブルデザイン対応
-        let screenWidth = UIScreen.main.bounds.width
-        if screenWidth < 668 { // 小さい画面の場合
+        let screenWidth = min(UIScreen.main.bounds.width, UIScreen.main.bounds.height)
+        if LayoutBreakpoint.isCompact(sideLength: screenWidth) { // 小さい画面の場合
             dayTotalButton.titleLabel?.font = UIFont.systemFont(ofSize: 16)
             monthTotalButton.titleLabel?.font = UIFont.systemFont(ofSize: 16)
             

@@ -60,7 +60,7 @@ public class EditVisitorInfoView: UIView {
     let updateButton = UIButton()
     let backButton = UIButton()
     
-    let screenWidth = UIScreen.main.bounds.width
+    let screenWidth = min(UIScreen.main.bounds.width, UIScreen.main.bounds.height)
     
     weak var delegate: EditVisitorInfoDelegate?
     
@@ -182,7 +182,7 @@ private extension EditVisitorInfoView {
         func setupTextField(_ textField: UITextField, text: String = "") {
             textField.backgroundColor = UIColor.white
             textField.text = text
-            if screenWidth < 668 {
+            if LayoutBreakpoint.isCompact(sideLength: screenWidth) {
                 textField.font = UIFont.systemFont(ofSize: 16)
             } else {
                 textField.font = UIFont.systemFont(ofSize: 32)
@@ -198,7 +198,7 @@ private extension EditVisitorInfoView {
         
         func setupLabel(_ label: UILabel, text: String = "") {
             label.text = text
-            if screenWidth < 668 {
+            if LayoutBreakpoint.isCompact(sideLength: screenWidth) {
                 label.font = UIFont.systemFont(ofSize: 16)
             } else {
                 label.font = UIFont.systemFont(ofSize: 32)
@@ -366,7 +366,7 @@ private extension EditVisitorInfoView {
         updateButton.translatesAutoresizingMaskIntoConstraints = false
         backButton.translatesAutoresizingMaskIntoConstraints = false
         
-        if screenWidth < 668 { // 小さい画面の場合
+        if LayoutBreakpoint.isCompact(sideLength: screenWidth) { // 小さい画面の場合
             NSLayoutConstraint.activate([
                 scrollView.topAnchor.constraint(equalTo: self.safeAreaLayoutGuide.topAnchor),
                 scrollView.bottomAnchor.constraint(equalTo: self.safeAreaLayoutGuide.bottomAnchor),

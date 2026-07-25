@@ -270,8 +270,8 @@ private extension CatInfoView {
         catSalesPriceLabel.translatesAutoresizingMaskIntoConstraints = false
         
         // レスポンシブルデザイン対応
-        let screenWidth = UIScreen.main.bounds.width
-        if screenWidth < 668 { // 小さい画面の場合
+        let screenWidth = min(UIScreen.main.bounds.width, UIScreen.main.bounds.height)
+        if LayoutBreakpoint.isCompact(sideLength: screenWidth) { // 小さい画面の場合
             catSexTitleLabel.font = UIFont.systemFont(ofSize: 16)
             catSexLabel.font = UIFont.systemFont(ofSize: 16)
             catBreedTitleLabel.font = UIFont.systemFont(ofSize: 16)

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>method</key>
+    <string>ad-hoc</string>
+    <key>teamID</key>
+    <string>5UX42Y3VW8</string>
+    <key>provisioningProfiles</key>
+    <dict>
+        <key>jp.co.yas.wecats.pos</key>
+        <string>wecats pos adhoc</string>
+    </dict>
+    <key>signingStyle</key>
+    <string>manual</string>
+    <key>stripSwiftSymbols</key>
+    <true/>
+    <key>enableBitcode</key>
+    <false/>
+</dict>
+</plist>

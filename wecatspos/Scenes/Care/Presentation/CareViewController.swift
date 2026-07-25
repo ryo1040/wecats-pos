@@ -36,7 +36,7 @@ final class CareViewController: UIViewController, CareViewControllerProtocol {
     var activityIndicator: UIActivityIndicatorView!
     var overlayView: UIView!
     
-    let screenWidth = UIScreen.main.bounds.width
+    let screenWidth = min(UIScreen.main.bounds.width, UIScreen.main.bounds.height)
     
     private let disposeBag = DisposeBag()
     
@@ -67,7 +67,7 @@ private extension CareViewController {
         
         func setupButton(_ button: UIButton, text: String = "") {
             button.setTitle(text, for: .normal)
-            if screenWidth < 668 {
+            if LayoutBreakpoint.isCompact(sideLength: screenWidth) {
                 button.titleLabel?.font = UIFont.systemFont(ofSize: 12)
             } else {
                 button.titleLabel?.font = UIFont.systemFont(ofSize: 32)
@@ -120,7 +120,7 @@ private extension CareViewController {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         
         // レスポンシブルデザイン対応
-        if screenWidth < 668 { // 小さい画面の場合
+        if LayoutBreakpoint.isCompact(sideLength: screenWidth) { // 小さい画面の場合
             NSLayoutConstraint.activate([
                 titleView.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor),
                 titleView.leftAnchor.constraint(equalTo: self.view.leftAnchor),
@@ -308,7 +308,7 @@ extension CareViewController: UITableViewDelegate, UITableViewDataSource {
         memoLabel.translatesAutoresizingMaskIntoConstraints = false
         
         // レスポンシブルデザイン対応
-        if screenWidth < 668 { // 小さい画面の場合
+        if LayoutBreakpoint.isCompact(sideLength: screenWidth) { // 小さい画面の場合
             nameLabel.font = UIFont.systemFont(ofSize: 12)
             dateLabel.font = UIFont.systemFont(ofSize: 12)
             memoLabel.font = UIFont.systemFont(ofSize: 12)
@@ -361,7 +361,7 @@ extension CareViewController: UITableViewDelegate, UITableViewDataSource {
         memoLabel.translatesAutoresizingMaskIntoConstraints = false
 
         // レスポンシブルデザイン対応
-        if screenWidth < 668 { // 小さい画面の場合
+        if LayoutBreakpoint.isCompact(sideLength: screenWidth) { // 小さい画面の場合
             catLabel.font = UIFont.boldSystemFont(ofSize: 12)
             dateLabel.font = UIFont.boldSystemFont(ofSize: 12)
             memoLabel.font = UIFont.boldSystemFont(ofSize: 12)
@@ -388,7 +388,7 @@ extension CareViewController: UITableViewDelegate, UITableViewDataSource {
     
     public func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         // レスポンシブルデザイン対応
-        if screenWidth < 668 { // 小さい画面の場合
+        if LayoutBreakpoint.isCompact(sideLength: screenWidth) { // 小さい画面の場合
             return 20
         } else { // 通常の画面の場合
             return 40
@@ -397,7 +397,7 @@ extension CareViewController: UITableViewDelegate, UITableViewDataSource {
     
     public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         // レスポンシブデザイン対応
-        if screenWidth < 668 { // 小さい画面の場合
+        if LayoutBreakpoint.isCompact(sideLength: screenWidth) { // 小さい画面の場合
             return 40
         } else { // 通常の画面の場合
             return 60
@@ -497,7 +497,7 @@ private extension CareViewController {
             textField.clearButtonMode = .whileEditing
             
             // レスポンシブルデザイン対応
-            if self.screenWidth < 668 {
+            if LayoutBreakpoint.isCompact(sideLength: self.screenWidth) {
                 textField.font = UIFont.systemFont(ofSize: 14)
             } else {
                 textField.font = UIFont.systemFont(ofSize: 16)

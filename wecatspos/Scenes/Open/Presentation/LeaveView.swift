@@ -59,7 +59,7 @@ public class LeaveView: UIView {
     var childCount: Int = 0
     var memo: String = ""
     
-    let screenWidth = UIScreen.main.bounds.width
+    let screenWidth = min(UIScreen.main.bounds.width, UIScreen.main.bounds.height)
     
     weak var delegate: LeaveDelegate?
     
@@ -166,7 +166,7 @@ private extension LeaveView {
         func setupTextField(_ textField: UITextField, text: String = "") {
             textField.backgroundColor = UIColor.white
             textField.text = text
-            if screenWidth < 668 {
+            if LayoutBreakpoint.isCompact(sideLength: screenWidth) {
                 textField.font = UIFont.systemFont(ofSize: 12)
             } else {
                 textField.font = UIFont.systemFont(ofSize: 32)
@@ -182,7 +182,7 @@ private extension LeaveView {
         
         func setupLabel(_ label: UILabel, text: String = "") {
             label.text = text
-            if screenWidth < 668 {
+            if LayoutBreakpoint.isCompact(sideLength: screenWidth) {
                 label.font = UIFont.systemFont(ofSize: 12)
             } else {
                 label.font = UIFont.systemFont(ofSize: 32)
@@ -193,7 +193,7 @@ private extension LeaveView {
         
         func setupButton(_ button: UIButton, text: String = "") {
             button.setTitle(text, for: .normal)
-            if screenWidth < 668 {
+            if LayoutBreakpoint.isCompact(sideLength: screenWidth) {
                 button.titleLabel?.font = UIFont.systemFont(ofSize: 12)
             } else {
                 button.titleLabel?.font = UIFont.systemFont(ofSize: 24)
@@ -308,7 +308,7 @@ private extension LeaveView {
         cancelButton.translatesAutoresizingMaskIntoConstraints = false
         
         // レスポンシブルデザイン対応
-        if screenWidth < 668 { // 小さい画面の場合
+        if LayoutBreakpoint.isCompact(sideLength: screenWidth) { // 小さい画面の場合
             NSLayoutConstraint.activate([
                 scrollView.topAnchor.constraint(equalTo: self.safeAreaLayoutGuide.topAnchor),
                 scrollView.bottomAnchor.constraint(equalTo: self.safeAreaLayoutGuide.bottomAnchor),

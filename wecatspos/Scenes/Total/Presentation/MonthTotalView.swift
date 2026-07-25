@@ -36,7 +36,7 @@ public class MonthTotalView: UIView, UITableViewDelegate, UITableViewDataSource 
     public init() {
         super.init(frame: .zero)
         
-        screenWidth = UIScreen.main.bounds.width
+        screenWidth = min(UIScreen.main.bounds.width, UIScreen.main.bounds.height)
         
         setupViews()
         
@@ -98,7 +98,7 @@ public class MonthTotalView: UIView, UITableViewDelegate, UITableViewDataSource 
         totalAmountLabel.translatesAutoresizingMaskIntoConstraints = false
         
         // レスポンシブルデザイン対応
-        if screenWidth < 668 { // 小さい画面の場合
+        if LayoutBreakpoint.isCompact(sideLength: screenWidth) { // 小さい画面の場合
             dateLabel.font = UIFont.systemFont(ofSize: 12)
             countLabel.font = UIFont.systemFont(ofSize: 12)
             totalAmountLabel.font = UIFont.systemFont(ofSize: 12)
@@ -152,7 +152,7 @@ public class MonthTotalView: UIView, UITableViewDelegate, UITableViewDataSource 
         totalAmountLabel.translatesAutoresizingMaskIntoConstraints = false
         
         // レスポンシブルデザイン対応
-        if screenWidth < 668 { // 小さい画面の場合
+        if LayoutBreakpoint.isCompact(sideLength: screenWidth) { // 小さい画面の場合
             dateLabel.font = UIFont.boldSystemFont(ofSize: 12)
             countLabel.font = UIFont.boldSystemFont(ofSize: 12)
             totalAmountLabel.font = UIFont.boldSystemFont(ofSize: 12)
@@ -179,7 +179,7 @@ public class MonthTotalView: UIView, UITableViewDelegate, UITableViewDataSource 
     
     public func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         // レスポンシブルデザイン対応
-        if screenWidth < 668 { // 小さい画面の場合
+        if LayoutBreakpoint.isCompact(sideLength: screenWidth) { // 小さい画面の場合
             return 20
         } else { // 通常の画面の場合
             return 40
@@ -188,7 +188,7 @@ public class MonthTotalView: UIView, UITableViewDelegate, UITableViewDataSource 
     
     public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         // レスポンシブデザイン対応
-        if screenWidth < 668 { // 小さい画面の場合
+        if LayoutBreakpoint.isCompact(sideLength: screenWidth) { // 小さい画面の場合
             return 40
         } else { // 通常の画面の場合
             return 60
@@ -289,7 +289,7 @@ private extension MonthTotalView {
         monthTotalAmountLabel.translatesAutoresizingMaskIntoConstraints = false
         
         // レスポンシブルデザイン対応
-        if screenWidth < 668 { // 小さい画面の場合
+        if LayoutBreakpoint.isCompact(sideLength: screenWidth) { // 小さい画面の場合
             prevButton.titleLabel?.font = UIFont.systemFont(ofSize: 16)
             monthLabel.font = UIFont.systemFont(ofSize: 16)
             nextButton.titleLabel?.font = UIFont.systemFont(ofSize: 16)

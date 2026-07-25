@@ -29,7 +29,7 @@ public class LeftView: UIView, UITableViewDelegate, UITableViewDataSource {
     public init() {
         super.init(frame: .zero)
         
-        screenWidth = UIScreen.main.bounds.width
+        screenWidth = min(UIScreen.main.bounds.width, UIScreen.main.bounds.height)
         
         setupViews()
     }
@@ -136,7 +136,7 @@ public class LeftView: UIView, UITableViewDelegate, UITableViewDataSource {
         priceLabel.translatesAutoresizingMaskIntoConstraints = false
         
         // レスポンシブルデザイン対応
-        if screenWidth < 668 { // 小さい画面の場合
+        if LayoutBreakpoint.isCompact(sideLength: screenWidth) { // 小さい画面の場合
             nameLabel.font = UIFont.systemFont(ofSize: 12)
             countLabel.font = UIFont.systemFont(ofSize: 12)
             enterTimeLabel.font = UIFont.systemFont(ofSize: 12)
@@ -232,7 +232,7 @@ public class LeftView: UIView, UITableViewDelegate, UITableViewDataSource {
         priceLabel.translatesAutoresizingMaskIntoConstraints = false
         
         // レスポンシブルデザイン対応
-        if screenWidth < 668 { // 小さい画面の場合
+        if LayoutBreakpoint.isCompact(sideLength: screenWidth) { // 小さい画面の場合
             nameLabel.font = UIFont.boldSystemFont(ofSize: 12)
             countLabel.font = UIFont.boldSystemFont(ofSize: 12)
             enterTimeLabel.font = UIFont.boldSystemFont(ofSize: 12)
@@ -287,7 +287,7 @@ public class LeftView: UIView, UITableViewDelegate, UITableViewDataSource {
     
     public func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         // レスポンシブルデザイン対応
-        if screenWidth < 668 { // 小さい画面の場合
+        if LayoutBreakpoint.isCompact(sideLength: screenWidth) { // 小さい画面の場合
             return 20
         } else { // 通常の画面の場合
             return 40
@@ -296,7 +296,7 @@ public class LeftView: UIView, UITableViewDelegate, UITableViewDataSource {
     
     public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         // レスポンシブデザイン対応
-        if screenWidth < 668 { // 小さい画面の場合
+        if LayoutBreakpoint.isCompact(sideLength: screenWidth) { // 小さい画面の場合
             return 40
         } else { // 通常の画面の場合
             return 60
@@ -388,7 +388,7 @@ private extension LeftView {
         dayTotalAmountLabel.translatesAutoresizingMaskIntoConstraints = false
         
         // レスポンシブルデザイン対応
-        if screenWidth < 668 { // 小さい画面の場合
+        if LayoutBreakpoint.isCompact(sideLength: screenWidth) { // 小さい画面の場合
             dayTotalAmountTitleLabel.font = UIFont.systemFont(ofSize: 16)
             dayTotalAmountLabel.font = UIFont.systemFont(ofSize: 16)
             

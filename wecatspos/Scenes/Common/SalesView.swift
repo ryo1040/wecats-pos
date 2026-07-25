@@ -113,7 +113,7 @@ private extension SalesView {
     }
 
     var isCompactLayout: Bool {
-        return currentWidth < 668
+        return LayoutBreakpoint.isCompact(sideLength: currentWidth)
     }
 
     var usesTwoColumnLayout: Bool {

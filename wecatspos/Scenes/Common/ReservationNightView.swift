@@ -51,10 +51,10 @@ public class ReservationNightView: UIView {
     
     // 動的に更新されるscreenWidthプロパティ
     private var dynamicScreenWidth: CGFloat {
-        return UIScreen.main.bounds.width
+        return min(UIScreen.main.bounds.width, UIScreen.main.bounds.height)
     }
     
-    let screenWidth = UIScreen.main.bounds.width
+    let screenWidth = min(UIScreen.main.bounds.width, UIScreen.main.bounds.height)
     weak var delegate: ReservationNightViewDelegate?
     
     public init() {
@@ -392,8 +392,8 @@ private extension ReservationNightView {
     /// 画面向きに応じてフォントサイズを更新
     func updateFontSizesForOrientation() {
         let currentScreenWidth = dynamicScreenWidth
-        let fontSize: CGFloat = currentScreenWidth < 668 ? 16 : 32
-        let buttonFontSize: CGFloat = screenWidth < 668 ? 12 : 24
+        let fontSize: CGFloat = LayoutBreakpoint.isCompact(sideLength: currentScreenWidth) ? 16 : 32
+        let buttonFontSize: CGFloat = LayoutBreakpoint.isCompact(sideLength: screenWidth) ? 12 : 24
         
         // 全てのラベルのフォントサイズを更新
         [dateTitleLabel, nameTitleLabel, countTitleLabel, telTitleLabel, priceTitleLabel, memoTitleLabel
@@ -417,7 +417,7 @@ private extension ReservationNightView {
     func setupConstraintsForCurrentOrientation() {
         let currentScreenWidth = dynamicScreenWidth
         
-        if currentScreenWidth < 668 {
+        if LayoutBreakpoint.isCompact(sideLength: currentScreenWidth) {
             if isPortrait {
                 setupSmallScreenPortraitConstraints()
             } else {

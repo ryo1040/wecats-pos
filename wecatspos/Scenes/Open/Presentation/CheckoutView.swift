@@ -27,7 +27,7 @@ public class CheckoutView: UIView {
     let messageLabel2 = UILabel()
     
     private var currentConstraints: [NSLayoutConstraint] = []
-    var screenWidth = UIScreen.main.bounds.width
+    var screenWidth = min(UIScreen.main.bounds.width, UIScreen.main.bounds.height)
     // 画面向きを判定するプロパティ
     private var isPortrait: Bool {
         return UIScreen.main.bounds.height > UIScreen.main.bounds.width
@@ -165,7 +165,7 @@ private extension CheckoutView {
         currentConstraints.removeAll()
         
         // 新しい制約を作成
-        if screenWidth < 668 {
+        if LayoutBreakpoint.isCompact(sideLength: screenWidth) {
             setupSmallScreenConstraints()
         } else if isPortrait {
             setupPortraitConstraints()
@@ -302,10 +302,10 @@ private extension CheckoutView {
     
     func updateUIElementsForOrientation() {
         // フォントサイズの更新
-        let fontSize: CGFloat = screenWidth < 668 ? 12 : 32
-        let fontSize2: CGFloat = screenWidth < 668 ? 9 : 20
-        let fontSize3: CGFloat = screenWidth < 668 ? 18 : 48
-        let buttonFontSize: CGFloat = screenWidth < 668 ? 12 : 24
+        let fontSize: CGFloat = LayoutBreakpoint.isCompact(sideLength: screenWidth) ? 12 : 32
+        let fontSize2: CGFloat = LayoutBreakpoint.isCompact(sideLength: screenWidth) ? 9 : 20
+        let fontSize3: CGFloat = LayoutBreakpoint.isCompact(sideLength: screenWidth) ? 18 : 48
+        let buttonFontSize: CGFloat = LayoutBreakpoint.isCompact(sideLength: screenWidth) ? 12 : 24
         
         // 全てのラベルのフォントサイズを更新
         [visitorCountLabel, totalTimeLabel, chargeLabel, messageLabel1, messageLabel2

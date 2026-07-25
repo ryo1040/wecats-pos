@@ -86,7 +86,7 @@ public class DenominationView: UIView {
     let cancelButton = UIButton()
     
     private var currentConstraints: [NSLayoutConstraint] = []
-    var screenWidth = UIScreen.main.bounds.width
+    var screenWidth = min(UIScreen.main.bounds.width, UIScreen.main.bounds.height)
     // 画面向きを判定するプロパティ
     private var isPortrait: Bool {
         return UIScreen.main.bounds.height > UIScreen.main.bounds.width
@@ -821,7 +821,7 @@ private extension DenominationView {
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
             // 画面幅を更新
-            self.screenWidth = UIScreen.main.bounds.width
+            self.screenWidth = min(UIScreen.main.bounds.width, UIScreen.main.bounds.height)
             // レイアウトを更新
             self.updateLayoutForCurrentOrientation()
         }
@@ -844,7 +844,7 @@ private extension DenominationView {
         currentConstraints.removeAll()
         
         // 新しい制約を作成
-        if screenWidth < 668 {
+        if LayoutBreakpoint.isCompact(sideLength: screenWidth) {
             setupSmallScreenConstraints()
         } else if isPortrait {
             setupPortraitConstraints()
@@ -1389,8 +1389,8 @@ private extension DenominationView {
     
     func updateUIElementsForOrientation() {
         // フォントサイズの更新
-        let fontSize: CGFloat = screenWidth < 668 ? 12 : 32
-        let buttonFontSize: CGFloat = screenWidth < 668 ? 12 : 24
+        let fontSize: CGFloat = LayoutBreakpoint.isCompact(sideLength: screenWidth) ? 12 : 32
+        let buttonFontSize: CGFloat = LayoutBreakpoint.isCompact(sideLength: screenWidth) ? 12 : 24
         
         // 全てのラベルのフォントサイズを更新
         [dateTitleLabel, dateLabel, dailySalesTitleLabel, dailySalesLabel,
