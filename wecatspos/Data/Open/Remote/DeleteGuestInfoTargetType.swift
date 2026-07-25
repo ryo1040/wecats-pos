@@ -11,10 +11,12 @@ import Moya
 struct DeleteGuestInfoTargetType: ApiTargetType {
     typealias Reponse = GetGuestInfoEntity
 
-    var baseURL: URL {
-        URL(string: "https://jy0fcsfxtj.execute-api.ap-northeast-1.amazonaws.com/guest/")!
-    }
+//    var baseURL: URL {
+//        URL(string: "https://jy0fcsfxtj.execute-api.ap-northeast-1.amazonaws.com/guest/")!
+//    }
 
+    var baseURL: URL { URL(string: API.guestBaseURL)! }
+    
     var path: String {
         "delete-guest-info"
     }

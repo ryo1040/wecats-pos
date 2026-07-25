@@ -10,6 +10,7 @@ import UIKit
 
 protocol StayingDelegate: AnyObject  {
     func tapEnterStoreButton()
+    func tapReservationNightButton()
     func tapTableViewRow(selectGuestInfo: GuestInfoModel)
     func tapDeleteTableVieRow(selectGuestInfo: GuestInfoModel)
     func tapEditTableViewRow(selectGuestInfo: GuestInfoModel)
@@ -18,6 +19,7 @@ protocol StayingDelegate: AnyObject  {
 public class StayingView: UIView, UITableViewDelegate, UITableViewDataSource {
 
     let enterStoreButton = UIButton()
+    let reservationNightButton = UIButton()
     let tableView = UITableView()
     
     var screenWidth: CGFloat = -1
@@ -327,6 +329,14 @@ private extension StayingView {
         enterStoreButton.addTarget(self, action: #selector(self.tapEnterStoreButton), for: .touchUpInside)
         self.addSubview(enterStoreButton)
         
+        reservationNightButton.setTitle("夜カフェ予約", for: .normal)
+        reservationNightButton.setTitleColor(UIColor.black, for: .normal)
+        reservationNightButton.backgroundColor = UIColor.white
+        reservationNightButton.layer.borderColor = UIColor.black.cgColor
+        reservationNightButton.layer.borderWidth = 1.0
+        reservationNightButton.layer.cornerRadius = 10
+        reservationNightButton.addTarget(self, action: #selector(self.tapReservationNightButton), for: .touchUpInside)
+        self.addSubview(reservationNightButton)
         
         if #available(iOS 15.0, *) {
             tableView.sectionHeaderTopPadding = 0
@@ -338,19 +348,22 @@ private extension StayingView {
         self.addSubview(tableView)
         
         enterStoreButton.translatesAutoresizingMaskIntoConstraints = false
+        reservationNightButton.translatesAutoresizingMaskIntoConstraints = false
         tableView.translatesAutoresizingMaskIntoConstraints = false
         
         // レスポンシブルデザイン対応
         if screenWidth < 668 { // 小さい画面の場合
-            // TODO: サーバに繋いだら、スマホで開いた場合は新規入店ボタンを非表示としてレイアウトを整える
-            // TODO: tableViewの行をタップした場合にLeaveViewへ遷移しないようにもする
             enterStoreButton.titleLabel?.font = UIFont.systemFont(ofSize: 16)
-            
+            reservationNightButton.titleLabel?.font = UIFont.systemFont(ofSize: 16)
             NSLayoutConstraint.activate([
                 enterStoreButton.topAnchor.constraint(equalTo: self.topAnchor, constant: 8),
                 enterStoreButton.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 32),
-                enterStoreButton.widthAnchor.constraint(equalToConstant: 100),
+                enterStoreButton.widthAnchor.constraint(equalToConstant: 150),
                 enterStoreButton.heightAnchor.constraint(equalToConstant: 32),
+                reservationNightButton.centerYAnchor.constraint(equalTo: enterStoreButton.centerYAnchor),
+                reservationNightButton.leftAnchor.constraint(equalTo: enterStoreButton.rightAnchor, constant: 16),
+                reservationNightButton.widthAnchor.constraint(equalToConstant: 150),
+                reservationNightButton.heightAnchor.constraint(equalToConstant: 32),
                 tableView.topAnchor.constraint(equalTo: enterStoreButton.bottomAnchor, constant: 8),
                 tableView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -32),
                 tableView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 32),
@@ -358,12 +371,16 @@ private extension StayingView {
             ])
         } else { // 通常の画面の場合
             enterStoreButton.titleLabel?.font = UIFont.systemFont(ofSize: 32)
-            
+            reservationNightButton.titleLabel?.font = UIFont.systemFont(ofSize: 32)
             NSLayoutConstraint.activate([
                 enterStoreButton.topAnchor.constraint(equalTo: self.topAnchor, constant: 32),
                 enterStoreButton.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 32),
-                enterStoreButton.widthAnchor.constraint(equalToConstant: 200),
+                enterStoreButton.widthAnchor.constraint(equalToConstant: 250),
                 enterStoreButton.heightAnchor.constraint(equalToConstant: 48),
+                reservationNightButton.centerYAnchor.constraint(equalTo: enterStoreButton.centerYAnchor),
+                reservationNightButton.leftAnchor.constraint(equalTo: enterStoreButton.rightAnchor, constant: 16),
+                reservationNightButton.widthAnchor.constraint(equalToConstant: 250),
+                reservationNightButton.heightAnchor.constraint(equalToConstant: 48),
                 tableView.topAnchor.constraint(equalTo: enterStoreButton.bottomAnchor, constant: 32),
                 tableView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -32),
                 tableView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 32),
@@ -374,5 +391,9 @@ private extension StayingView {
     
     @objc func tapEnterStoreButton() {
         delegate?.tapEnterStoreButton()
+    }
+    
+    @objc func tapReservationNightButton() {
+        delegate?.tapReservationNightButton()
     }
 }

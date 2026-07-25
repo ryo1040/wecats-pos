@@ -11,12 +11,13 @@ import Moya
 struct GetMedicalHistoryTargetType: ApiTargetType {
     typealias Reponse = GetMedicalHistoryEntity
 
-    var baseURL: URL {
-        URL(string: "https://9bjqoyd4u2.execute-api.ap-northeast-1.amazonaws.com/cat/")!
-    }
-
+//    var baseURL: URL {
+//        URL(string: "https://9bjqoyd4u2.execute-api.ap-northeast-1.amazonaws.com/cat/")!
+//    }
+    var baseURL: URL { URL(string: API.catBaseURL)! }
+    
     var path: String {
-        "medical-history"
+        "get-medical-history"
     }
 
     var method: Moya.Method {

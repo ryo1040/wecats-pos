@@ -35,12 +35,15 @@
 		0542218F2DBF204E0061D374 /* wecatspos.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = wecatspos.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		054221A52DBF204F0061D374 /* wecatsposTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = wecatsposTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		054221AF2DBF204F0061D374 /* wecatsposUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = wecatsposUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		31C1E718BE17473E1FABDE37 /* Pods-wecatspos.debug dev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-wecatspos.debug dev.xcconfig"; path = "Target Support Files/Pods-wecatspos/Pods-wecatspos.debug dev.xcconfig"; sourceTree = "<group>"; };
 		3AB871B08560537D42480A19 /* Pods-wecatspos.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-wecatspos.debug.xcconfig"; path = "Target Support Files/Pods-wecatspos/Pods-wecatspos.debug.xcconfig"; sourceTree = "<group>"; };
 		4607B579A11B7C2E909FED68 /* Pods-wecatspos-wecatsposUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-wecatspos-wecatsposUITests.release.xcconfig"; path = "Target Support Files/Pods-wecatspos-wecatsposUITests/Pods-wecatspos-wecatsposUITests.release.xcconfig"; sourceTree = "<group>"; };
+		6F28553157E16F25214F05C8 /* Pods-wecatsposTests.debug dev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-wecatsposTests.debug dev.xcconfig"; path = "Target Support Files/Pods-wecatsposTests/Pods-wecatsposTests.debug dev.xcconfig"; sourceTree = "<group>"; };
 		8F444D93A666D37E112A0B6B /* Pods_wecatsposTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_wecatsposTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A75D6BDE5555209E73C5C79F /* Pods-wecatspos-wecatsposUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-wecatspos-wecatsposUITests.debug.xcconfig"; path = "Target Support Files/Pods-wecatspos-wecatsposUITests/Pods-wecatspos-wecatsposUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		BB961DFC34AD52F6A5E01D0C /* Pods-wecatspos.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-wecatspos.release.xcconfig"; path = "Target Support Files/Pods-wecatspos/Pods-wecatspos.release.xcconfig"; sourceTree = "<group>"; };
 		C71A6CEBD5E4210A256C4399 /* Pods_wecatspos.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_wecatspos.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D5D3C6C0CE1515C57646E5F7 /* Pods-wecatspos-wecatsposUITests.debug dev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-wecatspos-wecatsposUITests.debug dev.xcconfig"; path = "Target Support Files/Pods-wecatspos-wecatsposUITests/Pods-wecatspos-wecatsposUITests.debug dev.xcconfig"; sourceTree = "<group>"; };
 		F8811372F8EB3936A3175373 /* Pods-wecatsposTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-wecatsposTests.debug.xcconfig"; path = "Target Support Files/Pods-wecatsposTests/Pods-wecatsposTests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -134,6 +137,9 @@
 				4607B579A11B7C2E909FED68 /* Pods-wecatspos-wecatsposUITests.release.xcconfig */,
 				F8811372F8EB3936A3175373 /* Pods-wecatsposTests.debug.xcconfig */,
 				0187D7CC62D5FB62C4D41793 /* Pods-wecatsposTests.release.xcconfig */,
+				31C1E718BE17473E1FABDE37 /* Pods-wecatspos.debug dev.xcconfig */,
+				D5D3C6C0CE1515C57646E5F7 /* Pods-wecatspos-wecatsposUITests.debug dev.xcconfig */,
+				6F28553157E16F25214F05C8 /* Pods-wecatsposTests.debug dev.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -450,7 +456,7 @@
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIStatusBarStyle = "";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -482,7 +488,7 @@
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIStatusBarStyle = "";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -556,6 +562,7 @@
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_SWIFT_FLAGS = "-DDEVELOPMENT";
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";

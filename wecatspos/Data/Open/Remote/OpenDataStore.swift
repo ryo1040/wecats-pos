@@ -14,8 +14,11 @@ protocol OpenDataStoreProtocol {
     func updateGuestInfo(param: PostGuestInfoRequestParam) -> Single<GetGuestInfoEntity>
     func deleteGuestInfo(param: PostDeleteGuestInfoRequestParam) -> Single<GetGuestInfoEntity>
     func calcTotalAmount(param: GetCalcTotalAmountRequestParam) -> Single<CalcTotalAmountEntity>
-    func getSalesMaster() -> Single<GetSalesEntity>
+    func getSales(param: GetSalesMasterRequestParam) -> Single<GetSalesEntity>
     func setSales(param: PostSalesRequestParam) -> Single<GetSalesEntity>
+    func getReservationNightInfo(param: GetReservationNightRequestParam) -> Single<GetReservationNightEntity>
+    func setReservationNightInfo(param: PostReservationNightRequestParam) -> Single<GetGuestInfoEntity>
+    func deleteReservationNightInfo(param: PostDeleteReservationNightRequestParam) -> Single<GetGuestInfoEntity>
 }
 
 final class OpenDataStore: OpenDataStoreProtocol {
@@ -40,12 +43,24 @@ final class OpenDataStore: OpenDataStoreProtocol {
         return APIClient.shared.request(GetCalcTotalAmountTargetType(param))
     }
     
-    func getSalesMaster() -> Single<GetSalesEntity> {
-        return APIClient.shared.request(GetSalesMasterTargetType())
+    func getSales(param: GetSalesMasterRequestParam) -> Single<GetSalesEntity> {
+        return APIClient.shared.request(GetSalesTargetType(param))
     }
     
     func setSales(param: PostSalesRequestParam) -> Single<GetSalesEntity> {
         return APIClient.shared.request(SetSalesTargetType(param))
+    }
+    
+    func getReservationNightInfo(param: GetReservationNightRequestParam) -> Single<GetReservationNightEntity> {
+        return APIClient.shared.request(GetReservationNightTargetType(param))
+    }
+    
+    func setReservationNightInfo(param: PostReservationNightRequestParam) -> Single<GetGuestInfoEntity> {
+        return APIClient.shared.request(SetReservationNightTargetType(param))
+    }
+    
+    func deleteReservationNightInfo(param: PostDeleteReservationNightRequestParam) -> Single<GetGuestInfoEntity> {
+        return APIClient.shared.request(DeleteReservationNightTargetType(param))
     }
 }
 

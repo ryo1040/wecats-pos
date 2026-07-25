@@ -54,25 +54,47 @@ public class VisitorInfoView: UIView {
     }
     
     func setVisitorInfo(selectGuestInfo: GuestInfoModel){
-        repeatLabel.text = selectGuestInfo.repeatFlag ? "リピーター" : "新規"
-        if selectGuestInfo.patternId == 1 {
-            patternLabel.text = "家族"
-        } else if selectGuestInfo.patternId == 2 {
-            patternLabel.text = "友人"
-        } else if selectGuestInfo.patternId == 3 {
-            patternLabel.text = "おひとり"
-        } else if selectGuestInfo.patternId == 5 {
-            patternLabel.text = "カップル"
-        } else {
-            patternLabel.text = "その他"
+        if let name = selectGuestInfo.name, !name.isEmpty {
+            if selectGuestInfo.name!.hasPrefix("夜猫カフェ") {
+                repeatLabel.text = "-"
+                patternLabel.text = "-"
+                let prefix = "夜猫カフェ"
+                let suffix = name.dropFirst(prefix.count)
+                
+                // 先頭の「夜猫カフェ」で改行
+                if suffix.isEmpty {
+                    nameLabel.text = "\(prefix)"
+                } else {
+                    nameLabel.text = "\(prefix)  \(suffix)"
+                }
+                countLabel.text = String(selectGuestInfo.adultCount) + "名"
+                stayTimeLabel.text = "-"
+                basicPriceLabel.text = "-"
+                discountAmountLabel.text = "-"
+                feeLabel.text = commaSeparateThreeDigits(selectGuestInfo.totalAmount) + "円"
+                memoLabel.text = selectGuestInfo.memo ?? ""
+            } else {
+                repeatLabel.text = selectGuestInfo.repeatFlag ? "リピーター" : "新規"
+                if selectGuestInfo.patternId == 1 {
+                    patternLabel.text = "家族"
+                } else if selectGuestInfo.patternId == 2 {
+                    patternLabel.text = "友人"
+                } else if selectGuestInfo.patternId == 3 {
+                    patternLabel.text = "おひとり"
+                } else if selectGuestInfo.patternId == 5 {
+                    patternLabel.text = "カップル"
+                } else {
+                    patternLabel.text = "その他"
+                }
+                nameLabel.text = selectGuestInfo.name ?? ""
+                countLabel.text = "大人：" + String(selectGuestInfo.adultCount) + "名、子供：" + String(selectGuestInfo.childCount) + "名"
+                stayTimeLabel.text = selectGuestInfo.enterTime + "～" + selectGuestInfo.leftTime + "　" + String(selectGuestInfo.stayTime) + "分"
+                basicPriceLabel.text = commaSeparateThreeDigits(selectGuestInfo.calcAmount) + "円"
+                discountAmountLabel.text = commaSeparateThreeDigits(selectGuestInfo.discountAmount) + "円"
+                feeLabel.text = commaSeparateThreeDigits(selectGuestInfo.totalAmount) + "円"
+                memoLabel.text = selectGuestInfo.memo ?? ""
+            }
         }
-        nameLabel.text = selectGuestInfo.name ?? ""
-        countLabel.text = "大人：" + String(selectGuestInfo.adultCount) + "名、子供：" + String(selectGuestInfo.childCount) + "名"
-        stayTimeLabel.text = selectGuestInfo.enterTime + "～" + selectGuestInfo.leftTime + "　" + String(selectGuestInfo.stayTime) + "分"
-    basicPriceLabel.text = commaSeparateThreeDigits(selectGuestInfo.calcAmount) + "円"
-    discountAmountLabel.text = commaSeparateThreeDigits(selectGuestInfo.discountAmount) + "円"
-    feeLabel.text = commaSeparateThreeDigits(selectGuestInfo.totalAmount) + "円"
-        memoLabel.text = selectGuestInfo.memo ?? ""
     }
 }
 

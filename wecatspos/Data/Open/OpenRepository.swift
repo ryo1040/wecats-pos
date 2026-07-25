@@ -14,8 +14,11 @@ protocol OpenRepositoryProtocol {
     func updateGuestInfo(param: PostGuestInfoRequestParam) -> Single<GetGuestInfoEntity>
     func deleteGuestInfo(param: PostDeleteGuestInfoRequestParam) -> Single<GetGuestInfoEntity>
     func calcTotalAmount(param: GetCalcTotalAmountRequestParam) -> Single<CalcTotalAmountEntity>
-    func getSalesMaster() -> Single<GetSalesEntity>
+    func getSales(param: GetSalesMasterRequestParam) -> Single<GetSalesEntity>
     func setSales(param: PostSalesRequestParam) -> Single<GetSalesEntity>
+    func getReservationNightInfo(param: GetReservationNightRequestParam) -> Single<GetReservationNightEntity>
+    func setReservationNightInfo(param: PostReservationNightRequestParam) -> Single<GetGuestInfoEntity>
+    func deleteReservationNightInfo(param: PostDeleteReservationNightRequestParam) -> Single<GetGuestInfoEntity>
 }
 
 final class OpenRepository: OpenRepositoryProtocol {
@@ -41,11 +44,23 @@ final class OpenRepository: OpenRepositoryProtocol {
         return openDataStore.calcTotalAmount(param: param)
     }
     
-    func getSalesMaster() -> Single<GetSalesEntity> {
-        return openDataStore.getSalesMaster()
+    func getSales(param: GetSalesMasterRequestParam) -> Single<GetSalesEntity> {
+        return openDataStore.getSales(param: param)
     }
     
     func setSales(param: PostSalesRequestParam) -> Single<GetSalesEntity> {
         return openDataStore.setSales(param: param)
+    }
+    
+    func getReservationNightInfo(param: GetReservationNightRequestParam) -> Single<GetReservationNightEntity> {
+        return openDataStore.getReservationNightInfo(param: param)
+    }
+    
+    func setReservationNightInfo(param: PostReservationNightRequestParam) -> Single<GetGuestInfoEntity> {
+        return openDataStore.setReservationNightInfo(param: param)
+    }
+    
+    func deleteReservationNightInfo(param: PostDeleteReservationNightRequestParam) -> Single<GetGuestInfoEntity> {
+        return openDataStore.deleteReservationNightInfo(param: param)
     }
 }

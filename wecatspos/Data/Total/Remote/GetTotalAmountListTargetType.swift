@@ -11,9 +11,10 @@ import Moya
 struct GetTotalAmountListTargetType: ApiTargetType {
     typealias Reponse = GetTotalAmountListEntity
 
-    var baseURL: URL {
-        URL(string: "https://2h7b8vpz13.execute-api.ap-northeast-1.amazonaws.com/guest/")!
-    }
+//    var baseURL: URL {
+//        URL(string: "https://2h7b8vpz13.execute-api.ap-northeast-1.amazonaws.com/guest/")!
+//    }
+    var baseURL: URL { URL(string: API.totalAmountBaseURL)! }
     
     var path: String {
         "get-guest-info-month"

@@ -27,18 +27,6 @@ final class GetSalesTranslator {
     }
 }
 
-final class SalesMasterTranslator {
-    static func generate(salesMaster: SalesMasterEntity) -> SalesMasterModel {
-        var model: SalesMasterModel = SalesMasterModel()
-        model.id = salesMaster.id
-        model.name = salesMaster.name
-        model.price = salesMaster.price
-        model.order = salesMaster.order
-        model.memo = salesMaster.memo
-        return model
-    }
-}
-
 final class SalesTranslator {
     static func generate(sales: SalesEntity) -> SalesModel {
         var model: SalesModel = SalesModel()

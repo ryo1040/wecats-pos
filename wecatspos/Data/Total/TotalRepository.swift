@@ -13,6 +13,10 @@ protocol TotalRepositoryProtocol {
     func getTotalAmountList(param: GetTotalAmountListRequestParam) -> Single<GetTotalAmountListEntity>
     func updateGuestInfo(param: PostGuestInfoRequestParam) -> Single<GetGuestInfoEntity>
     func deleteGuestInfo(param: PostDeleteGuestInfoRequestParam) -> Single<GetGuestInfoEntity>
+    func getSales(param: GetSalesMasterRequestParam) -> Single<GetSalesEntity>
+    func getReservationNightInfo(param: GetReservationNightRequestParam) -> Single<GetReservationNightEntity>
+    func setReservationNightInfo(param: PostReservationNightRequestParam) -> Single<GetGuestInfoEntity>
+    func deleteReservationNightInfo(param: PostDeleteReservationNightRequestParam) -> Single<GetGuestInfoEntity>
 }
 
 final class TotalRepository: TotalRepositoryProtocol {
@@ -32,5 +36,21 @@ final class TotalRepository: TotalRepositoryProtocol {
     
     func deleteGuestInfo(param: PostDeleteGuestInfoRequestParam) -> Single<GetGuestInfoEntity> {
         return totalDataStore.deleteGuestInfo(param: param)
+    }
+    
+    func getSales(param: GetSalesMasterRequestParam) -> Single<GetSalesEntity> {
+        return totalDataStore.getSales(param: param)
+    }
+    
+    func getReservationNightInfo(param: GetReservationNightRequestParam) -> Single<GetReservationNightEntity> {
+        return totalDataStore.getReservationNightInfo(param: param)
+    }
+    
+    func setReservationNightInfo(param: PostReservationNightRequestParam) -> Single<GetGuestInfoEntity> {
+        return totalDataStore.setReservationNightInfo(param: param)
+    }
+    
+    func deleteReservationNightInfo(param: PostDeleteReservationNightRequestParam) -> Single<GetGuestInfoEntity> {
+        return totalDataStore.deleteReservationNightInfo(param: param)
     }
 }

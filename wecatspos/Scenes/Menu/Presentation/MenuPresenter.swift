@@ -14,6 +14,7 @@ protocol MenuPresenterProtocol: AnyObject {
     func didTapTotalButton()
     func didTapCloseButton()
     func didTapCareButton()
+    func didTapSettingsButton()
 }
 
 final class MenuPresenter: MenuPresenterProtocol {
@@ -44,5 +45,9 @@ final class MenuPresenter: MenuPresenterProtocol {
     
     func didTapCareButton() {
         wireframe.presentCare()
+    }
+    
+    func didTapSettingsButton() {
+        wireframe.presentSettings()
     }
 }

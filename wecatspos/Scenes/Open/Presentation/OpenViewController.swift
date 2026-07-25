@@ -33,12 +33,14 @@ final class OpenViewController: UIViewController, OpenViewControllerProtocol {
     let salesView = SalesView()
     let enterView = EnterView()
     let leaveView = LeaveView()
+    let reservationNightView = ReservationNightView()
     let visitorInfoView = VisitorInfoView()
     let editVisitorInfoView = EditVisitorInfoView()
     let checkoutView = CheckoutView()
     
     var activityIndicator: UIActivityIndicatorView!
     var overlayView: UIView!
+
     
     private let disposeBag = DisposeBag()
     
@@ -118,6 +120,10 @@ private extension OpenViewController {
         leaveView.delegate = self
         mainLabel.addSubview(leaveView)
         
+        reservationNightView.isHidden = true
+        reservationNightView.delegate = self
+        mainLabel.addSubview(reservationNightView)
+        
         visitorInfoView.isHidden = true
         visitorInfoView.delegate = self
         mainLabel.addSubview(visitorInfoView)
@@ -141,6 +147,7 @@ private extension OpenViewController {
         salesView.translatesAutoresizingMaskIntoConstraints = false
         enterView.translatesAutoresizingMaskIntoConstraints = false
         leaveView.translatesAutoresizingMaskIntoConstraints = false
+        reservationNightView.translatesAutoresizingMaskIntoConstraints = false
         visitorInfoView.translatesAutoresizingMaskIntoConstraints = false
         editVisitorInfoView.translatesAutoresizingMaskIntoConstraints = false
         checkoutView.translatesAutoresizingMaskIntoConstraints = false
@@ -185,6 +192,10 @@ private extension OpenViewController {
                 leaveView.bottomAnchor.constraint(equalTo: mainLabel.bottomAnchor),
                 leaveView.leftAnchor.constraint(equalTo: mainLabel.leftAnchor),
                 leaveView.rightAnchor.constraint(equalTo: mainLabel.rightAnchor),
+                reservationNightView.topAnchor.constraint(equalTo: mainLabel.topAnchor),
+                reservationNightView.bottomAnchor.constraint(equalTo: mainLabel.bottomAnchor),
+                reservationNightView.leftAnchor.constraint(equalTo: mainLabel.leftAnchor),
+                reservationNightView.rightAnchor.constraint(equalTo: mainLabel.rightAnchor),
                 visitorInfoView.topAnchor.constraint(equalTo: mainLabel.topAnchor),
                 visitorInfoView.bottomAnchor.constraint(equalTo: mainLabel.bottomAnchor),
                 visitorInfoView.leftAnchor.constraint(equalTo: mainLabel.leftAnchor),
@@ -236,6 +247,10 @@ private extension OpenViewController {
                 leaveView.bottomAnchor.constraint(equalTo: mainLabel.bottomAnchor),
                 leaveView.leftAnchor.constraint(equalTo: mainLabel.leftAnchor),
                 leaveView.rightAnchor.constraint(equalTo: mainLabel.rightAnchor),
+                reservationNightView.topAnchor.constraint(equalTo: mainLabel.topAnchor),
+                reservationNightView.bottomAnchor.constraint(equalTo: mainLabel.bottomAnchor),
+                reservationNightView.leftAnchor.constraint(equalTo: mainLabel.leftAnchor),
+                reservationNightView.rightAnchor.constraint(equalTo: mainLabel.rightAnchor),
                 visitorInfoView.topAnchor.constraint(equalTo: mainLabel.topAnchor),
                 visitorInfoView.bottomAnchor.constraint(equalTo: mainLabel.bottomAnchor),
                 visitorInfoView.leftAnchor.constraint(equalTo: mainLabel.leftAnchor),
@@ -264,6 +279,7 @@ private extension OpenViewController {
                 leftView.tableView.reloadData()
                 enterView.isHidden = true
                 leaveView.isHidden = true
+                reservationNightView.isHidden = true
                 visitorInfoView.isHidden = true
                 editVisitorInfoView.isHidden = true
                 checkoutView.isHidden = true
@@ -272,6 +288,7 @@ private extension OpenViewController {
         
         presenter.viewEntry
             .subscribe(onNext: { [unowned self] model in
+                print("viewEntry received")
                 print("Received create guest info: \(model)")
                 stayingView.stayingList = model.filter { $0.stayingFlag }.sorted(by: { $0.enterTime < $1.enterTime })
                 stayingView.tableView.reloadData()
@@ -280,6 +297,7 @@ private extension OpenViewController {
                 leftView.tableView.reloadData()
                 enterView.isHidden = true
                 leaveView.isHidden = true
+                reservationNightView.isHidden = true
                 visitorInfoView.isHidden = true
                 editVisitorInfoView.isHidden = true
                 checkoutView.isHidden = true
@@ -288,23 +306,29 @@ private extension OpenViewController {
         
         presenter.viewLeave
             .subscribe(onNext: { [unowned self] model in
-                print("Received cat info data: \(model)")
+                print("viewLeave received")
+                print("viewLeave vc=", ObjectIdentifier(self))
+                print("Received leftView data: \(model)")
                 stayingView.stayingList = model.filter { $0.stayingFlag }.sorted(by: { $0.enterTime < $1.enterTime })
                 stayingView.tableView.reloadData()
                 leftView.leftList = model.filter { !$0.stayingFlag }.sorted(by: { $0.enterTime < $1.enterTime })
                 leftView.calcDayTotalFee()
                 leftView.tableView.reloadData()
+                leftView.isHidden = false
+                stayingView.isHidden = true
                 enterView.isHidden = true
                 leaveView.isHidden = true
+                reservationNightView.isHidden = true
                 visitorInfoView.isHidden = true
                 editVisitorInfoView.isHidden = true
                 checkoutView.isHidden = true
                 stopLoading()
+                print("stayingHidden=", stayingView.isHidden, "leftHidden=", leftView.isHidden)
             }).disposed(by: disposeBag)
 
         presenter.calcedTotalAmount
             .subscribe(onNext: { [unowned self] model in
-                print("Received cat info data: \(model)")
+                print("Received calcTotalAmount data: \(model)")
                 leaveView.stayTime = model.stayTime
                 leaveView.stayTimeLabel.text = "\(model.stayTime)" + "分"
                 leaveView.feeLabel.text = "¥" + formatNumber(String(model.totalAmount))
@@ -315,7 +339,9 @@ private extension OpenViewController {
         
         presenter.viewSales
             .subscribe(onNext: { [unowned self] model in
-                print("Received cat info data: \(model)")
+                print("Received sales data: \(model)")
+                // TODO: salesView.readOnlyFlgの制御をする
+                
                 salesView.setItems(salesMasterModel: model.salesMasterModel, salesModel: model.salesModel)
                 stopLoading()
             }).disposed(by: disposeBag)
@@ -332,6 +358,14 @@ private extension OpenViewController {
                     // OKボタンタップ時の処理
                 })
                 self.present(alert, animated: true)
+                salesView.hasUnsavedChanges = false
+                stopLoading()
+            }).disposed(by: disposeBag)
+        
+        presenter.getReservationNightInfo
+            .subscribe(onNext: { [unowned self] model in
+                reservationNightView.setReservationNightInfo(reservationNightViewModel: model)
+                reservationNightView.isHidden = false
                 stopLoading()
             }).disposed(by: disposeBag)
     }
@@ -399,6 +433,7 @@ private extension OpenViewController {
             presenter.load()
             stayingView.isHidden = true
             leftView.isHidden = false
+            reservationNightView.isHidden = true
             stayingButton.backgroundColor = UIColor(red: 239/255, green: 236/255, blue: 231/255, alpha: 1.0)
             leftBotton.backgroundColor = UIColor.lightGray
             salesButton.backgroundColor = UIColor(red: 239/255, green: 236/255, blue: 231/255, alpha: 1.0)
@@ -410,10 +445,12 @@ private extension OpenViewController {
     
     @objc func tapSalesButton(_ sender: UIButton) {
         startLoading()
-        presenter.getSalesMaster()
+        salesView.readOnlyFlg = false
+        presenter.getSales(date: "")
         stayingView.isHidden = true
         leftView.isHidden = true
         salesView.isHidden = false
+        reservationNightView.isHidden = true
         stayingButton.backgroundColor = UIColor(red: 239/255, green: 236/255, blue: 231/255, alpha: 1.0)
         leftBotton.backgroundColor = UIColor(red: 239/255, green: 236/255, blue: 231/255, alpha: 1.0)
         salesButton.backgroundColor = UIColor.lightGray
@@ -430,12 +467,27 @@ private extension OpenViewController {
         let numberValue = Int(number) ?? 0
         return formatter.string(from: NSNumber(value: numberValue)) ?? number
     }
+
+    func extractInteger(from text: String, pattern: String) -> Int? {
+        guard let regex = try? NSRegularExpression(pattern: pattern),
+              let match = regex.firstMatch(in: text, range: NSRange(text.startIndex..., in: text)),
+              let range = Range(match.range(at: 1), in: text) else {
+            return nil
+        }
+        return Int(text[range])
+    }
 }
 
 extension OpenViewController: StayingDelegate {
     func tapEnterStoreButton() {
         enterView.setEnterInfo()
         enterView.isHidden = false
+    }
+    
+    func tapReservationNightButton() {
+        reservationNightView.updateFlg = true
+        reservationNightView.setReservationNightInfo(reservationNightViewModel: ReservationNightViewModel())
+        reservationNightView.isHidden = false
     }
     
     func tapTableViewRow(selectGuestInfo: GuestInfoModel) {
@@ -455,17 +507,65 @@ extension OpenViewController: StayingDelegate {
 
 extension OpenViewController: LeftDelegate {
     func tapLeftTableViewRow(selectGuestInfo: GuestInfoModel) {
-        visitorInfoView.setVisitorInfo(selectGuestInfo: selectGuestInfo)
-        visitorInfoView.isHidden = false
+        if selectGuestInfo.name == "物販" {
+            salesView.readOnlyFlg = true
+            presenter.getSales(date: selectGuestInfo.date)
+            salesView.isHidden = false
+        } else if selectGuestInfo.name!.hasPrefix("夜猫カフェ") {
+            if let memo = selectGuestInfo.memo,
+                let range = memo.range(of: #"\d{4}-\d{2}-\d{2}"#, options: .regularExpression) {
+                let date = String(memo[range])
+                var name = selectGuestInfo.name!
+                name.removeFirst("夜猫カフェ".count)
+                name.removeLast("様".count)
+                startLoading()
+                reservationNightView.updateFlg = false
+                reservationNightView.selectedVisitorHistoryId = selectGuestInfo.id
+                presenter.getReservationNightInfo(date: date, name: name)
+            }
+        } else {
+            visitorInfoView.setVisitorInfo(selectGuestInfo: selectGuestInfo)
+            visitorInfoView.isHidden = false
+        }
     }
     
     func tapDeleteLeftTableVieRow(selectGuestInfo: GuestInfoModel) {
-        presenter.didTapDeleteButton(id: selectGuestInfo.id, date: selectGuestInfo.date)
+        if selectGuestInfo.name!.hasPrefix("夜猫カフェ") {
+            if let memo = selectGuestInfo.memo {
+                var name = selectGuestInfo.name!
+                name.removeFirst("夜猫カフェ".count)
+                name.removeLast("様".count)
+                let id = extractInteger(from: memo, pattern: #"reservation_id:\s*(-?\d+)"#) ?? -1
+                let branch = extractInteger(from: memo, pattern: #"branch:\s*(-?\d+)"#) ?? -1
+                presenter.didTapReservationNightDeleteButton(id: id, branch: branch, date: selectGuestInfo.date, visitorHistoryId: selectGuestInfo.id)
+            }
+        } else {
+            presenter.didTapDeleteButton(id: selectGuestInfo.id, date: selectGuestInfo.date)
+        }
     }
 
     func tapEditLeftTableViewRow(selectGuestInfo: GuestInfoModel) {
-        editVisitorInfoView.setVisitorInfo(selectGuestInfo: selectGuestInfo)
-        editVisitorInfoView.isHidden = false
+        if let name = selectGuestInfo.name, !name.isEmpty {
+            if selectGuestInfo.name!.hasPrefix("夜猫カフェ") {
+                if let memo = selectGuestInfo.memo,
+                    let range = memo.range(of: #"\d{4}-\d{2}-\d{2}"#, options: .regularExpression) {
+                    let date = String(memo[range])
+                    var name = selectGuestInfo.name!
+                    name.removeFirst("夜猫カフェ".count)
+                    name.removeLast("様".count)
+                    startLoading()
+                    reservationNightView.updateFlg = true
+                    reservationNightView.selectedVisitorHistoryId = selectGuestInfo.id
+                    presenter.getReservationNightInfo(date: date, name: name)
+                }
+            } else {
+                editVisitorInfoView.setVisitorInfo(selectGuestInfo: selectGuestInfo)
+                editVisitorInfoView.isHidden = false
+            }
+        } else {
+            editVisitorInfoView.setVisitorInfo(selectGuestInfo: selectGuestInfo)
+            editVisitorInfoView.isHidden = false
+        }
     }
 }
 
@@ -550,10 +650,14 @@ extension OpenViewController: CheckoutDelegate {
     }
 }
 
-extension OpenViewController: SalesDelegate {
+extension OpenViewController: SalesViewDelegate {
     func tapSalesRegisterButton(sales: [SalesModel], totalAmount: Int) {
         startLoading()
         presenter.didTapSalesRegisterButton(sales: sales, totalAmount: totalAmount)
+    }
+    
+    func tapSalesCancelButton() {
+        salesView.isHidden = true
     }
     
     func salesViewWillClose(hasUnsavedChanges: Bool, completion: @escaping (Bool) -> Void) {
@@ -578,5 +682,18 @@ extension OpenViewController: SalesDelegate {
         }))
         
         present(alert, animated: true)
+    }
+}
+
+extension OpenViewController: ReservationNightViewDelegate {
+    func tapReservationNightSubmitButton(id: Int, branch: Int, date: String, name: String, tel: String, count: Int, price: Int, memo: String, visitorHistoryId: Int) {
+        startLoading()
+        presenter.didTapReservationNightSubmitButton(id: id, branch: branch, date: date, name: name, tel: tel, count: count, price: price, memo: memo, visitorHistoryId: visitorHistoryId)
+        leftView.isHidden = false
+        stayingView.isHidden = true
+    }
+    
+    func tapReservationNightCancelButton() {
+        reservationNightView.isHidden = true
     }
 }

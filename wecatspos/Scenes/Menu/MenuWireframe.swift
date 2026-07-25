@@ -14,6 +14,7 @@ protocol MenuWireframeProtocol: BaseWireframeProtocol {
     func presentTotal()
     func presentClose()
     func presentCare()
+    func presentSettings()
     func presentViewController(viewController: UIViewController)
 }
 
@@ -50,6 +51,11 @@ class MenuWireframe: BaseWireframe, MenuWireframeProtocol {
     
     func presentCare() {
         let vc = CareBuilder().build()
+        presentViewController(viewController: vc)
+    }
+    
+    func presentSettings() {
+        let vc = SettingsBuilder().build()
         presentViewController(viewController: vc)
     }
     

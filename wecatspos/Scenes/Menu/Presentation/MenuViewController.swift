@@ -24,6 +24,7 @@ final class MenuViewController: UIViewController, MenuViewControllerProtocol {
     let totalButton = UIButton()
     let closeButton = UIButton()
     let careButton = UIButton()
+    let settingsButton = UIButton()
     
     let screenWidth = UIScreen.main.bounds.width
     
@@ -95,6 +96,10 @@ private extension MenuViewController {
         careButton.addTarget(self, action: #selector(self.tapCareButton(_:)), for: UIControl.Event.touchUpInside)
         mainLabel.addSubview(careButton)
 
+        setupButton(settingsButton, text: "設定")
+        settingsButton.addTarget(self, action: #selector(self.tapSettingsButton(_:)), for: UIControl.Event.touchUpInside)
+        mainLabel.addSubview(settingsButton)
+        
         // 2行×3列（空のUIViewで隙間を埋める）
         let dummy1 = UIView()
 
@@ -103,7 +108,7 @@ private extension MenuViewController {
         row1Stack.distribution = .fillEqually
         row1Stack.spacing = 96
 
-        let row2Stack = UIStackView(arrangedSubviews: [totalButton, careButton, dummy1])
+        let row2Stack = UIStackView(arrangedSubviews: [totalButton, careButton, settingsButton])
         row2Stack.axis = .horizontal
         row2Stack.distribution = .fillEqually
         row2Stack.spacing = 96
@@ -175,6 +180,10 @@ private extension MenuViewController {
     
     @objc func tapCareButton(_ sender: UIButton){
         presenter.didTapCareButton()
+    }
+    
+    @objc func tapSettingsButton(_ sender: UIButton){
+        presenter.didTapSettingsButton()
     }
 }
 

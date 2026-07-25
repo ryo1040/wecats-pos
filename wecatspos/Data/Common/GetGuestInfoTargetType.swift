@@ -11,9 +11,10 @@ import Moya
 struct GetGuestInfoTargetType: ApiTargetType {
     typealias Reponse = GetGuestInfoEntity
 
-    var baseURL: URL {
-        URL(string: "https://fhrd475n84.execute-api.ap-northeast-1.amazonaws.com/guest/")!
-    }
+//    var baseURL: URL {
+//        URL(string: "https://fhrd475n84.execute-api.ap-northeast-1.amazonaws.com/guest/")!
+//    }
+    var baseURL: URL { URL(string: API.getGuestBaseURL)! }
     
     var path: String {
         "get-guest-info-day"

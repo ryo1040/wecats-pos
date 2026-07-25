@@ -7,7 +7,7 @@
  
 public struct GetSalesModel {
     public var status: Int
-    public var salesMasterModel:  [SalesMasterModel]
+    public var salesMasterModel: [SalesMasterModel]
     public var salesModel: [SalesModel]
     
     public init(status: Int, salesMasterModel: [SalesMasterModel], salesModel: [SalesModel]) {
@@ -20,30 +20,6 @@ public struct GetSalesModel {
         self.status = -1
         self.salesMasterModel = []
         self.salesModel = []
-    }
-}
-
-public struct SalesMasterModel {
-    public var id: Int
-    public var name: String
-    public var price: Int
-    public var order: Int
-    public var memo: String
-
-    public init(id: Int, name: String, price: Int, order: Int, memo: String) {
-        self.id = id
-        self.name = name
-        self.price = price
-        self.order = order
-        self.memo = memo
-    }
-    
-    public init() {
-        self.id = -1
-        self.name = ""
-        self.price = -1
-        self.order = -1
-        self.memo = ""
     }
 }
 
