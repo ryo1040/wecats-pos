@@ -891,7 +891,7 @@ private extension EditVisitorInfoView {
             repeatFlag = true
         }
         
-        delegate?.tapEditVisitorInfoUpdateButton(id: visitorInfo.id, repeatFlag: repeatFlag, patternId: selectedPatternPickerId, name: nameTextField.text ?? "", date: visitorInfo.date, holidayFlag: visitorInfo.holidayFlag, kidsDayFlag: visitorInfo.kidsdayFlag, adultCount: Int(countAdultTextField.text!)!, childCount: Int(countChildTextField.text!)!, enterTime: enterTimeTextField.text!, leftTime: leftTimeTextField.text!, stayTime: Int(stayTimeTextField.text!)!, calcAmount: Int(basicPriceTextField.text!)!, discountAmount: Int(discountAmountTextField.text!)!, saleAmount: 0, gachaAmount: 0, totalAmount: Int(feeTextField.text!)!, memo: memoTextField.text ?? "")
+        delegate?.tapEditVisitorInfoUpdateButton(id: visitorInfo.id, repeatFlag: repeatFlag, patternId: selectedPatternPickerId, name: nameTextField.text ?? "", date: visitorInfo.date, holidayFlag: visitorInfo.holidayFlag, kidsDayFlag: visitorInfo.kidsdayFlag, adultCount: Int(countAdultTextField.text ?? "") ?? 0, childCount: Int(countChildTextField.text ?? "") ?? 0, enterTime: enterTimeTextField.text ?? "", leftTime: leftTimeTextField.text ?? "", stayTime: Int(stayTimeTextField.text ?? "") ?? 0, calcAmount: Int(basicPriceTextField.text ?? "") ?? 0, discountAmount: Int(discountAmountTextField.text ?? "") ?? 0, saleAmount: 0, gachaAmount: 0, totalAmount: Int(feeTextField.text ?? "") ?? 0, memo: memoTextField.text ?? "")
     }
     
     // キャンセルボタンタップ時のイベント

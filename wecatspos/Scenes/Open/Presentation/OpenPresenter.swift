@@ -67,7 +67,7 @@ final class OpenPresenter: OpenPresenterProtocol {
             .subscribe(onNext: {
                 [unowned self] model in
                 self.viewGuestInfo.onNext(model)
-            }, onError: { error in
+            }, onError: { [unowned self] error in
                 self.handleLoadError(error)
                 print(error)
             })
@@ -76,7 +76,7 @@ final class OpenPresenter: OpenPresenterProtocol {
     
     func handleLoadError(_ error: Error) {
         self.wireframe.presentAlert(Sentence.MSG_NETWORK_ERROR, buttonTitle: Sentence.DIALOG_BTN_RETRY)
-            .subscribe(onNext: { option in
+            .subscribe(onNext: { [unowned self] option in
                 if option == Sentence.DIALOG_BTN_RETRY {
                     // ボタンタップ時に再試行
                     self.load()
@@ -103,7 +103,7 @@ final class OpenPresenter: OpenPresenterProtocol {
             .subscribe(onNext: {
                 [unowned self] model in
                 self.viewEntry.onNext(model)
-            }, onError: { error in
+            }, onError: { [unowned self] error in
                 self.handleDidTapEnterSubmitButtonError(error, id: id, repeatFlag: repeatFlag, patternId: patternId, name: name, date: date, holidayFlag: holidayFlag, kidsdayFlag: kidsdayFlag, enterTime: enterTime, countAdult: countAdult, countChild: countChild, memo: memo)
             })
             .disposed(by: self.disposeBag)
@@ -111,7 +111,7 @@ final class OpenPresenter: OpenPresenterProtocol {
     
     func handleDidTapEnterSubmitButtonError(_ error: Error, id: Int, repeatFlag: Bool, patternId: Int, name: String, date: String, holidayFlag: Bool, kidsdayFlag: Bool, enterTime: String, countAdult: Int, countChild: Int, memo: String) {
         self.wireframe.presentAlert(Sentence.MSG_NETWORK_ERROR, buttonTitle: Sentence.DIALOG_BTN_RETRY)
-            .subscribe(onNext: { option in
+            .subscribe(onNext: { [unowned self] option in
                 if option == Sentence.DIALOG_BTN_RETRY {
                     // ボタンタップ時に再試行
                     self.didTapEnterSubmitButton(id: id, repeatFlag: repeatFlag, patternId: patternId, name: name, date: date, holidayFlag: holidayFlag, kidsdayFlag: kidsdayFlag, enterTime: enterTime, countAdult: countAdult, countChild: countChild, memo: memo)
@@ -130,7 +130,7 @@ final class OpenPresenter: OpenPresenterProtocol {
             .subscribe(onNext: {
                 [unowned self] model in
                 self.viewEntry.onNext(model)
-            }, onError: { error in
+            }, onError: { [unowned self] error in
                 self.handleDidTapUpdateSubmitButtonError(error, id: id, repeatFlag: repeatFlag, patternId: patternId, name: name, date: date, holidayFlag: holidayFlag, kidsdayFlag: kidsdayFlag, enterTime: enterTime, countAdult: countAdult, countChild: countChild, memo: memo)
             })
             .disposed(by: self.disposeBag)
@@ -138,7 +138,7 @@ final class OpenPresenter: OpenPresenterProtocol {
     
     func handleDidTapUpdateSubmitButtonError(_ error: Error, id: Int, repeatFlag: Bool, patternId: Int, name: String, date: String, holidayFlag: Bool, kidsdayFlag: Bool, enterTime: String, countAdult: Int, countChild: Int, memo: String) {
         self.wireframe.presentAlert(Sentence.MSG_NETWORK_ERROR, buttonTitle: Sentence.DIALOG_BTN_RETRY)
-            .subscribe(onNext: { option in
+            .subscribe(onNext: { [unowned self] option in
                 if option == Sentence.DIALOG_BTN_RETRY {
                     // ボタンタップ時に再試行
                     self.didTapUpdateSubmitButton(id: id, repeatFlag: repeatFlag, patternId: patternId, name: name, date: date, holidayFlag: holidayFlag, kidsdayFlag: kidsdayFlag, enterTime: enterTime, countAdult: countAdult, countChild: countChild, memo: memo)
@@ -157,7 +157,7 @@ final class OpenPresenter: OpenPresenterProtocol {
             .subscribe(onNext: {
                 [unowned self] model in
                 self.viewLeave.onNext(model)
-            }, onError: { error in
+            }, onError: { [unowned self] error in
                 self.handleDidTapLeaveSubmitButtonError(error, id: id, repeatFlag: repeatFlag, patternId: patternId, name: name, date: date, holidayFlag: holidayFlag, kidsDayFlag: kidsDayFlag, adultCount: adultCount, childCount: childCount, enterTime: enterTime, leftTime: leftTime, stayTime: stayTime, calcAmount: calcAmount, discountAmount: discountAmount, saleAmount: saleAmount, gachaAmount: gachaAmount, totalAmount: totalAmount, memo: memo)
             })
             .disposed(by: self.disposeBag)
@@ -165,7 +165,7 @@ final class OpenPresenter: OpenPresenterProtocol {
     
     func handleDidTapLeaveSubmitButtonError(_ error: Error, id: Int, repeatFlag: Bool, patternId: Int, name: String?, date: String, holidayFlag: Bool, kidsDayFlag: Bool, adultCount: Int, childCount: Int, enterTime: String, leftTime: String, stayTime: Int, calcAmount: Int, discountAmount: Int, saleAmount: Int, gachaAmount: Int, totalAmount: Int, memo: String) {
         self.wireframe.presentAlert(Sentence.MSG_NETWORK_ERROR, buttonTitle: Sentence.DIALOG_BTN_RETRY)
-            .subscribe(onNext: { option in
+            .subscribe(onNext: { [unowned self] option in
                 if option == Sentence.DIALOG_BTN_RETRY {
                     // ボタンタップ時に再試行
                     self.didTapLeaveSubmitButton(id: id, repeatFlag: repeatFlag, patternId: patternId, name: name, date: date, holidayFlag: holidayFlag, kidsDayFlag: kidsDayFlag, adultCount: adultCount, childCount: childCount, enterTime: enterTime, leftTime: leftTime, stayTime: stayTime, calcAmount: calcAmount, discountAmount: discountAmount, saleAmount: saleAmount, gachaAmount: gachaAmount, totalAmount: totalAmount, memo: memo)
@@ -184,7 +184,7 @@ final class OpenPresenter: OpenPresenterProtocol {
             .subscribe(onNext: {
                 [unowned self] model in
                 self.viewGuestInfo.onNext(model)
-            }, onError: { error in
+            }, onError: { [unowned self] error in
                 self.handleDidTapDeleteButtonError(error, id: id, date: date)
             })
             .disposed(by: self.disposeBag)
@@ -192,7 +192,7 @@ final class OpenPresenter: OpenPresenterProtocol {
     
     func handleDidTapDeleteButtonError(_ error: Error, id: Int, date: String) {
         self.wireframe.presentAlert(Sentence.MSG_NETWORK_ERROR, buttonTitle: Sentence.DIALOG_BTN_RETRY)
-            .subscribe(onNext: { option in
+            .subscribe(onNext: { [unowned self] option in
                 if option == Sentence.DIALOG_BTN_RETRY {
                     // ボタンタップ時に再試行
                     self.didTapDeleteButton(id: id, date: date)
@@ -211,7 +211,7 @@ final class OpenPresenter: OpenPresenterProtocol {
             .subscribe(onNext: {
                 [unowned self] model in
                 self.viewEntry.onNext(model)
-            }, onError: { error in
+            }, onError: { [unowned self] error in
                 self.handleDidTapEditVisitorInfoUpdateButtonError(error, id: id, repeatFlag: repeatFlag, patternId: patternId, name: name, date: date, holidayFlag: holidayFlag, kidsDayFlag: kidsDayFlag, adultCount: adultCount, childCount: childCount, enterTime: enterTime, leftTime: leftTime, stayTime: stayTime, calcAmount: calcAmount, discountAmount: discountAmount, saleAmount: saleAmount, gachaAmount: gachaAmount, totalAmount: totalAmount, memo: memo)
             })
             .disposed(by: self.disposeBag)
@@ -219,7 +219,7 @@ final class OpenPresenter: OpenPresenterProtocol {
     
     func handleDidTapEditVisitorInfoUpdateButtonError(_ error: Error, id: Int, repeatFlag: Bool, patternId: Int, name: String?, date: String, holidayFlag: Bool, kidsDayFlag: Bool, adultCount: Int, childCount: Int, enterTime: String, leftTime: String, stayTime: Int, calcAmount: Int, discountAmount: Int, saleAmount: Int, gachaAmount: Int, totalAmount: Int, memo: String) {
         self.wireframe.presentAlert(Sentence.MSG_NETWORK_ERROR, buttonTitle: Sentence.DIALOG_BTN_RETRY)
-            .subscribe(onNext: { option in
+            .subscribe(onNext: { [unowned self] option in
                 if option == Sentence.DIALOG_BTN_RETRY {
                     // ボタンタップ時に再試行
                     self.didTapEditVisitorInfoUpdateButton(id: id, repeatFlag: repeatFlag, patternId: patternId, name: name, date: date, holidayFlag: holidayFlag, kidsDayFlag: kidsDayFlag, adultCount: adultCount, childCount: childCount, enterTime: enterTime, leftTime: leftTime, stayTime: stayTime, calcAmount: calcAmount, discountAmount: discountAmount, saleAmount: saleAmount, gachaAmount: gachaAmount, totalAmount: totalAmount, memo: memo)
@@ -238,7 +238,7 @@ final class OpenPresenter: OpenPresenterProtocol {
             .subscribe(onNext: {
                 [unowned self] model in
                 self.calcedTotalAmount.onNext(model)
-            }, onError: { error in
+            }, onError: { [unowned self] error in
                 self.handleCalcTotalAmountError(error, enterTime: enterTime, leftTime: leftTime, adultCount: adultCount, childCount: childCount, discountAmount: discountAmount, saleAmount: saleAmount)
             })
             .disposed(by: self.disposeBag)
@@ -246,7 +246,7 @@ final class OpenPresenter: OpenPresenterProtocol {
 
     func handleCalcTotalAmountError(_ error: Error, enterTime: String, leftTime: String, adultCount: Int, childCount: Int, discountAmount: String, saleAmount: String) {
         self.wireframe.presentAlert(Sentence.MSG_NETWORK_ERROR, buttonTitle: Sentence.DIALOG_BTN_RETRY)
-            .subscribe(onNext: { option in
+            .subscribe(onNext: { [unowned self] option in
                 if option == Sentence.DIALOG_BTN_RETRY {
                     // ボタンタップ時に再試行
                     self.calcTotalAmount(enterTime: enterTime, leftTime: leftTime, adultCount: adultCount, childCount: childCount, discountAmount: discountAmount, saleAmount: saleAmount)
@@ -265,7 +265,7 @@ final class OpenPresenter: OpenPresenterProtocol {
             .subscribe(onNext: {
                 [unowned self] model in
                 self.viewSales.onNext(model)
-            }, onError: { error in
+            }, onError: { [unowned self] error in
                 self.handleGetSalesMasterError(error, date: date)
             })
             .disposed(by: self.disposeBag)
@@ -273,7 +273,7 @@ final class OpenPresenter: OpenPresenterProtocol {
     
     func handleGetSalesMasterError(_ error: Error, date: String) {
         self.wireframe.presentAlert(Sentence.MSG_NETWORK_ERROR, buttonTitle: Sentence.DIALOG_BTN_RETRY)
-            .subscribe(onNext: { option in
+            .subscribe(onNext: { [unowned self] option in
                 if option == Sentence.DIALOG_BTN_RETRY {
                     // ボタンタップ時に再試行
                     self.getSales(date: date)
@@ -300,7 +300,7 @@ final class OpenPresenter: OpenPresenterProtocol {
             .subscribe(onNext: {
                 [unowned self] model in
                 self.salesRegistrationCompleted.onNext(())
-            }, onError: { error in
+            }, onError: { [unowned self] error in
                 self.handleDidTapSalesRegisterButtonError(error, sales: sales, totalAmount: totalAmount)
             })
             .disposed(by: self.disposeBag)
@@ -308,7 +308,7 @@ final class OpenPresenter: OpenPresenterProtocol {
     
     func handleDidTapSalesRegisterButtonError(_ error: Error, sales: [SalesModel], totalAmount: Int) {
         self.wireframe.presentAlert(Sentence.MSG_NETWORK_ERROR, buttonTitle: Sentence.DIALOG_BTN_RETRY)
-            .subscribe(onNext: { option in
+            .subscribe(onNext: { [unowned self] option in
                 if option == Sentence.DIALOG_BTN_RETRY {
                     // ボタンタップ時に再試行
                     self.didTapSalesRegisterButton(sales: sales, totalAmount: totalAmount)
@@ -327,7 +327,7 @@ final class OpenPresenter: OpenPresenterProtocol {
             .subscribe(onNext: {
                 [unowned self] model in
                 self.getReservationNightInfo.onNext(model.reservationNightViewModel[0])
-            }, onError: { error in
+            }, onError: { [unowned self] error in
                 self.handleGetReservationNightInfoError(error, date: date, name: name)
             })
             .disposed(by: self.disposeBag)
@@ -335,7 +335,7 @@ final class OpenPresenter: OpenPresenterProtocol {
     
     func handleGetReservationNightInfoError(_ error: Error, date: String, name: String) {
         self.wireframe.presentAlert(Sentence.MSG_NETWORK_ERROR, buttonTitle: Sentence.DIALOG_BTN_RETRY)
-            .subscribe(onNext: { option in
+            .subscribe(onNext: { [unowned self] option in
                 if option == Sentence.DIALOG_BTN_RETRY {
                     // ボタンタップ時に再試行
                     self.getReservationNightInfo(date: date, name: name)
@@ -354,7 +354,7 @@ final class OpenPresenter: OpenPresenterProtocol {
             .subscribe(onNext: {
                 [unowned self] model in
                 self.viewGuestInfo.onNext(model)
-            }, onError: { error in
+            }, onError: { [unowned self] error in
                 self.handleDidTapeservationNightSubmitButtonError(error, id: id, branch: branch, date: date, name: name, tel: tel, count: count, price: price, memo: memo, visitorHistoryId: visitorHistoryId)
             })
             .disposed(by: self.disposeBag)
@@ -362,7 +362,7 @@ final class OpenPresenter: OpenPresenterProtocol {
     
     func handleDidTapeservationNightSubmitButtonError(_ error: Error, id: Int, branch: Int, date: String, name: String, tel: String, count: Int, price: Int, memo: String, visitorHistoryId: Int) {
         self.wireframe.presentAlert(Sentence.MSG_NETWORK_ERROR, buttonTitle: Sentence.DIALOG_BTN_RETRY)
-            .subscribe(onNext: { option in
+            .subscribe(onNext: { [unowned self] option in
                 if option == Sentence.DIALOG_BTN_RETRY {
                     // ボタンタップ時に再試行
                     self.didTapReservationNightSubmitButton(id: id, branch: branch, date: date, name: name, tel: tel, count: count, price: price, memo: memo, visitorHistoryId: visitorHistoryId)
@@ -381,7 +381,7 @@ final class OpenPresenter: OpenPresenterProtocol {
             .subscribe(onNext: {
                 [unowned self] model in
                 self.viewGuestInfo.onNext(model)
-            }, onError: { error in
+            }, onError: { [unowned self] error in
                 self.handleDidTapeservationNightDeleteButtonError(error, id: id, branch: branch, date: date, visitorHistoryId: visitorHistoryId)
             })
             .disposed(by: self.disposeBag)
@@ -389,7 +389,7 @@ final class OpenPresenter: OpenPresenterProtocol {
     
     func handleDidTapeservationNightDeleteButtonError(_ error: Error, id: Int, branch: Int, date: String, visitorHistoryId: Int) {
         self.wireframe.presentAlert(Sentence.MSG_NETWORK_ERROR, buttonTitle: Sentence.DIALOG_BTN_RETRY)
-            .subscribe(onNext: { option in
+            .subscribe(onNext: { [unowned self] option in
                 if option == Sentence.DIALOG_BTN_RETRY {
                     // ボタンタップ時に再試行
                     self.didTapReservationNightDeleteButton(id: id, branch: branch, date: date, visitorHistoryId: visitorHistoryId)

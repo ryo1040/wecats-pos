@@ -125,6 +125,8 @@ private extension EditSalesSettingsView {
             contentView.leftAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leftAnchor),
             contentView.rightAnchor.constraint(equalTo: scrollView.contentLayoutGuide.rightAnchor),
             contentView.widthAnchor.constraint(equalTo: scrollView.frameLayoutGuide.widthAnchor),
+            // 画面高より小さくならないようにして、端末ごとに高さを自動調整する
+            contentView.heightAnchor.constraint(greaterThanOrEqualTo: scrollView.frameLayoutGuide.heightAnchor),
         ])
         
         // UI要素の設定（制約は後で動的に設定するため、ここでは基本設定のみ）
@@ -244,7 +246,7 @@ private extension EditSalesSettingsView {
             return
         }
         
-        delegate?.didTapEditSalesSettingsSubmitButton(salesMaster: SalesMasterModel(id: salesMasterModel.id, branch: salesMasterModel.branch + 1, name: nameTextField.text!, price: Int(priceTextField.text!) ?? 0, order: Int(orderByTextField.text!) ?? 0, memo: memoTextField.text ?? ""))
+        delegate?.didTapEditSalesSettingsSubmitButton(salesMaster: SalesMasterModel(id: salesMasterModel.id, branch: salesMasterModel.branch + 1, name: nameTextField.text ?? "", price: Int(priceTextField.text ?? "") ?? 0, order: Int(orderByTextField.text ?? "") ?? 0, memo: memoTextField.text ?? ""))
     }
     
     // キャンセルボタンタップ時のイベント
@@ -425,19 +427,48 @@ private extension EditSalesSettingsView {
                 errorMessageLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
                 errorMessageLabel.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 32),
 
+                // 名前
+                nameTitleLabel.topAnchor.constraint(equalTo: errorMessageLabel.bottomAnchor, constant: 36),
+                nameTitleLabel.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 32),
+                nameTitleLabel.widthAnchor.constraint(equalToConstant: 100),
+                nameTextField.centerYAnchor.constraint(equalTo: nameTitleLabel.centerYAnchor),
+                nameTextField.leftAnchor.constraint(equalTo: nameTitleLabel.rightAnchor, constant: 16),
+                nameTextField.widthAnchor.constraint(equalToConstant: 200),
+                
+                // 価格
+                priceTitleLabel.topAnchor.constraint(equalTo: nameTitleLabel.bottomAnchor, constant: 36),
+                priceTitleLabel.leftAnchor.constraint(equalTo: nameTitleLabel.leftAnchor),
+                priceTitleLabel.widthAnchor.constraint(equalTo: nameTitleLabel.widthAnchor),
+                priceTextField.centerYAnchor.constraint(equalTo: priceTitleLabel.centerYAnchor),
+                priceTextField.leftAnchor.constraint(equalTo: priceTitleLabel.rightAnchor, constant: 16),
+                priceTextField.widthAnchor.constraint(equalTo: nameTextField.widthAnchor),
+                
+                // 表示順
+                orderByTitleLabel.topAnchor.constraint(equalTo: priceTitleLabel.bottomAnchor, constant: 36),
+                orderByTitleLabel.leftAnchor.constraint(equalTo: nameTitleLabel.leftAnchor),
+                orderByTitleLabel.widthAnchor.constraint(equalTo: nameTitleLabel.widthAnchor),
+                orderByTextField.centerYAnchor.constraint(equalTo: orderByTitleLabel.centerYAnchor),
+                orderByTextField.leftAnchor.constraint(equalTo: orderByTitleLabel.rightAnchor, constant: 16),
+                orderByTextField.widthAnchor.constraint(equalTo: nameTextField.widthAnchor),
+                
+                // メモ
+                memoTitleLabel.topAnchor.constraint(equalTo: orderByTitleLabel.bottomAnchor, constant: 36),
+                memoTitleLabel.leftAnchor.constraint(equalTo: nameTitleLabel.leftAnchor),
+                memoTitleLabel.widthAnchor.constraint(equalTo: nameTitleLabel.widthAnchor),
+                memoTextField.centerYAnchor.constraint(equalTo: memoTitleLabel.centerYAnchor),
+                memoTextField.leftAnchor.constraint(equalTo: memoTitleLabel.rightAnchor, constant: 16),
+                memoTextField.widthAnchor.constraint(equalTo: nameTextField.widthAnchor),
+                
                 // 登録ボタン
-                submitButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -32),
-                submitButton.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -32),
-                submitButton.heightAnchor.constraint(equalToConstant: 48),
-                submitButton.widthAnchor.constraint(equalToConstant: 160),
+                submitButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16),
+                submitButton.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -16),
+                submitButton.heightAnchor.constraint(equalToConstant: 36),
+                submitButton.widthAnchor.constraint(equalToConstant: 100),
                 // キャンセルボタン
                 cancelButton.bottomAnchor.constraint(equalTo: submitButton.bottomAnchor),
-                cancelButton.rightAnchor.constraint(equalTo: submitButton.leftAnchor, constant: -32),
-                cancelButton.heightAnchor.constraint(equalToConstant: 48),
-                cancelButton.widthAnchor.constraint(equalToConstant: 160),
-                
-                // ContentViewの高さを決定
-                contentView.heightAnchor.constraint(equalToConstant: 800)
+                cancelButton.rightAnchor.constraint(equalTo: submitButton.leftAnchor, constant: -16),
+                cancelButton.heightAnchor.constraint(equalToConstant: 36),
+                cancelButton.widthAnchor.constraint(equalToConstant: 100)
             ]
             
             currentConstraints.append(contentsOf: constraints)
@@ -494,10 +525,7 @@ private extension EditSalesSettingsView {
                 cancelButton.bottomAnchor.constraint(equalTo: submitButton.bottomAnchor),
                 cancelButton.rightAnchor.constraint(equalTo: submitButton.leftAnchor, constant: -32),
                 cancelButton.heightAnchor.constraint(equalToConstant: 48),
-                cancelButton.widthAnchor.constraint(equalToConstant: 160),
-                
-                // ContentViewの高さを決定（縦向きは高めに設定）
-                contentView.heightAnchor.constraint(equalToConstant: 950)
+                cancelButton.widthAnchor.constraint(equalToConstant: 160)
             ]
             
             currentConstraints.append(contentsOf: constraints)
@@ -554,10 +582,7 @@ private extension EditSalesSettingsView {
                 cancelButton.bottomAnchor.constraint(equalTo: submitButton.bottomAnchor),
                 cancelButton.rightAnchor.constraint(equalTo: submitButton.leftAnchor, constant: -32),
                 cancelButton.heightAnchor.constraint(equalToConstant: 48),
-                cancelButton.widthAnchor.constraint(equalToConstant: 160),
-                
-                // ContentViewの高さを決定（横向きは低めに設定）
-                contentView.heightAnchor.constraint(equalToConstant: 580)
+                cancelButton.widthAnchor.constraint(equalToConstant: 160)
             ]
             
             currentConstraints.append(contentsOf: constraints)

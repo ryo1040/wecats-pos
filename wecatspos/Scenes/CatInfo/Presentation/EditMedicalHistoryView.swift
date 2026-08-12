@@ -338,23 +338,22 @@ private extension EditMedicalHistoryView {
     }
     
     @objc func tapSubmitButton(_ sender: UIButton){
-        if (dateTextField.text == "") {
+        guard let dateText = dateTextField.text, !dateText.isEmpty else {
             errorMessageLabel.text = "日付を入力してください"
             return
-        } else {
-            if !self.dateCheck(date: dateTextField.text!) {
-                errorMessageLabel.text = "日付はyyyy/mm/dd形式で入力してください"
-            }
         }
-        
-        if (overviewTextField.text == "") {
+        if !self.dateCheck(date: dateText) {
+            errorMessageLabel.text = "日付はyyyy/mm/dd形式で入力してください"
+        }
+
+        guard let overview = overviewTextField.text, !overview.isEmpty else {
             errorMessageLabel.text = "概要を入力してください"
             return
         }
 
-        let date = dateTextField.text!.replacingOccurrences(of: "/", with: "-")
-        
-        delegate?.tapSubmitButton(id: id, date: date, overview: overviewTextField.text!, detail: detailTextView.text)
+        let date = dateText.replacingOccurrences(of: "/", with: "-")
+
+        delegate?.tapSubmitButton(id: id, date: date, overview: overview, detail: detailTextView.text)
     }
     
     func setupDatePicker() {

@@ -329,7 +329,7 @@ private extension ReservationNightView {
     
     // 予約ボタンタップ時のイベント
     @objc func tapSubmitButton() {
-        delegate?.tapReservationNightSubmitButton(id: selectedId, branch: selectedBranch, date: dateTextField.text!, name: nameTextField.text!, tel: telTextField.text!, count: Int(countTextField.text!)!, price: Int(priceTextField.text!)!, memo: memoTextField.text!, visitorHistoryId: selectedVisitorHistoryId)
+        delegate?.tapReservationNightSubmitButton(id: selectedId, branch: selectedBranch, date: dateTextField.text ?? "", name: nameTextField.text ?? "", tel: telTextField.text ?? "", count: Int(countTextField.text ?? "") ?? 0, price: Int(priceTextField.text ?? "") ?? 0, memo: memoTextField.text ?? "", visitorHistoryId: selectedVisitorHistoryId)
     }
     
     // キャンセルボタンタップ時のイベント

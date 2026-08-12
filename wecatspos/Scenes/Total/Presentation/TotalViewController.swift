@@ -291,7 +291,12 @@ private extension TotalViewController {
 
     @objc func tapDayTotalButton(_ sender: UIButton) {
         startLoading()
-        presenter.load(date: dayTotalView.dayLabel.text!.replacingOccurrences(of: "/", with: "-"))
+        guard let dayText = dayTotalView.dayLabel.text else {
+            assertionFailure("dayLabel.text must be set")
+            stopLoading()
+            return
+        }
+        presenter.load(date: dayText.replacingOccurrences(of: "/", with: "-"))
         dayTotalView.isHidden = false
         monthTotalView.isHidden = true
         dayTotalButton.backgroundColor = UIColor.lightGray

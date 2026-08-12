@@ -551,12 +551,13 @@ private extension CloseRegisterView {
             return
         }
         
-        monthLabel.text = String(format: "%04d/%02d", selectedYear, selectedMonth)
+        let monthText = String(format: "%04d/%02d", selectedYear, selectedMonth)
+        monthLabel.text = monthText
         self.endEditing(true) // ピッカーを閉じる
         pickerBackgroundView.isHidden = true
 
         // Delegateを通じて変更を通知
-        delegate?.changeMonth(month: monthLabel.text!.replacingOccurrences(of: "/", with: "-"))
+        delegate?.changeMonth(month: monthText.replacingOccurrences(of: "/", with: "-"))
     }
     
     @objc private func cancelDatePicker() {

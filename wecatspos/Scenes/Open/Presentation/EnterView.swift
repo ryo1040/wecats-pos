@@ -821,7 +821,7 @@ private extension EnterView {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd"
         
-        delegate?.tapEnterSubmitButton(id: -1, repeatFlag: repeatFlag, patternId: selectedPatternPickerId, name: nameTextField.text!, date: formatter.string(from: Date()), holidayFlag: holidayFlag, kidsdayFlag: kidsdayFlag, enterTime: enterTimeTextField.text!, countAdult: Int(countAdultTextField.text!)!, countChild: Int(countChildTextField.text!)!, memo: memoTextField.text!)
+        delegate?.tapEnterSubmitButton(id: -1, repeatFlag: repeatFlag, patternId: selectedPatternPickerId, name: nameTextField.text ?? "", date: formatter.string(from: Date()), holidayFlag: holidayFlag, kidsdayFlag: kidsdayFlag, enterTime: enterTimeTextField.text ?? "", countAdult: Int(countAdultTextField.text ?? "") ?? 0, countChild: Int(countChildTextField.text ?? "") ?? 0, memo: memoTextField.text ?? "")
     }
  
     @objc func tapUpdateButton() {
@@ -855,7 +855,7 @@ private extension EnterView {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd"
         
-        delegate?.tapUpdateSubmitButton(id: self.editId, repeatFlag: repeatFlag, patternId: selectedPatternPickerId, name: nameTextField.text!, date: formatter.string(from: Date()), holidayFlag: holidayFlag, kidsdayFlag: kidsdayFlag, enterTime: enterTimeTextField.text!, countAdult: Int(countAdultTextField.text!)!, countChild: Int(countChildTextField.text!)!, memo: memoTextField.text!)
+        delegate?.tapUpdateSubmitButton(id: self.editId, repeatFlag: repeatFlag, patternId: selectedPatternPickerId, name: nameTextField.text ?? "", date: formatter.string(from: Date()), holidayFlag: holidayFlag, kidsdayFlag: kidsdayFlag, enterTime: enterTimeTextField.text ?? "", countAdult: Int(countAdultTextField.text ?? "") ?? 0, countChild: Int(countChildTextField.text ?? "") ?? 0, memo: memoTextField.text ?? "")
     }
 
     // キャンセルボタンタップ時のイベント

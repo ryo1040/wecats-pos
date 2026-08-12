@@ -247,6 +247,8 @@ private extension DenominationView {
             contentView.leftAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leftAnchor),
             contentView.rightAnchor.constraint(equalTo: scrollView.contentLayoutGuide.rightAnchor),
             contentView.widthAnchor.constraint(equalTo: scrollView.frameLayoutGuide.widthAnchor),
+            // 端末サイズに応じてコンテンツ高さを決める（最低でも画面高）
+            contentView.heightAnchor.constraint(greaterThanOrEqualTo: scrollView.frameLayoutGuide.heightAnchor),
         ])
         
         // UI要素の設定（制約は後で動的に設定するため、ここでは基本設定のみ）
@@ -599,8 +601,14 @@ private extension DenominationView {
         
         let totalAmount = tenThousandYenCount * 10000 + fiveThousandYenCount * 5000 + twoThousandYenCount * 2000 + oneThousandYenCount * 1000 + fiveHundredYenCount * 500 + oneHundredYenCount * 100 + fiftyYenCount * 50 + tenYenCount * 10 + fiveYenCount * 5 + oneYenCount * 1
         
+        guard let date = dateLabel.text else {
+            assertionFailure("dateLabel.text must be set before submit")
+            errorMessageLabel.text = "日付の取得に失敗しました"
+            return
+        }
+
         // TODO: totalの入力チェックどうする？合計額とあってるかまでチェックする？
-        delegate?.tapDenominationSubmitButton(date: dateLabel.text!, tenThousandYenCount: tenThousandYenCount, fiveThousandYenCount: fiveThousandYenCount, twoThousandYenCount: twoThousandYenCount, oneThousandYenCount: oneThousandYenCount, fiveHundredYenCount: fiveHundredYenCount, oneHundredYenCount: oneHundredYenCount, fiftyYenCount: fiftyYenCount, tenYenCount: tenYenCount, fiveYenCount: fiveYenCount, oneYenCount: oneYenCount, exportAmount: exportAmount, ticketAmount: ticketAmount, totalAmount: totalAmount, memo: memoTextField.text ?? "")
+        delegate?.tapDenominationSubmitButton(date: date, tenThousandYenCount: tenThousandYenCount, fiveThousandYenCount: fiveThousandYenCount, twoThousandYenCount: twoThousandYenCount, oneThousandYenCount: oneThousandYenCount, fiveHundredYenCount: fiveHundredYenCount, oneHundredYenCount: oneHundredYenCount, fiftyYenCount: fiftyYenCount, tenYenCount: tenYenCount, fiveYenCount: fiveYenCount, oneYenCount: oneYenCount, exportAmount: exportAmount, ticketAmount: ticketAmount, totalAmount: totalAmount, memo: memoTextField.text ?? "")
     }
 
     // キャンセルボタンタップ時のイベント
@@ -700,7 +708,12 @@ private extension DenominationView {
         let totalAmount = tenThousandYenCount * 10000 + fiveThousandYenCount * 5000 + twoThousandYenCount * 2000 + oneThousandYenCount * 1000 + fiveHundredYenCount * 500 + oneHundredYenCount * 100 + fiftyYenCount * 50 + tenYenCount * 10 + fiveYenCount * 5 + oneYenCount * 1
         totalAmountLabel.text = commaSeparateThreeDigits(totalAmount) + "円"
         
-        delegate?.checkTotalAmount(date: dateLabel.text!, totalAmount: totalAmount, ticketAmount: ticketAmount, exportAmount: exportAmount)
+        guard let date = dateLabel.text else {
+            assertionFailure("dateLabel.text must be set before calc")
+            errorMessageLabel.text = "日付の取得に失敗しました"
+            return
+        }
+        delegate?.checkTotalAmount(date: date, totalAmount: totalAmount, ticketAmount: ticketAmount, exportAmount: exportAmount)
     }
     
     func commaSeparateThreeDigits(_ amount: Int) -> String {
@@ -882,144 +895,172 @@ private extension DenominationView {
                 dailySalesLabel.centerYAnchor.constraint(equalTo: dailySalesTitleLabel.centerYAnchor),
                 dailySalesLabel.leftAnchor.constraint(equalTo: dailySalesTitleLabel.rightAnchor, constant: 8),
                 // 1万円札
-                tenThousandYenTitleLabel.topAnchor.constraint(equalTo: dateTitleLabel.bottomAnchor, constant: 24),
+                tenThousandYenTitleLabel.topAnchor.constraint(equalTo: dateTitleLabel.bottomAnchor, constant: 20),
                 tenThousandYenTitleLabel.rightAnchor.constraint(equalTo: dateTitleLabel.rightAnchor),
                 tenThousandYenCountTextField.centerYAnchor.constraint(equalTo: tenThousandYenTitleLabel.centerYAnchor),
                 tenThousandYenCountTextField.leftAnchor.constraint(equalTo: tenThousandYenTitleLabel.rightAnchor, constant: 8),
                 tenThousandYenCountTextField.widthAnchor.constraint(equalToConstant: 50),
                 tenThousandYenCountTextField.heightAnchor.constraint(equalToConstant: 25),
+                tenThousandYenMaiLabel.centerYAnchor.constraint(equalTo: tenThousandYenTitleLabel.centerYAnchor),
+                tenThousandYenMaiLabel.leftAnchor.constraint(equalTo: tenThousandYenCountTextField.rightAnchor, constant: 8),
+                tenThousandYenLabel.centerYAnchor.constraint(equalTo: tenThousandYenTitleLabel.centerYAnchor),
+                tenThousandYenLabel.leftAnchor.constraint(equalTo: tenThousandYenMaiLabel.rightAnchor, constant: 8),
+                tenThousandYenLabel.widthAnchor.constraint(equalToConstant: 100),
                 // 5千円札
-                fiveThousandYenTitleLabel.topAnchor.constraint(equalTo: tenThousandYenTitleLabel.bottomAnchor, constant: 32),
+                fiveThousandYenTitleLabel.topAnchor.constraint(equalTo: tenThousandYenTitleLabel.bottomAnchor, constant: 20),
                 fiveThousandYenTitleLabel.rightAnchor.constraint(equalTo: tenThousandYenTitleLabel.rightAnchor),
                 fiveThousandYenCountTextField.centerYAnchor.constraint(equalTo: fiveThousandYenTitleLabel.centerYAnchor),
                 fiveThousandYenCountTextField.leftAnchor.constraint(equalTo: fiveThousandYenTitleLabel.rightAnchor, constant: 8),
-                fiveThousandYenCountTextField.widthAnchor.constraint(equalToConstant: 100),
+                fiveThousandYenCountTextField.widthAnchor.constraint(equalToConstant: 50),
+                fiveThousandYenCountTextField.heightAnchor.constraint(equalToConstant: 25),
                 fiveThousandYenMaiLabel.centerYAnchor.constraint(equalTo: fiveThousandYenTitleLabel.centerYAnchor),
                 fiveThousandYenMaiLabel.leftAnchor.constraint(equalTo: fiveThousandYenCountTextField.rightAnchor, constant: 8),
                 fiveThousandYenLabel.centerYAnchor.constraint(equalTo: fiveThousandYenTitleLabel.centerYAnchor),
-                fiveThousandYenLabel.leftAnchor.constraint(equalTo: fiveThousandYenMaiLabel.rightAnchor, constant: 16),
-                fiveThousandYenLabel.widthAnchor.constraint(equalToConstant: 180),
+                fiveThousandYenLabel.leftAnchor.constraint(equalTo: fiveThousandYenMaiLabel.rightAnchor, constant: 8),
+                fiveThousandYenLabel.widthAnchor.constraint(equalToConstant: 100),
                 // 2千円札
-                twoThousandYenTitleLabel.topAnchor.constraint(equalTo: fiveThousandYenTitleLabel.bottomAnchor, constant: 32),
+                twoThousandYenTitleLabel.topAnchor.constraint(equalTo: fiveThousandYenTitleLabel.bottomAnchor, constant: 20),
                 twoThousandYenTitleLabel.rightAnchor.constraint(equalTo: tenThousandYenTitleLabel.rightAnchor),
                 twoThousandYenCountTextField.centerYAnchor.constraint(equalTo: twoThousandYenTitleLabel.centerYAnchor),
                 twoThousandYenCountTextField.leftAnchor.constraint(equalTo: twoThousandYenTitleLabel.rightAnchor, constant: 8),
-                twoThousandYenCountTextField.widthAnchor.constraint(equalToConstant: 100),
+                twoThousandYenCountTextField.widthAnchor.constraint(equalToConstant: 50),
+                twoThousandYenCountTextField.heightAnchor.constraint(equalToConstant: 25),
                 twoThousandYenMaiLabel.centerYAnchor.constraint(equalTo: twoThousandYenTitleLabel.centerYAnchor),
                 twoThousandYenMaiLabel.leftAnchor.constraint(equalTo: twoThousandYenCountTextField.rightAnchor, constant: 8),
                 twoThousandYenLabel.centerYAnchor.constraint(equalTo: twoThousandYenTitleLabel.centerYAnchor),
-                twoThousandYenLabel.leftAnchor.constraint(equalTo: twoThousandYenMaiLabel.rightAnchor, constant: 16),
-                twoThousandYenLabel.widthAnchor.constraint(equalToConstant: 180),
+                twoThousandYenLabel.leftAnchor.constraint(equalTo: twoThousandYenMaiLabel.rightAnchor, constant: 8),
+                twoThousandYenLabel.widthAnchor.constraint(equalToConstant: 100),
                 // 千円札
-                oneThousandYenTitleLabel.topAnchor.constraint(equalTo: twoThousandYenTitleLabel.bottomAnchor, constant: 32),
+                oneThousandYenTitleLabel.topAnchor.constraint(equalTo: twoThousandYenTitleLabel.bottomAnchor, constant: 20),
                 oneThousandYenTitleLabel.rightAnchor.constraint(equalTo: tenThousandYenTitleLabel.rightAnchor),
                 oneThousandYenCountTextField.centerYAnchor.constraint(equalTo: oneThousandYenTitleLabel.centerYAnchor),
                 oneThousandYenCountTextField.leftAnchor.constraint(equalTo: oneThousandYenTitleLabel.rightAnchor, constant: 8),
-                oneThousandYenCountTextField.widthAnchor.constraint(equalToConstant: 100),
+                oneThousandYenCountTextField.widthAnchor.constraint(equalToConstant: 50),
+                oneThousandYenCountTextField.heightAnchor.constraint(equalToConstant: 25),
                 oneThousandYenMaiLabel.centerYAnchor.constraint(equalTo: oneThousandYenTitleLabel.centerYAnchor),
                 oneThousandYenMaiLabel.leftAnchor.constraint(equalTo: oneThousandYenCountTextField.rightAnchor, constant: 8),
                 oneThousandYenLabel.centerYAnchor.constraint(equalTo: oneThousandYenTitleLabel.centerYAnchor),
-                oneThousandYenLabel.leftAnchor.constraint(equalTo: oneThousandYenMaiLabel.rightAnchor, constant: 16),
-                oneThousandYenLabel.widthAnchor.constraint(equalToConstant: 180),
+                oneThousandYenLabel.leftAnchor.constraint(equalTo: oneThousandYenMaiLabel.rightAnchor, constant: 8),
+                oneThousandYenLabel.widthAnchor.constraint(equalToConstant: 100),
                 // 500円玉
-                fiveHundredYenTitleLabel.topAnchor.constraint(equalTo: oneThousandYenTitleLabel.bottomAnchor, constant: 32),
+                fiveHundredYenTitleLabel.topAnchor.constraint(equalTo: oneThousandYenTitleLabel.bottomAnchor, constant: 20),
                 fiveHundredYenTitleLabel.rightAnchor.constraint(equalTo: tenThousandYenTitleLabel.rightAnchor),
                 fiveHundredYenCountTextField.centerYAnchor.constraint(equalTo: fiveHundredYenTitleLabel.centerYAnchor),
                 fiveHundredYenCountTextField.leftAnchor.constraint(equalTo: fiveHundredYenTitleLabel.rightAnchor, constant: 8),
-                fiveHundredYenCountTextField.widthAnchor.constraint(equalToConstant: 100),
+                fiveHundredYenCountTextField.widthAnchor.constraint(equalToConstant: 50),
+                fiveHundredYenCountTextField.heightAnchor.constraint(equalToConstant: 25),
                 fiveHundredYenMaiLabel.centerYAnchor.constraint(equalTo: fiveHundredYenTitleLabel.centerYAnchor),
                 fiveHundredYenMaiLabel.leftAnchor.constraint(equalTo: fiveHundredYenCountTextField.rightAnchor, constant: 8),
                 fiveHundredYenLabel.centerYAnchor.constraint(equalTo: fiveHundredYenTitleLabel.centerYAnchor),
-                fiveHundredYenLabel.leftAnchor.constraint(equalTo: fiveHundredYenMaiLabel.rightAnchor, constant: 16),
-                fiveHundredYenLabel.widthAnchor.constraint(equalToConstant: 180),
+                fiveHundredYenLabel.leftAnchor.constraint(equalTo: fiveHundredYenMaiLabel.rightAnchor, constant: 8),
+                fiveHundredYenLabel.widthAnchor.constraint(equalToConstant: 100),
                 // 100円玉
+                oneHundredYenTitleLabel.centerYAnchor.constraint(equalTo: tenThousandYenTitleLabel.centerYAnchor),
+                oneHundredYenTitleLabel.rightAnchor.constraint(equalTo: dailySalesTitleLabel.rightAnchor),
                 oneHundredYenCountTextField.centerYAnchor.constraint(equalTo: oneHundredYenTitleLabel.centerYAnchor),
                 oneHundredYenCountTextField.leftAnchor.constraint(equalTo: oneHundredYenTitleLabel.rightAnchor, constant: 8),
-                oneHundredYenCountTextField.widthAnchor.constraint(equalToConstant: 100),
+                oneHundredYenCountTextField.widthAnchor.constraint(equalToConstant: 50),
+                oneHundredYenCountTextField.heightAnchor.constraint(equalToConstant: 25),
                 oneHundredYenMaiLabel.centerYAnchor.constraint(equalTo: oneHundredYenTitleLabel.centerYAnchor),
                 oneHundredYenMaiLabel.leftAnchor.constraint(equalTo: oneHundredYenCountTextField.rightAnchor, constant: 8),
                 oneHundredYenLabel.centerYAnchor.constraint(equalTo: oneHundredYenTitleLabel.centerYAnchor),
                 oneHundredYenLabel.leftAnchor.constraint(equalTo: oneHundredYenMaiLabel.rightAnchor, constant: 16),
-                oneHundredYenLabel.widthAnchor.constraint(equalToConstant: 180),
+                oneHundredYenLabel.widthAnchor.constraint(equalToConstant: 100),
                 // 50円玉
+                fiftyYenTitleLabel.topAnchor.constraint(equalTo: oneHundredYenTitleLabel.bottomAnchor, constant: 20),
+                fiftyYenTitleLabel.rightAnchor.constraint(equalTo: oneHundredYenTitleLabel.rightAnchor),
                 fiftyYenCountTextField.centerYAnchor.constraint(equalTo: fiftyYenTitleLabel.centerYAnchor),
                 fiftyYenCountTextField.leftAnchor.constraint(equalTo: fiftyYenTitleLabel.rightAnchor, constant: 8),
-                fiftyYenCountTextField.widthAnchor.constraint(equalToConstant: 100),
+                fiftyYenCountTextField.widthAnchor.constraint(equalToConstant: 50),
+                fiftyYenCountTextField.heightAnchor.constraint(equalToConstant: 25),
                 fiftyYenMaiLabel.centerYAnchor.constraint(equalTo: fiftyYenTitleLabel.centerYAnchor),
                 fiftyYenMaiLabel.leftAnchor.constraint(equalTo: fiftyYenCountTextField.rightAnchor, constant: 8),
                 fiftyYenLabel.centerYAnchor.constraint(equalTo: fiftyYenTitleLabel.centerYAnchor),
                 fiftyYenLabel.leftAnchor.constraint(equalTo: fiftyYenMaiLabel.rightAnchor, constant: 16),
-                fiftyYenLabel.widthAnchor.constraint(equalToConstant: 180),
+                fiftyYenLabel.widthAnchor.constraint(equalToConstant: 100),
                 // 10円玉
+                tenYenTitleLabel.topAnchor.constraint(equalTo: fiftyYenTitleLabel.bottomAnchor, constant: 20),
+                tenYenTitleLabel.rightAnchor.constraint(equalTo: oneHundredYenTitleLabel.rightAnchor),
                 tenYenCountTextField.centerYAnchor.constraint(equalTo: tenYenTitleLabel.centerYAnchor),
                 tenYenCountTextField.leftAnchor.constraint(equalTo: tenYenTitleLabel.rightAnchor, constant: 8),
-                tenYenCountTextField.widthAnchor.constraint(equalToConstant: 100),
+                tenYenCountTextField.widthAnchor.constraint(equalToConstant: 50),
+                tenYenCountTextField.heightAnchor.constraint(equalToConstant: 25),
                 tenYenMaiLabel.centerYAnchor.constraint(equalTo: tenYenTitleLabel.centerYAnchor),
                 tenYenMaiLabel.leftAnchor.constraint(equalTo: tenYenCountTextField.rightAnchor, constant: 8),
                 tenYenLabel.centerYAnchor.constraint(equalTo: tenYenTitleLabel.centerYAnchor),
                 tenYenLabel.leftAnchor.constraint(equalTo: tenYenMaiLabel.rightAnchor, constant: 16),
-                tenYenLabel.widthAnchor.constraint(equalToConstant: 180),
-                // 5円玉
+                tenYenLabel.widthAnchor.constraint(equalToConstant: 100),
+//                // 5円玉
+                fiveYenTitleLabel.topAnchor.constraint(equalTo: tenYenTitleLabel.bottomAnchor, constant: 20),
+                fiveYenTitleLabel.rightAnchor.constraint(equalTo: oneHundredYenTitleLabel.rightAnchor),
                 fiveYenCountTextField.centerYAnchor.constraint(equalTo: fiveYenTitleLabel.centerYAnchor),
                 fiveYenCountTextField.leftAnchor.constraint(equalTo: fiveYenTitleLabel.rightAnchor, constant: 8),
-                fiveYenCountTextField.widthAnchor.constraint(equalToConstant: 100),
+                fiveYenCountTextField.widthAnchor.constraint(equalToConstant: 50),
+                fiveYenCountTextField.heightAnchor.constraint(equalToConstant: 25),
                 fiveYenMaiLabel.centerYAnchor.constraint(equalTo: fiveYenTitleLabel.centerYAnchor),
                 fiveYenMaiLabel.leftAnchor.constraint(equalTo: fiveYenCountTextField.rightAnchor, constant: 8),
                 fiveYenLabel.centerYAnchor.constraint(equalTo: fiveYenTitleLabel.centerYAnchor),
                 fiveYenLabel.leftAnchor.constraint(equalTo: fiveYenMaiLabel.rightAnchor, constant: 16),
-                fiveYenLabel.widthAnchor.constraint(equalToConstant: 180),
+                fiveYenLabel.widthAnchor.constraint(equalToConstant: 100),
                 // 1円玉
+                oneYenTitleLabel.topAnchor.constraint(equalTo: fiveYenTitleLabel.bottomAnchor, constant: 20),
+                oneYenTitleLabel.rightAnchor.constraint(equalTo: oneHundredYenTitleLabel.rightAnchor),
                 oneYenCountTextField.centerYAnchor.constraint(equalTo: oneYenTitleLabel.centerYAnchor),
                 oneYenCountTextField.leftAnchor.constraint(equalTo: oneYenTitleLabel.rightAnchor, constant: 8),
-                oneYenCountTextField.widthAnchor.constraint(equalToConstant: 100),
+                oneYenCountTextField.widthAnchor.constraint(equalToConstant: 50),
+                oneYenCountTextField.heightAnchor.constraint(equalToConstant: 25),
                 oneYenMaiLabel.centerYAnchor.constraint(equalTo: oneYenTitleLabel.centerYAnchor),
                 oneYenMaiLabel.leftAnchor.constraint(equalTo: oneYenCountTextField.rightAnchor, constant: 8),
                 oneYenLabel.centerYAnchor.constraint(equalTo: oneYenTitleLabel.centerYAnchor),
                 oneYenLabel.leftAnchor.constraint(equalTo: oneYenMaiLabel.rightAnchor, constant: 16),
-                oneYenLabel.widthAnchor.constraint(equalToConstant: 180),
+                oneYenLabel.widthAnchor.constraint(equalToConstant: 100),
                 // 応援券など
+                ticketTitleLabel.topAnchor.constraint(equalTo: fiveHundredYenTitleLabel.bottomAnchor, constant: 20),
+                ticketTitleLabel.rightAnchor.constraint(equalTo: tenThousandYenTitleLabel.rightAnchor),
                 ticketYenTextField.centerYAnchor.constraint(equalTo: ticketTitleLabel.centerYAnchor),
                 ticketYenTextField.leftAnchor.constraint(equalTo: ticketTitleLabel.rightAnchor, constant: 8),
-                ticketYenTextField.widthAnchor.constraint(equalToConstant: 200),
+                ticketYenTextField.widthAnchor.constraint(equalToConstant: 100),
+                ticketYenTextField.heightAnchor.constraint(equalToConstant: 25),
                 ticketYenLabel.centerYAnchor.constraint(equalTo: ticketTitleLabel.centerYAnchor),
                 ticketYenLabel.leftAnchor.constraint(equalTo: ticketYenTextField.rightAnchor, constant: 8),
                 // 持ち帰り
+                exportAmountTitleLabel.topAnchor.constraint(equalTo: oneYenTitleLabel.bottomAnchor, constant: 20),
+                exportAmountTitleLabel.rightAnchor.constraint(equalTo: oneHundredYenTitleLabel.rightAnchor),
                 exportAmountTextField.centerYAnchor.constraint(equalTo: exportAmountTitleLabel.centerYAnchor),
                 exportAmountTextField.leftAnchor.constraint(equalTo: exportAmountTitleLabel.rightAnchor, constant: 8),
-                exportAmountTextField.widthAnchor.constraint(equalToConstant: 200),
+                exportAmountTextField.widthAnchor.constraint(equalToConstant: 100),
+                exportAmountTextField.heightAnchor.constraint(equalToConstant: 25),
                 exportAmountYenLabel.centerYAnchor.constraint(equalTo: exportAmountTextField.centerYAnchor),
                 exportAmountYenLabel.leftAnchor.constraint(equalTo: exportAmountTextField.rightAnchor, constant: 8),
                 // 合計金額
-                totalYenAmountLabel.topAnchor.constraint(equalTo: exportAmountTitleLabel.bottomAnchor, constant: 32),
+                totalYenAmountLabel.topAnchor.constraint(equalTo: ticketTitleLabel.bottomAnchor, constant: 20),
                 totalYenAmountLabel.rightAnchor.constraint(equalTo: tenThousandYenTitleLabel.rightAnchor),
                 totalAmountLabel.centerYAnchor.constraint(equalTo: totalYenAmountLabel.centerYAnchor),
                 totalAmountLabel.leftAnchor.constraint(equalTo: totalYenAmountLabel.rightAnchor, constant: 16),
-                totalAmountLabel.widthAnchor.constraint(equalToConstant: 200),
+                totalAmountLabel.widthAnchor.constraint(equalToConstant: 100),
                 // 料金計算・チェックボタン
                 calcButton.centerYAnchor.constraint(equalTo: totalYenAmountLabel.centerYAnchor),
-                calcButton.leftAnchor.constraint(equalTo: totalAmountLabel.rightAnchor, constant: 24),
-                calcButton.heightAnchor.constraint(equalToConstant: 48),
-                calcButton.widthAnchor.constraint(equalToConstant: 240),
+                calcButton.leftAnchor.constraint(equalTo: totalAmountLabel.rightAnchor, constant: 16),
+                calcButton.heightAnchor.constraint(equalToConstant: 25),
+                calcButton.widthAnchor.constraint(equalToConstant: 160),
                 // メモ
-                memoTitleLabel.topAnchor.constraint(equalTo: totalYenAmountLabel.bottomAnchor, constant: 32),
+                memoTitleLabel.topAnchor.constraint(equalTo: totalYenAmountLabel.bottomAnchor, constant: 20),
                 memoTitleLabel.rightAnchor.constraint(equalTo: tenThousandYenTitleLabel.rightAnchor),
                 memoTextField.topAnchor.constraint(equalTo: memoTitleLabel.topAnchor),
                 memoTextField.bottomAnchor.constraint(equalTo: memoTitleLabel.bottomAnchor),
                 memoTextField.leftAnchor.constraint(equalTo: memoTitleLabel.rightAnchor, constant: 16),
-                memoTextField.widthAnchor.constraint(equalToConstant: 400),
+                memoTextField.widthAnchor.constraint(equalToConstant: 200),
+                memoTextField.heightAnchor.constraint(equalToConstant: 25),
                 // 登録ボタン
-                submitButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -32),
-                submitButton.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -32),
-                submitButton.heightAnchor.constraint(equalToConstant: 48),
-                submitButton.widthAnchor.constraint(equalToConstant: 160),
+                submitButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16),
+                submitButton.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -8),
+                submitButton.heightAnchor.constraint(equalToConstant: 25),
+                submitButton.widthAnchor.constraint(equalToConstant: 100),
                 // キャンセルボタン
                 cancelButton.bottomAnchor.constraint(equalTo: submitButton.bottomAnchor),
-                cancelButton.rightAnchor.constraint(equalTo: submitButton.leftAnchor, constant: -32),
-                cancelButton.heightAnchor.constraint(equalToConstant: 48),
-                cancelButton.widthAnchor.constraint(equalToConstant: 160),
-                
-                // ContentViewの高さを決定
-                contentView.heightAnchor.constraint(equalToConstant: 800)
+                cancelButton.rightAnchor.constraint(equalTo: submitButton.leftAnchor, constant: -16),
+                cancelButton.heightAnchor.constraint(equalToConstant: 25),
+                cancelButton.widthAnchor.constraint(equalToConstant: 100)
             ]
             
             currentConstraints.append(contentsOf: constraints)
@@ -1189,17 +1230,14 @@ private extension DenominationView {
                 memoTextField.widthAnchor.constraint(equalToConstant: 400),
                 // 登録ボタン
                 submitButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -32),
-                submitButton.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -32),
+                submitButton.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -16),
                 submitButton.heightAnchor.constraint(equalToConstant: 48),
                 submitButton.widthAnchor.constraint(equalToConstant: 160),
                 // キャンセルボタン
                 cancelButton.bottomAnchor.constraint(equalTo: submitButton.bottomAnchor),
-                cancelButton.rightAnchor.constraint(equalTo: submitButton.leftAnchor, constant: -32),
+                cancelButton.rightAnchor.constraint(equalTo: submitButton.leftAnchor, constant: -16),
                 cancelButton.heightAnchor.constraint(equalToConstant: 48),
-                cancelButton.widthAnchor.constraint(equalToConstant: 160),
-                
-                // ContentViewの高さを決定（縦向きは高めに設定）
-                contentView.heightAnchor.constraint(equalToConstant: 1170)
+                cancelButton.widthAnchor.constraint(equalToConstant: 160)
             ]
             
             currentConstraints.append(contentsOf: constraints)
@@ -1369,17 +1407,14 @@ private extension DenominationView {
                 memoTextField.widthAnchor.constraint(equalToConstant: 400),
                 // 登録ボタン
                 submitButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -32),
-                submitButton.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -32),
+                submitButton.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -16),
                 submitButton.heightAnchor.constraint(equalToConstant: 48),
                 submitButton.widthAnchor.constraint(equalToConstant: 160),
                 // キャンセルボタン
                 cancelButton.bottomAnchor.constraint(equalTo: submitButton.bottomAnchor),
-                cancelButton.rightAnchor.constraint(equalTo: submitButton.leftAnchor, constant: -32),
+                cancelButton.rightAnchor.constraint(equalTo: submitButton.leftAnchor, constant: -16),
                 cancelButton.heightAnchor.constraint(equalToConstant: 48),
-                cancelButton.widthAnchor.constraint(equalToConstant: 160),
-                
-                // ContentViewの高さを決定（横向きは低めに設定）
-                contentView.heightAnchor.constraint(equalToConstant: 680)
+                cancelButton.widthAnchor.constraint(equalToConstant: 160)
             ]
             
             currentConstraints.append(contentsOf: constraints)

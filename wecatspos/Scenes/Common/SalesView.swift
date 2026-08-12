@@ -109,7 +109,9 @@ extension SalesView {
 
 private extension SalesView {
     var currentWidth: CGFloat {
-        return bounds.width > 0 ? bounds.width : UIScreen.main.bounds.width
+        let width = bounds.width > 0 ? bounds.width : UIScreen.main.bounds.width
+        let height = bounds.height > 0 ? bounds.height : UIScreen.main.bounds.height
+        return min(width, height)
     }
 
     var isCompactLayout: Bool {

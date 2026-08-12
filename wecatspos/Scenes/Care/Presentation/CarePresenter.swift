@@ -45,7 +45,7 @@ final class CarePresenter: CarePresenterProtocol {
                 [unowned self] model in
                 print(model)
                 self.viewCareInfo.onNext(model)
-            }, onError: { error in
+            }, onError: { [unowned self] error in
                 self.handleLoadError(error, careType: careType)
                 print(error)
             })
@@ -54,7 +54,7 @@ final class CarePresenter: CarePresenterProtocol {
     
     func handleLoadError(_ error: Error, careType: Int) {
         self.wireframe.presentAlert(Sentence.MSG_NETWORK_ERROR, buttonTitle: Sentence.DIALOG_BTN_RETRY)
-            .subscribe(onNext: { option in
+            .subscribe(onNext: { [unowned self] option in
                 if option == Sentence.DIALOG_BTN_RETRY {
                     // ボタンタップ時に再試行
                     self.load(careType: careType)
@@ -80,7 +80,7 @@ final class CarePresenter: CarePresenterProtocol {
                 [unowned self] model in
                 print(model)
                 self.viewCareInfo.onNext(model)
-            }, onError: { error in
+            }, onError: { [unowned self] error in
                 self.handleSetCareInfoError(error, selectedCareType: selectedCareType, selectedRow: selectedRow)
                 print(error)
             })
@@ -89,7 +89,7 @@ final class CarePresenter: CarePresenterProtocol {
     
     func handleSetCareInfoError(_ error: Error, selectedCareType: Int, selectedRow: CareInfoModel) {
         self.wireframe.presentAlert(Sentence.MSG_NETWORK_ERROR, buttonTitle: Sentence.DIALOG_BTN_RETRY)
-            .subscribe(onNext: { option in
+            .subscribe(onNext: { [unowned self] option in
                 if option == Sentence.DIALOG_BTN_RETRY {
                     // ボタンタップ時に再試行
                     self.setCareInfo(selectedCareType: selectedCareType, selectedRow: selectedRow)
@@ -109,7 +109,7 @@ final class CarePresenter: CarePresenterProtocol {
                 [unowned self] model in
                 print(model)
                 self.viewCareInfo.onNext(model)
-            }, onError: { error in
+            }, onError: { [unowned self] error in
                 self.handleSetCareInfoError(error, selectedCareType: selectedCareType, selectedRow: selectedRow)
                 print(error)
             })
@@ -118,7 +118,7 @@ final class CarePresenter: CarePresenterProtocol {
     
     func handleEditCareMemoError(_ error: Error, selectedCareType: Int, selectedRow: CareInfoModel) {
         self.wireframe.presentAlert(Sentence.MSG_NETWORK_ERROR, buttonTitle: Sentence.DIALOG_BTN_RETRY)
-            .subscribe(onNext: { option in
+            .subscribe(onNext: { [unowned self] option in
                 if option == Sentence.DIALOG_BTN_RETRY {
                     // ボタンタップ時に再試行
                     self.editCareMemo(selectedCareType: selectedCareType, selectedRow: selectedRow)
@@ -138,7 +138,7 @@ final class CarePresenter: CarePresenterProtocol {
                 [unowned self] model in
                 print(model)
                 self.viewCareInfo.onNext(model)
-            }, onError: { error in
+            }, onError: { [unowned self] error in
                 self.handleLoadError(error, careType: selectedCareType)
                 print(error)
             })
@@ -147,7 +147,7 @@ final class CarePresenter: CarePresenterProtocol {
     
     func handleDeleteCareInfoError(_ error: Error, selectedCareType: Int, selectedRow: CareInfoModel) {
         self.wireframe.presentAlert(Sentence.MSG_NETWORK_ERROR, buttonTitle: Sentence.DIALOG_BTN_RETRY)
-            .subscribe(onNext: { option in
+            .subscribe(onNext: { [unowned self] option in
                 if option == Sentence.DIALOG_BTN_RETRY {
                     // ボタンタップ時に再試行
                     self.deleteCareInfo(selectedCareType: selectedCareType, selectedRow: selectedRow)

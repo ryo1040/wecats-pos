@@ -52,7 +52,7 @@ final class CatInfoPresenter: CatInfoPresenterProtocol {
             .subscribe(onNext: {
                 [unowned self] model in
                 self.viewMedicalHistoryData.onNext(model)
-            }, onError: { error in
+            }, onError: { [unowned self] error in
                 self.handleDidTapEditMedicalHistorySubmitButtonError(error, id: id, catId: catId, date: date, overview: overview, detail: detail)
             })
             .disposed(by: self.disposeBag)
@@ -60,7 +60,7 @@ final class CatInfoPresenter: CatInfoPresenterProtocol {
     
     func handleDidTapEditMedicalHistorySubmitButtonError(_ error: Error, id: Int, catId: Int, date: String, overview: String, detail: String?) {
         self.wireframe.presentAlert(Sentence.MSG_NETWORK_ERROR, buttonTitle: Sentence.DIALOG_BTN_RETRY)
-            .subscribe(onNext: { option in
+            .subscribe(onNext: { [unowned self] option in
                 if option == Sentence.DIALOG_BTN_RETRY {
                     // ボタンタップ時に再試行
                     self.didTapEditMedicalHistorySubmitButton(id: id, catId: catId, date: date, overview: overview, detail: detail)
@@ -76,7 +76,7 @@ final class CatInfoPresenter: CatInfoPresenterProtocol {
             .subscribe(onNext: {
                 [unowned self] model in
                 self.viewMedicalHistoryData.onNext(model)
-            }, onError: { error in
+            }, onError: { [unowned self] error in
                 self.handleGetMedicalHistoryError(error, catId: catId)
             })
             .disposed(by: self.disposeBag)
@@ -84,7 +84,7 @@ final class CatInfoPresenter: CatInfoPresenterProtocol {
     
     func handleGetMedicalHistoryError(_ error: Error, catId: Int) {
         self.wireframe.presentAlert(Sentence.MSG_NETWORK_ERROR, buttonTitle: Sentence.DIALOG_BTN_RETRY)
-            .subscribe(onNext: { option in
+            .subscribe(onNext: { [unowned self] option in
                 if option == Sentence.DIALOG_BTN_RETRY {
                     // ボタンタップ時に再試行
                     self.getMedicalHistory(catId: catId)
@@ -103,7 +103,7 @@ private extension CatInfoPresenter {
             .subscribe(onNext: {
                 [unowned self] model in
                 self.viewCatInfoData.onNext(model)
-            }, onError: { error in
+            }, onError: { [unowned self] error in
                 self.handleGetCatInfoError(error)
                 print(error)
             })
@@ -112,7 +112,7 @@ private extension CatInfoPresenter {
     
     func handleGetCatInfoError(_ error: Error) {
         self.wireframe.presentAlert(Sentence.MSG_NETWORK_ERROR, buttonTitle: Sentence.DIALOG_BTN_RETRY)
-            .subscribe(onNext: { option in
+            .subscribe(onNext: { [unowned self] option in
                 if option == Sentence.DIALOG_BTN_RETRY {
                     // ボタンタップ時に再試行
                     self.getCatInfo()

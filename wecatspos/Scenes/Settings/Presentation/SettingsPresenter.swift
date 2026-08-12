@@ -41,7 +41,7 @@ final class SettingsPresenter: SettingsPresenterProtocol {
             .subscribe(onNext: {
                 [unowned self] model in
                 self.viewSalesMaster.onNext(model)
-            }, onError: { error in
+            }, onError: { [unowned self] error in
                 self.handleLoadError(error)
             })
             .disposed(by: self.disposeBag)
@@ -49,7 +49,7 @@ final class SettingsPresenter: SettingsPresenterProtocol {
     
     func handleLoadError(_ error: Error) {
         self.wireframe.presentAlert(Sentence.MSG_NETWORK_ERROR, buttonTitle: Sentence.DIALOG_BTN_RETRY)
-            .subscribe(onNext: { option in
+            .subscribe(onNext: { [unowned self] option in
                 if option == Sentence.DIALOG_BTN_RETRY {
                     // ボタンタップ時に再試行
                     self.load()
@@ -72,7 +72,7 @@ final class SettingsPresenter: SettingsPresenterProtocol {
             .subscribe(onNext: {
                 [unowned self] model in
                 self.viewSalesMaster.onNext(model)
-            }, onError: { error in
+            }, onError: { [unowned self] error in
                 self.handleSetSalesMasterError(error, salesMaster: salesMaster)
                 print(error)
             })
@@ -81,7 +81,7 @@ final class SettingsPresenter: SettingsPresenterProtocol {
     
     func handleSetSalesMasterError(_ error: Error, salesMaster: SalesMasterModel) {
         self.wireframe.presentAlert(Sentence.MSG_NETWORK_ERROR, buttonTitle: Sentence.DIALOG_BTN_RETRY)
-            .subscribe(onNext: { option in
+            .subscribe(onNext: { [unowned self] option in
                 if option == Sentence.DIALOG_BTN_RETRY {
                     // ボタンタップ時に再試行
                     self.setSalesMaster(salesMaster: salesMaster)
@@ -100,7 +100,7 @@ final class SettingsPresenter: SettingsPresenterProtocol {
             .subscribe(onNext: {
                 [unowned self] model in
                 self.viewSalesMaster.onNext(model)
-            }, onError: { error in
+            }, onError: { [unowned self] error in
                 self.handleDeleteSalesMasterError(error, selectedSalesMaster: selectedSalesMaster)
                 print(error)
             })
@@ -109,7 +109,7 @@ final class SettingsPresenter: SettingsPresenterProtocol {
     
     func handleDeleteSalesMasterError(_ error: Error, selectedSalesMaster: SalesMasterModel) {
         self.wireframe.presentAlert(Sentence.MSG_NETWORK_ERROR, buttonTitle: Sentence.DIALOG_BTN_RETRY)
-            .subscribe(onNext: { option in
+            .subscribe(onNext: { [unowned self] option in
                 if option == Sentence.DIALOG_BTN_RETRY {
                     // ボタンタップ時に再試行
                     self.deleteSalesMaster(selectedSalesMaster: selectedSalesMaster)

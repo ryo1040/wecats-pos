@@ -46,16 +46,16 @@ final class ClosePresenter: ClosePresenterProtocol {
             .subscribe(onNext: {
                 [unowned self] model in
                 self.viewCloseResister.onNext(model)
-            }, onError: { error in
+            }, onError: { [unowned self] error in
                 self.handleLoadError(error, month: month)
                 print(error)
             })
             .disposed(by: self.disposeBag)
     }
-    
+
     func handleLoadError(_ error: Error, month: String) {
         self.wireframe.presentAlert(Sentence.MSG_NETWORK_ERROR, buttonTitle: Sentence.DIALOG_BTN_RETRY)
-            .subscribe(onNext: { option in
+            .subscribe(onNext: { [unowned self] option in
                 if option == Sentence.DIALOG_BTN_RETRY {
                     // ボタンタップ時に再試行
                     self.load(month: month)
@@ -80,7 +80,7 @@ final class ClosePresenter: ClosePresenterProtocol {
                 // 返ってきたチェック結果をポップアップで表示
                 if model.status == 200 {
                     self.wireframe.presentAlert(model.checkResult, buttonTitle: "確認")
-                        .subscribe(onNext: { option in
+                        .subscribe(onNext: { [unowned self] option in
                             if option == "確認" {
                                 self.viewCheckResult.onNext(model)
                             }
@@ -88,7 +88,7 @@ final class ClosePresenter: ClosePresenterProtocol {
                         .disposed(by: self.disposeBag)
                 } else if model.status == 901 {
                     self.wireframe.presentAlert(model.checkResult, buttonTitle: "確認")
-                        .subscribe(onNext: { option in
+                        .subscribe(onNext: { [unowned self] option in
                             if option == "確認" {
                                 self.viewCheckResult.onNext(model)
                             }
@@ -96,17 +96,17 @@ final class ClosePresenter: ClosePresenterProtocol {
                         .disposed(by: self.disposeBag)
                 }
 
-            }, onError: { error in
+            }, onError: { [unowned self] error in
                 self.handleCheckTotalAmountError(error, date: date, totalAmount: totalAmount, ticketAmount: ticketAmount, exportAmount: exportAmount)
                 print(error)
             })
             .disposed(by: self.disposeBag)
 
     }
-    
+
     func handleCheckTotalAmountError(_ error: Error, date: String, totalAmount: Int, ticketAmount: Int, exportAmount: Int) {
         self.wireframe.presentAlert(Sentence.MSG_NETWORK_ERROR, buttonTitle: Sentence.DIALOG_BTN_RETRY)
-            .subscribe(onNext: { option in
+            .subscribe(onNext: { [unowned self] option in
                 if option == Sentence.DIALOG_BTN_RETRY {
                     // ボタンタップ時に再試行
                     self.checkTotalAmount(date: date, totalAmount: totalAmount, ticketAmount: ticketAmount, exportAmount: exportAmount)
@@ -125,16 +125,16 @@ final class ClosePresenter: ClosePresenterProtocol {
             .subscribe(onNext: {
                 [unowned self] model in
                 self.viewCloseResister.onNext(model)
-            }, onError: { error in
+            }, onError: { [unowned self] error in
                 self.handleSetDenominationError(error, date: date, tenThousandYenCount: tenThousandYenCount, fiveThousandYenCount: fiveThousandYenCount, twoThousandYenCount: twoThousandYenCount, oneThousandYenCount: oneThousandYenCount, fiveHundredYenCount: fiveHundredYenCount, oneHundredYenCount: oneHundredYenCount, fiftyYenCount: fiftyYenCount, tenYenCount: tenYenCount, fiveYenCount: fiveYenCount, oneYenCount: oneYenCount, exportAmount: exportAmount, ticketAmount: ticketAmount, totalAmount: totalAmount, memo: memo)
                 print(error)
             })
             .disposed(by: self.disposeBag)
     }
-    
+
     func handleSetDenominationError(_ error: Error, date: String, tenThousandYenCount: Int, fiveThousandYenCount: Int, twoThousandYenCount: Int, oneThousandYenCount: Int, fiveHundredYenCount: Int, oneHundredYenCount: Int, fiftyYenCount: Int, tenYenCount: Int, fiveYenCount: Int, oneYenCount: Int, exportAmount: Int, ticketAmount: Int, totalAmount: Int, memo: String) {
         self.wireframe.presentAlert(Sentence.MSG_NETWORK_ERROR, buttonTitle: Sentence.DIALOG_BTN_RETRY)
-            .subscribe(onNext: { option in
+            .subscribe(onNext: { [unowned self] option in
                 if option == Sentence.DIALOG_BTN_RETRY {
                     // ボタンタップ時に再試行
                     self.didTapDenominationSubmitButton(date: date, tenThousandYenCount: tenThousandYenCount, fiveThousandYenCount: fiveThousandYenCount, twoThousandYenCount: twoThousandYenCount, oneThousandYenCount: oneThousandYenCount, fiveHundredYenCount: fiveHundredYenCount, oneHundredYenCount: oneHundredYenCount, fiftyYenCount: fiftyYenCount, tenYenCount: tenYenCount, fiveYenCount: fiveYenCount, oneYenCount: oneYenCount, exportAmount: exportAmount, ticketAmount: ticketAmount, totalAmount: totalAmount, memo: memo)
@@ -142,7 +142,7 @@ final class ClosePresenter: ClosePresenterProtocol {
             })
             .disposed(by: self.disposeBag)
     }
-    
+
     func didTapDenominationDeleteButton(date: String) {
         let param = PostDenominationDeleteRequestParam(date: date)
 
@@ -153,16 +153,16 @@ final class ClosePresenter: ClosePresenterProtocol {
             .subscribe(onNext: {
                 [unowned self] model in
                 self.viewCloseResister.onNext(model)
-            }, onError: { error in
+            }, onError: { [unowned self] error in
                 self.handleDeleteDenominationError(error, date: date)
                 print(error)
             })
             .disposed(by: self.disposeBag)
     }
-    
+
     func handleDeleteDenominationError(_ error: Error, date: String) {
         self.wireframe.presentAlert(Sentence.MSG_NETWORK_ERROR, buttonTitle: Sentence.DIALOG_BTN_RETRY)
-            .subscribe(onNext: { option in
+            .subscribe(onNext: { [unowned self] option in
                 if option == Sentence.DIALOG_BTN_RETRY {
                     // ボタンタップ時に再試行
                     self.didTapDenominationDeleteButton(date: date)
