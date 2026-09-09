@@ -9,7 +9,7 @@ import Foundation
 import Moya
 
 struct GetCalcTotalAmountTargetType: ApiTargetType {
-    typealias Reponse = CalcTotalAmountEntity
+    typealias Reponse = GetTotalAmountEntity
 
 //    var baseURL: URL {
 //        URL(string: "https://vl1sxpjk81.execute-api.ap-northeast-1.amazonaws.com/guest/")!

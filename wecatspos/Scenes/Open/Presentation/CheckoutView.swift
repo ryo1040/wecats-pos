@@ -56,7 +56,7 @@ public class CheckoutView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func setCheckout(selectedGuest: CalcTotalAmountModel) {
+    func setCheckout(selectedGuest: GetTotalAmountModel) {
         visitorCountLabel.text = "大人" + String(selectedGuest.adultCount) + "名、子ども" + String(selectedGuest.childCount) + "名"
         totalTimeLabel.text = String(selectedGuest.stayTime) + "分"
         chargeLabel.text = "¥" + commaSeparateThreeDigits(selectedGuest.totalAmount)
@@ -65,7 +65,6 @@ public class CheckoutView: UIView {
         var childUnitPrice = selectedGuest.childUnitPrice
         let formattedAdultUnitPrice = commaSeparateThreeDigits(adultUnitPrice)
         if selectedGuest.kidsDayFlg {
-            childUnitPrice = childUnitPrice / 2
             let formattedChildUnitPrice = commaSeparateThreeDigits(childUnitPrice)
             breakdownLabel.text = "大人¥" + formattedAdultUnitPrice + "×" + String(selectedGuest.adultCount) + "名 + 子ども¥" + formattedChildUnitPrice + "×" + String(selectedGuest.childCount) + "名（半額）"
         } else {

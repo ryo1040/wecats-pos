@@ -1,11 +1,12 @@
 //
-//  CalcTotalAmountModel.swift
+//  GetTotalAmountModel.swift
 //  wecatspos
 //
-//  Created by matsumoto on 2025/10/11.
+//  Created by matsumoto on 2026/08/29.
 //
 
-public struct CalcTotalAmountModel {
+
+public struct GetTotalAmountModel {
     public var stayTime: Int
     public var kidsDayFlg: Bool
     public var adultUnitPrice: Int

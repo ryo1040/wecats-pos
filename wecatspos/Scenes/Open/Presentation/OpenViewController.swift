@@ -322,6 +322,10 @@ private extension OpenViewController {
                 visitorInfoView.isHidden = true
                 editVisitorInfoView.isHidden = true
                 checkoutView.isHidden = true
+                stayingButton.backgroundColor = UIColor(red: 239/255, green: 236/255, blue: 231/255, alpha: 1.0)
+                stayingButton.setTitleColor(UIColor.black, for: .normal)
+                leftBotton.backgroundColor = UIColor.lightGray
+                leftBotton.setTitleColor(UIColor.white, for: .normal)
                 stopLoading()
                 print("stayingHidden=", stayingView.isHidden, "leftHidden=", leftView.isHidden)
             }).disposed(by: disposeBag)
@@ -622,9 +626,9 @@ extension OpenViewController: LeaveDelegate {
         presenter.didTapLeaveSubmitButton(id: id, repeatFlag: repeatFlag, patternId: patternId, name: name, date: date, holidayFlag: holidayFlag, kidsDayFlag: kidsDayFlag, adultCount: adultCount, childCount: childCount, enterTime: enterTime, leftTime: leftTime, stayTime: stayTime, calcAmount: calcAmount, discountAmount: discountAmount, saleAmount: saleAmount, gachaAmount: gachaAmount, totalAmount: totalAmount, memo: memo)
     }
     
-    func calcTotalAmount(enterTime: String, leftTime: String, adultCount: Int, childCount: Int, discountAmount: String, saleAmount: String) {
+    func calcTotalAmount(enterTime: String, leftTime: String, adultCount: Int, childCount: Int, discountAmount: String, freeNyanTime: Bool, saleAmount: String) {
         startLoading()
-        presenter.calcTotalAmount(enterTime: enterTime, leftTime: leftTime, adultCount: adultCount, childCount: childCount, discountAmount: discountAmount, saleAmount: saleAmount)
+        presenter.calcTotalAmount(enterTime: enterTime, leftTime: leftTime, adultCount: adultCount, childCount: childCount, discountAmount: discountAmount, freeNyanTime: freeNyanTime, saleAmount: saleAmount)
     }
 }
 

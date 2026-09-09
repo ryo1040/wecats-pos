@@ -15,7 +15,7 @@ protocol OpenUseCaseProtocol: AnyObject {
     func setGuestInfo(param: PostGuestInfoRequestParam) -> Observable<[GuestInfoModel]>
     func updateGuestInfo(param: PostGuestInfoRequestParam) -> Observable<[GuestInfoModel]>
     func deleteGuestInfo(param: PostDeleteGuestInfoRequestParam) -> Observable<[GuestInfoModel]>
-    func calcTotalAmount(param: GetCalcTotalAmountRequestParam) -> Observable<CalcTotalAmountModel>
+    func calcTotalAmount(param: GetCalcTotalAmountRequestParam) -> Observable<GetTotalAmountModel>
     func getSales(param: GetSalesMasterRequestParam) -> Observable<GetSalesModel>
     func setSales(param: PostSalesRequestParam) -> Observable<GetSalesModel>
     func getReservationNightInfo(param: GetReservationNightRequestParam) -> Observable<GetReservationNightViewModel>
@@ -70,9 +70,10 @@ final class OpenUseCase: OpenUseCaseProtocol {
         }
     }
 
-    func calcTotalAmount(param: GetCalcTotalAmountRequestParam) -> Observable<CalcTotalAmountModel> {
+    func calcTotalAmount(param: GetCalcTotalAmountRequestParam) -> Observable<GetTotalAmountModel> {
         self.openRepository.calcTotalAmount(param: param).asObservable().map { entity in
-            CalcTotalAmountTranslator.generate(calcTotalAmount: entity)
+            GetTotalAmountTranslator.generate(calcTotalAmount: entity)
+            
         }
     }
     

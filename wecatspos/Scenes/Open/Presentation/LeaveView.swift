@@ -11,7 +11,7 @@ import UIKit
 protocol LeaveDelegate: AnyObject  {
     func tapLeaveSubmitButton(id: Int, repeatFlag: Bool, patternId: Int, name: String?, date: String, holidayFlag: Bool, kidsDayFlag: Bool, adultCount: Int, childCount: Int, enterTime: String, leftTime: String, stayTime: Int, calcAmount: Int, discountAmount: Int, saleAmount: Int, gachaAmount: Int, totalAmount: Int, memo: String)
     func tapLeaveCancelButton()
-    func calcTotalAmount(enterTime: String, leftTime: String, adultCount: Int, childCount: Int, discountAmount: String, saleAmount: String)
+    func calcTotalAmount(enterTime: String, leftTime: String, adultCount: Int, childCount: Int, discountAmount: String, freeNyanTime: Bool, saleAmount: String)
 }
 
 public class LeaveView: UIView {
@@ -31,6 +31,8 @@ public class LeaveView: UIView {
     let stayTimeLabel = UILabel()
     let discountAmountTitleLabel = UILabel()
     let discountAmountTextField = UITextField()
+    let freeNyanTimeCheckBox = UISwitch()
+    let freeNyanTimeLabel = UILabel()
     let feeTitleLabel = UILabel()
     let feeLabel = UILabel()
     let feeCalcButton = UIButton()
@@ -93,6 +95,7 @@ public class LeaveView: UIView {
         self.enterTime = enterTime
         self.adultCount = adultCount
         self.childCount = childCount
+        self.freeNyanTimeCheckBox.isOn = false
         self.memo = memo
         
         let formatter = DateFormatter()
@@ -245,6 +248,12 @@ private extension LeaveView {
         setupLabel(discountAmountTitleLabel, text: "割引額：")
         scrollView.addSubview(discountAmountTitleLabel)
         
+        freeNyanTimeCheckBox.isOn = false
+        scrollView.addSubview(freeNyanTimeCheckBox)
+
+        setupLabel(freeNyanTimeLabel, text: "フリーにゃんタイム")
+        scrollView.addSubview(freeNyanTimeLabel)
+        
         setupTextField(discountAmountTextField, text: "0")
         discountAmountTextField.keyboardType = .numberPad
         discountAmountTextField.returnKeyType = .done
@@ -299,6 +308,8 @@ private extension LeaveView {
         stayTimeLabel.translatesAutoresizingMaskIntoConstraints = false
         discountAmountTitleLabel.translatesAutoresizingMaskIntoConstraints = false
         discountAmountTextField.translatesAutoresizingMaskIntoConstraints = false
+        freeNyanTimeCheckBox.translatesAutoresizingMaskIntoConstraints = false
+        freeNyanTimeLabel.translatesAutoresizingMaskIntoConstraints = false
         feeTitleLabel.translatesAutoresizingMaskIntoConstraints = false
         feeLabel.translatesAutoresizingMaskIntoConstraints = false
         feeCalcButton.translatesAutoresizingMaskIntoConstraints = false
@@ -341,6 +352,10 @@ private extension LeaveView {
                 discountAmountTextField.leftAnchor.constraint(equalTo: discountAmountTitleLabel.rightAnchor, constant: 8),
                 discountAmountTextField.widthAnchor.constraint(equalToConstant: 120),
                 discountAmountTextField.heightAnchor.constraint(equalToConstant: 25),
+                freeNyanTimeLabel.centerYAnchor.constraint(equalTo: discountAmountTitleLabel.centerYAnchor),
+                freeNyanTimeLabel.leftAnchor.constraint(equalTo: discountAmountTextField.rightAnchor, constant: 25),
+                freeNyanTimeCheckBox.centerYAnchor.constraint(equalTo: discountAmountTitleLabel.centerYAnchor),
+                freeNyanTimeCheckBox.leftAnchor.constraint(equalTo: freeNyanTimeLabel.rightAnchor, constant: 8),
                 feeTitleLabel.topAnchor.constraint(equalTo: discountAmountTextField.bottomAnchor, constant: 48),
                 feeTitleLabel.rightAnchor.constraint(equalTo: enterTimeTitleLabel.rightAnchor),
                 feeLabel.centerYAnchor.constraint(equalTo: feeTitleLabel.centerYAnchor),
@@ -398,6 +413,10 @@ private extension LeaveView {
                 discountAmountTextField.bottomAnchor.constraint(equalTo: discountAmountTitleLabel.bottomAnchor),
                 discountAmountTextField.leftAnchor.constraint(equalTo: discountAmountTitleLabel.rightAnchor, constant: 16),
                 discountAmountTextField.widthAnchor.constraint(equalToConstant: 240),
+                freeNyanTimeLabel.centerYAnchor.constraint(equalTo: discountAmountTitleLabel.centerYAnchor),
+                freeNyanTimeLabel.leftAnchor.constraint(equalTo: discountAmountTextField.rightAnchor, constant: 25),
+                freeNyanTimeCheckBox.centerYAnchor.constraint(equalTo: discountAmountTitleLabel.centerYAnchor),
+                freeNyanTimeCheckBox.leftAnchor.constraint(equalTo: freeNyanTimeLabel.rightAnchor, constant: 16),
                 feeTitleLabel.topAnchor.constraint(equalTo: discountAmountTextField.bottomAnchor, constant: 64),
                 feeTitleLabel.rightAnchor.constraint(equalTo: enterTimeTitleLabel.rightAnchor),
                 feeLabel.topAnchor.constraint(equalTo: feeTitleLabel.topAnchor),
@@ -542,7 +561,7 @@ private extension LeaveView {
         }
         
         // 料金計算
-        delegate?.calcTotalAmount(enterTime: enterTimeTextField.text ?? "", leftTime: leftTimeTextField.text ?? "", adultCount: self.adultCount, childCount: self.childCount, discountAmount: discountAmountTextField.text?.replacingOccurrences(of: ",", with: "") ?? "", saleAmount: "0")
+        delegate?.calcTotalAmount(enterTime: enterTimeTextField.text ?? "", leftTime: leftTimeTextField.text ?? "", adultCount: self.adultCount, childCount: self.childCount, discountAmount: discountAmountTextField.text?.replacingOccurrences(of: ",", with: "") ?? "", freeNyanTime: freeNyanTimeCheckBox.isOn, saleAmount: "0")
     }
     
     // 退店登録ボタンタップ時のイベント
@@ -572,6 +591,7 @@ private extension LeaveView {
         leftTimeTextField.text = ""
         stayTimeLabel.text = ""
         discountAmountTextField.text = ""
+        freeNyanTimeCheckBox.isOn = false
         feeLabel.text = ""
         delegate?.tapLeaveCancelButton()
     }

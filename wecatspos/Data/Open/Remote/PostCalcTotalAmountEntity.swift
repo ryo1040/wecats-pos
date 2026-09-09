@@ -20,10 +20,11 @@ struct GetCalcTotalAmountRequestParam: Codable {
     var adultCount: Int
     var childCount: Int
     var discountAmount: String
+    var freeNyanTime: Bool
     var salesAmount: String
 }
 
-public struct CalcTotalAmountEntity: Codable {
+public struct GetTotalAmountEntity: Codable {
     var status: Int
     var stayTime: Int
     var kidsDayFlg: Bool
