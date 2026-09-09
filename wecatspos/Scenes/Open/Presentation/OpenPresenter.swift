@@ -353,7 +353,7 @@ final class OpenPresenter: OpenPresenterProtocol {
             }
             .subscribe(onNext: {
                 [unowned self] model in
-                self.viewGuestInfo.onNext(model)
+                self.viewLeave.onNext(model)
             }, onError: { [unowned self] error in
                 self.handleDidTapeservationNightSubmitButtonError(error, id: id, branch: branch, date: date, name: name, tel: tel, count: count, price: price, memo: memo, visitorHistoryId: visitorHistoryId)
             })
@@ -380,7 +380,7 @@ final class OpenPresenter: OpenPresenterProtocol {
             }
             .subscribe(onNext: {
                 [unowned self] model in
-                self.viewGuestInfo.onNext(model)
+                self.viewLeave.onNext(model)
             }, onError: { [unowned self] error in
                 self.handleDidTapeservationNightDeleteButtonError(error, id: id, branch: branch, date: date, visitorHistoryId: visitorHistoryId)
             })

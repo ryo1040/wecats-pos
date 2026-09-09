@@ -334,7 +334,11 @@ private extension ReservationNightView {
     
     // キャンセルボタンタップ時のイベント
     @objc func tapCancelButton() {
-
+        dateTextField.text = ""
+        nameTextField.text = ""
+        telTextField.text = ""
+        countTextField.text = ""
+        priceTextField.text = ""
         memoTextField.text = ""
         delegate?.tapReservationNightCancelButton()
     }
